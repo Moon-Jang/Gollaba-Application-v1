@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Free-Polling-Application
+  config:
+    import: classpath:private/application-dev.yaml, classpath:private/application-prod.yaml
