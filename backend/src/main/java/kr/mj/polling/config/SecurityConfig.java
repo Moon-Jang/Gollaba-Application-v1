@@ -23,16 +23,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final JwtTokenFilter jwtTokenFilter;
+    private final String[] permitAllList = {
+            "/api/v1/signup",
+            "/api/v1/login",
+            "/health-check", // aws - target group
+            "/h2-console/**", // h2-console
+            "/v3/api-docs", // swagger
+            "/swagger-ui/**", // swagger
+            "/swagger-resources/**", // swagger
+            "/webjars/**", // swagger
+    };
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring()
-                .antMatchers("/h2-console/**");
     }
 
     @Override
@@ -47,9 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/signup").permitAll()
-                .antMatchers("/api/v1/login").permitAll()
-                .antMatchers("/api/v1/products").permitAll()
+                .antMatchers(permitAllList).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().disable().headers().frameOptions().disable(); //h2 console 관련

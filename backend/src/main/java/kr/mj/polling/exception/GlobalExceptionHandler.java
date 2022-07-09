@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorAPIResponse> handleException(HttpServletRequest request, Exception e) {
-        return SampleException.getResult(e);
+        return PollingAppException.getResult(e);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

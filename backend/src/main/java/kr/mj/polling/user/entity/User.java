@@ -4,6 +4,7 @@ import kr.mj.polling.user.type.UserRoleType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -49,6 +50,22 @@ public class User {
         this.uniqueId = uniqueId;
         this.nickName = nickName;
         this.password = password;
+        this.userRole = userRole;
+    }
+
+    public void  updateUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public void updateNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateUserRole(UserRoleType userRole) {
         this.userRole = userRole;
     }
 

@@ -1,8 +1,8 @@
 package kr.mj.polling.security;
 
 import io.jsonwebtoken.*;
-import kr.mj.polling.exception.SampleErrorCode;
-import kr.mj.polling.exception.SampleException;
+import kr.mj.polling.exception.PollingAppErrorCode;
+import kr.mj.polling.exception.PollingAppException;
 import kr.mj.polling.security.service.PrincipalDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -85,7 +85,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (JwtException | IllegalArgumentException e) {
-            throw new SampleException(SampleErrorCode.INVALID_JWT_TOKEN);
+            throw new PollingAppException(PollingAppErrorCode.INVALID_JWT_TOKEN);
         }
     }
 }

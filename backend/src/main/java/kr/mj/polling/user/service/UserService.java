@@ -1,11 +1,11 @@
 package kr.mj.polling.user.service;
 
-import kr.mj.polling.exception.SampleErrorCode;
-import kr.mj.polling.exception.SampleException;
+import kr.mj.polling.exception.PollingAppErrorCode;
+import kr.mj.polling.exception.PollingAppException;
 import kr.mj.polling.user.dto.SignupRequest;
 import kr.mj.polling.user.dto.SignupResponse;
 import kr.mj.polling.user.entity.User;
-import kr.mj.polling.user.repository.UserRepository;
+import kr.mj.polling.unit.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,11 @@ public class UserService {
 
     public SignupResponse save(SignupRequest request) {
         if (userRepository.existsByUniqueId(request.getUniqueId())) {
-            throw new SampleException(SampleErrorCode.ALREADY_EXIST_USER);
+            throw new PollingAppException(PollingAppErrorCode.ALREADY_EXIST_USER);
+        }
+
+        if (userRepository.existsByNickName(request.getNickName())) {
+            throw new PollingAppException(PollingAppErrorCode.ALREADY_EXIST_USER);
         }
 
         User user = request.toEntity(passwordEncoder);

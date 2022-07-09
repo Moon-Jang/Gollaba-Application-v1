@@ -1,6 +1,6 @@
 package kr.mj.polling.common;
 
-import kr.mj.polling.exception.SampleErrorCode;
+import kr.mj.polling.exception.PollingAppErrorCode;
 import lombok.Getter;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -20,12 +20,12 @@ public class ErrorAPIResponse {
         error.put("message", message);
     }
 
-    public ErrorAPIResponse(SampleErrorCode errorCode) {
+    public ErrorAPIResponse(PollingAppErrorCode errorCode) {
         error.put("code", errorCode.getCode());
         error.put("message", errorCode.getDescription());
     }
 
-    public ErrorAPIResponse(SampleErrorCode errorCode, String message) {
+    public ErrorAPIResponse(PollingAppErrorCode errorCode, String message) {
         error.put("code", errorCode.getCode());
         error.put("message", message);
     }
