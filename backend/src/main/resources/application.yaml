@@ -1,5 +1,5 @@
 spring:
   application:
-    name: Free-Polling-Application
+    name: Gollaba-Application
   config:
-    import: classpath:private/application-dev.yaml, classpath:private/application-prod.yaml
+    import: classpath:private/application-test.yaml, classpath:private/application-dev.yaml, classpath:private/application-prod.yaml
