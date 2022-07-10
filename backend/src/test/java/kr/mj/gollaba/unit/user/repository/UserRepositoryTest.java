@@ -1,7 +1,7 @@
 package kr.mj.gollaba.unit.user.repository;
 
 import kr.mj.gollaba.unit.common.RepositoryTest;
-import kr.mj.gollaba.unit.repository.UserRepository;
+import kr.mj.gollaba.user.repository.UserRepository;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.type.UserRoleType;

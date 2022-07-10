@@ -28,6 +28,7 @@ public class SignupRequest {
     @NotBlank
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
             message = "비밀번호 형식에 맞지 않습니다. 최소 8글자 최대 24글자 , 숫자 + 영어 + 특수문자 필수")
+    @Size(min = 8, max = 24)
     @ApiModelProperty(position = 3, example = "test12345*", required = true)
     private String password;
 

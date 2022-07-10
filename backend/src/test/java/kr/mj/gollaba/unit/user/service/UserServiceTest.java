@@ -2,7 +2,7 @@ package kr.mj.gollaba.unit.user.service;
 
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
-import kr.mj.gollaba.unit.repository.UserRepository;
+import kr.mj.gollaba.user.repository.UserRepository;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.SignupResponse;
