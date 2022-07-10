@@ -4,7 +4,7 @@ import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.security.PrincipalDetails;
 import kr.mj.gollaba.user.entity.User;
-import kr.mj.gollaba.unit.repository.UserRepository;
+import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

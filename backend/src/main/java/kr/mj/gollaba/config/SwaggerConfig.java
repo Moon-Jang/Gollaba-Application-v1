@@ -57,11 +57,11 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 
 		Server devServer = new Server();
 		devServer.setDescription("dev");
-		devServer.setUrl("https://dev.free.polling.com");
+		devServer.setUrl("https://dev.api.gollaba.net");
 
 		Server prodServer = new Server();
 		prodServer.setDescription("prod");
-		prodServer.setUrl("https://free.polling.com");
+		prodServer.setUrl("https://api.gollaba.net");
 
 		openApi.setServers(List.of(localServer, devServer, prodServer));
 

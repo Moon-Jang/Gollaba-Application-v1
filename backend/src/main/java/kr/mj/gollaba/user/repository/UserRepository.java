@@ -1,4 +1,4 @@
-package kr.mj.gollaba.unit.repository;
+package kr.mj.gollaba.user.repository;
 
 import kr.mj.gollaba.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
