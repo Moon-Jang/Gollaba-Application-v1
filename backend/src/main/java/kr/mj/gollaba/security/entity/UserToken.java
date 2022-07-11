@@ -11,36 +11,43 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "jwt_token")
+@Table(name = "user_token")
 @Getter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class JwtToken {
+public class UserToken {
 
     @Id
-    @Column(name = "jwt_token_id", nullable = false)
+    @Column(name = "user_token_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "access_token", nullable = false)
+    private String accessToken;
+
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
-
-    @Column(name = "user_email", nullable = false, unique = true)
-    private String userEmail;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "update_at", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updateAt;
 
     @Builder
-    public JwtToken(Long id, String refreshToken, String userEmail) {
+    public UserToken(Long id, String accessToken, String refreshToken) {
         this.id = id;
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.userEmail = userEmail;
     }
 
+    public void updateAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

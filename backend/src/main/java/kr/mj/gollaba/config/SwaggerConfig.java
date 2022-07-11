@@ -39,6 +39,7 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 				.groupName(version)
 				.select()
 				.apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
+				//.paths(PathSelectors.ant("/health-check"))
 				.paths(PathSelectors.ant(Const.ROOT_URL + "/**"))
 				.build()
 				.apiInfo(apiInfo(title, version))
