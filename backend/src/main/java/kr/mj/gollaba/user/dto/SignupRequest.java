@@ -1,6 +1,7 @@
 package kr.mj.gollaba.user.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import kr.mj.gollaba.common.BaseApiRequest;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.type.UserRoleType;
 import lombok.Getter;
@@ -13,12 +14,12 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class SignupRequest {
+public class SignupRequest implements BaseApiRequest {
 
     @NotBlank
     @Size(min = 8, max = 32)
-    @ApiModelProperty(position = 1, example = "testId", required = true)
-    private String uniqueId;
+    @ApiModelProperty(position = 1, example = "testid123456", required = true)
+    private String id;
 
     @NotBlank
     @Size(min = 2, max = 20)
@@ -34,11 +35,16 @@ public class SignupRequest {
 
     public User toEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
-                .uniqueId(uniqueId)
+                .uniqueId(id)
                 .nickName(nickName)
                 .password(passwordEncoder.encode(password))
                 .userRole(UserRoleType.ROLE_USER)
                 .build();
+    }
+
+    @Override
+    public void validate() {
+
     }
 
 }

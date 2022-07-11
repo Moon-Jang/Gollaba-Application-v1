@@ -56,7 +56,7 @@ class UserServiceTest {
                         .willReturn(UserFactory.createWithId());
 
                 SignupRequest request = new SignupRequest();
-                request.setUniqueId(UserFactory.TEST_UNIQUE_ID);
+                request.setId(UserFactory.TEST_UNIQUE_ID);
                 request.setNickName(UserFactory.TEST_NICK_NAME);
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
@@ -82,7 +82,7 @@ class UserServiceTest {
                         .willReturn(true);
 
                 SignupRequest request = new SignupRequest();
-                request.setUniqueId(UserFactory.TEST_UNIQUE_ID);
+                request.setId(UserFactory.TEST_UNIQUE_ID);
                 request.setNickName(UserFactory.TEST_NICK_NAME);
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
@@ -109,7 +109,7 @@ class UserServiceTest {
                         .willReturn(true);
 
                 SignupRequest request = new SignupRequest();
-                request.setUniqueId(UserFactory.TEST_UNIQUE_ID);
+                request.setId(UserFactory.TEST_UNIQUE_ID);
                 request.setNickName(UserFactory.TEST_NICK_NAME);
                 request.setPassword(UserFactory.TEST_PASSWORD);
 

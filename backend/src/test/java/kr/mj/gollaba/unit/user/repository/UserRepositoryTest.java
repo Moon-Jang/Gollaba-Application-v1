@@ -21,7 +21,7 @@ class UserRepositoryTest extends RepositoryTest {
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    @DisplayName("회원 객체 저장")
+    @DisplayName("회원 객체 추가")
     @Test
     void save() throws Exception {
         //given
@@ -47,7 +47,9 @@ class UserRepositoryTest extends RepositoryTest {
     void save_update() throws Exception {
         //given
         User savedUser = userRepository.save(UserFactory.create());
+
         flushAndClear();
+
         String newUniqueId = "test20220101";
         String newNickname = "김길동";
         String newPassword = "gkdnwj1234*";

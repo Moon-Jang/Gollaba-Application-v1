@@ -38,3 +38,6 @@ out/
 
 ### genreated
 src/main/generated/
+
+## CUSTOM
+src/main/resources/private/

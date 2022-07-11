@@ -25,14 +25,14 @@ public class User {
     @Column(name = "unique_id", nullable = false, unique = true)
     private String uniqueId;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "nickname", nullable = false, unique = true)
     private String nickName;
 
     @Column(name = "password", nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_role_type", nullable = false)
+    @Column(name = "user_role", nullable = false)
     private UserRoleType userRole;
 
     @CreatedDate
@@ -40,8 +40,8 @@ public class User {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "update_at", nullable = false)
-    private LocalDateTime updateAt;
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
     @Builder
     private User(Long id, String uniqueId, String nickName, String password, UserRoleType userRole) {

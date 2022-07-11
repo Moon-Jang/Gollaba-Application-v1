@@ -22,9 +22,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final JwtTokenFilter jwtTokenFilter;
+
     private final String[] permitAllList = {
-            "/api/v1/signup",
-            "/api/v1/login",
+            "/v1/signup",
+            "/v1/login",
             "/health-check", // aws - target group
             "/h2-console/**", // h2-console
             "/v3/api-docs", // swagger
@@ -32,12 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**", // swagger
             "/webjars/**", // swagger
     };
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
