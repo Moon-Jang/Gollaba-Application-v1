@@ -1,13 +1,8 @@
-package kr.mj.gollaba.security.dto;
+package kr.mj.gollaba.auth.dto;
 
 import kr.mj.gollaba.common.BaseApiResponse;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.util.Assert;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Getter
 public class LoginResponse implements BaseApiResponse {

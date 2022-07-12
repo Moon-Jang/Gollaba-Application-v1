@@ -1,11 +1,11 @@
-package kr.mj.gollaba.security.controller;
+package kr.mj.gollaba.auth.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import kr.mj.gollaba.common.Const;
-import kr.mj.gollaba.security.dto.LoginRequest;
-import kr.mj.gollaba.security.dto.LoginResponse;
-import kr.mj.gollaba.security.service.AuthService;
+import kr.mj.gollaba.auth.dto.LoginRequest;
+import kr.mj.gollaba.auth.dto.LoginResponse;
+import kr.mj.gollaba.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

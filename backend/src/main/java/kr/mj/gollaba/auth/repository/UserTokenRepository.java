@@ -1,7 +1,6 @@
-package kr.mj.gollaba.security.repository;
+package kr.mj.gollaba.auth.repository;
 
-import kr.mj.gollaba.security.entity.UserToken;
-import kr.mj.gollaba.user.entity.User;
+import kr.mj.gollaba.auth.entity.UserToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

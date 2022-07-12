@@ -2,7 +2,7 @@ package kr.mj.gollaba.integration.auth;
 
 import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.integration.common.IntegrationTest;
-import kr.mj.gollaba.security.dto.LoginRequest;
+import kr.mj.gollaba.auth.dto.LoginRequest;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

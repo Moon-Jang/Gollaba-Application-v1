@@ -1,8 +1,8 @@
-package kr.mj.gollaba.security;
+package kr.mj.gollaba.auth;
 
 import kr.mj.gollaba.common.Const;
-import kr.mj.gollaba.security.service.AuthService;
-import kr.mj.gollaba.security.utils.JwtTokenUtils;
+import kr.mj.gollaba.auth.service.AuthService;
+import kr.mj.gollaba.auth.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
