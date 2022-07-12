@@ -1,7 +1,7 @@
 package kr.mj.gollaba.integration.user;
 
 import kr.mj.gollaba.common.Const;
-import kr.mj.gollaba.integration.common.BaseIntegrationTest;
+import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class UserControllerTest extends BaseIntegrationTest {
+class UserControllerTest extends IntegrationTest {
 
     @DisplayName("회원 가입")
     @Test

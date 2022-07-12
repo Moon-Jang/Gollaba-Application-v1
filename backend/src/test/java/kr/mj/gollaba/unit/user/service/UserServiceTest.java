@@ -2,6 +2,7 @@ package kr.mj.gollaba.unit.user.service;
 
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
+import kr.mj.gollaba.unit.common.ServiceTest;
 import kr.mj.gollaba.user.repository.UserRepository;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
@@ -21,13 +22,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+
+class UserServiceTest extends ServiceTest {
 
     @InjectMocks
     private UserService userService;
@@ -50,7 +51,7 @@ class UserServiceTest {
             @Test
             public void return_response() throws Exception {
                 //given
-                given(userRepository.existsByUniqueId(any(String.class)))
+                given(userRepository.existsByUniqueId(anyString()))
                         .willReturn(false);
                 given(userRepository.save(any(User.class)))
                         .willReturn(UserFactory.createWithId());
@@ -65,7 +66,7 @@ class UserServiceTest {
 
                 //then
                 assertThat(response.getUserId()).isEqualTo(UserFactory.TEST_ID);
-                verify(userRepository, times(1)).existsByUniqueId(any(String.class));
+                verify(userRepository, times(1)).existsByUniqueId(anyString());
                 verify(userRepository, times(1)).save(any(User.class));
             }
         }
@@ -78,7 +79,7 @@ class UserServiceTest {
             @Test
             public void error_by_exist_user() throws Exception {
                 //given
-                given(userRepository.existsByUniqueId(any(String.class)))
+                given(userRepository.existsByUniqueId(anyString()))
                         .willReturn(true);
 
                 SignupRequest request = new SignupRequest();
@@ -91,7 +92,7 @@ class UserServiceTest {
                         .as(GollabaErrorCode.ALREADY_EXIST_USER.getDescription())
                         .isInstanceOf(GollabaException.class);
 
-                verify(userRepository, times(1)).existsByUniqueId(any(String.class));
+                verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
             }
         }
 
@@ -103,9 +104,9 @@ class UserServiceTest {
             @Test
             public void error_by_exist_user() throws Exception {
                 //given
-                given(userRepository.existsByUniqueId(any(String.class)))
+                given(userRepository.existsByUniqueId(anyString()))
                         .willReturn(false);
-                given(userRepository.existsByNickName(any(String.class)))
+                given(userRepository.existsByNickName(anyString()))
                         .willReturn(true);
 
                 SignupRequest request = new SignupRequest();
@@ -118,8 +119,8 @@ class UserServiceTest {
                         .as(GollabaErrorCode.ALREADY_EXIST_USER.getDescription())
                         .isInstanceOf(GollabaException.class);
 
-                verify(userRepository, times(1)).existsByUniqueId(any(String.class));
-                verify(userRepository, times(1)).existsByNickName(any(String.class));
+                verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+                verify(userRepository, times(1)).existsByNickName(eq(UserFactory.TEST_NICK_NAME));
             }
         }
     }

@@ -55,8 +55,18 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+test {
+    useJUnitPlatform{
+        includeTags 'UnitTest'
+        excludeTags 'IntegrationTest'
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform{
+        includeTags 'IntegrationTest'
+        excludeTags 'UnitTest'
+    }
 }
 
 bootJar {
