@@ -1,4 +1,4 @@
-package kr.mj.gollaba.security;
+package kr.mj.gollaba.auth;
 
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import org.springframework.security.core.AuthenticationException;

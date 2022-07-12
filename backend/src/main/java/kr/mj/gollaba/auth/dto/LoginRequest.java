@@ -1,4 +1,4 @@
-package kr.mj.gollaba.security.dto;
+package kr.mj.gollaba.auth.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;

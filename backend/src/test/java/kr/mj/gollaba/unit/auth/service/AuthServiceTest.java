@@ -1,12 +1,12 @@
-package kr.mj.gollaba.unit.security.service;
+package kr.mj.gollaba.unit.auth.service;
 
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
-import kr.mj.gollaba.security.JwtTokenProvider;
-import kr.mj.gollaba.security.dto.LoginRequest;
-import kr.mj.gollaba.security.dto.LoginResponse;
-import kr.mj.gollaba.security.repository.UserTokenRepository;
-import kr.mj.gollaba.security.service.AuthService;
+import kr.mj.gollaba.auth.JwtTokenProvider;
+import kr.mj.gollaba.auth.dto.LoginRequest;
+import kr.mj.gollaba.auth.dto.LoginResponse;
+import kr.mj.gollaba.auth.repository.UserTokenRepository;
+import kr.mj.gollaba.auth.service.AuthService;
 import kr.mj.gollaba.unit.common.ServiceTest;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
@@ -14,11 +14,9 @@ import kr.mj.gollaba.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -26,7 +24,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -145,16 +142,16 @@ class AuthServiceTest extends ServiceTest {
         @Nested
         class not_exist_refresh_token {
 
-            @Test
-            public void return_error_response() throws Exception {
-                //given
-                given(userTokenRepository.findByRefreshToken(anyString()))
-                        .willReturn(Optional.empty());
-
-                //when
-
-                //then
-            }
+//            @Test
+//            public void return_error_response() throws Exception {
+//                //given
+//                given(userTokenRepository.findByRefreshToken(anyString()))
+//                        .willReturn(Optional.empty());
+//
+//                //when
+//
+//                //then
+//            }
         }
     }
 

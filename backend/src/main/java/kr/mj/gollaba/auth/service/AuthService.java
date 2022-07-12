@@ -1,16 +1,12 @@
-package kr.mj.gollaba.security.service;
+package kr.mj.gollaba.auth.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
-import kr.mj.gollaba.security.JwtTokenProvider;
-import kr.mj.gollaba.security.PrincipalDetails;
-import kr.mj.gollaba.security.dto.LoginRequest;
-import kr.mj.gollaba.security.dto.LoginResponse;
-import kr.mj.gollaba.security.repository.UserTokenRepository;
+import kr.mj.gollaba.auth.JwtTokenProvider;
+import kr.mj.gollaba.auth.PrincipalDetails;
+import kr.mj.gollaba.auth.dto.LoginRequest;
+import kr.mj.gollaba.auth.dto.LoginResponse;
+import kr.mj.gollaba.auth.repository.UserTokenRepository;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor

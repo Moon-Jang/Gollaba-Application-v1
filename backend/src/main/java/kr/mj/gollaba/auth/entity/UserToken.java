@@ -1,4 +1,4 @@
-package kr.mj.gollaba.security.entity;
+package kr.mj.gollaba.auth.entity;
 
 import lombok.Builder;
 import lombok.Getter;

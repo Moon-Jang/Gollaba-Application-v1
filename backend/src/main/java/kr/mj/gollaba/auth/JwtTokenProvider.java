@@ -1,4 +1,4 @@
-package kr.mj.gollaba.security;
+package kr.mj.gollaba.auth;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

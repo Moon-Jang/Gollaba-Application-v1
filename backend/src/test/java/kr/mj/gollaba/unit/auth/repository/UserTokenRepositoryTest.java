@@ -1,19 +1,16 @@
-package kr.mj.gollaba.unit.security.repository;
+package kr.mj.gollaba.unit.auth.repository;
 
-import kr.mj.gollaba.security.JwtTokenProvider;
-import kr.mj.gollaba.security.entity.UserToken;
-import kr.mj.gollaba.security.repository.UserTokenRepository;
+import kr.mj.gollaba.auth.JwtTokenProvider;
+import kr.mj.gollaba.auth.entity.UserToken;
+import kr.mj.gollaba.auth.repository.UserTokenRepository;
 import kr.mj.gollaba.unit.common.RepositoryTest;
-import kr.mj.gollaba.unit.security.factory.UserTokenFactory;
-import kr.mj.gollaba.unit.user.factory.UserFactory;
-import kr.mj.gollaba.user.entity.User;
+import kr.mj.gollaba.unit.auth.factory.UserTokenFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Import(value = JwtTokenProvider.class)
 class UserTokenRepositoryTest extends RepositoryTest {

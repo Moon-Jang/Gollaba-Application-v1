@@ -1,11 +1,7 @@
-package kr.mj.gollaba.unit.security.factory;
+package kr.mj.gollaba.unit.auth.factory;
 
-import kr.mj.gollaba.security.JwtTokenProvider;
-import kr.mj.gollaba.security.entity.UserToken;
-import kr.mj.gollaba.user.entity.User;
-import kr.mj.gollaba.user.type.UserRoleType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import kr.mj.gollaba.auth.JwtTokenProvider;
+import kr.mj.gollaba.auth.entity.UserToken;
 
 public class UserTokenFactory {
 
