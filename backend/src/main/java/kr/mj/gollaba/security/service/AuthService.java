@@ -32,11 +32,11 @@ public class AuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByUniqueId(request.getEmail())
-                .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_USER_BY_UNIQUE_ID));
+        User user = userRepository.findByUniqueId(request.getId())
+                .orElseThrow(() -> new GollabaException(GollabaErrorCode.FAIL_LOGIN));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new GollabaException(GollabaErrorCode.NOT_MATCHED_PASSWORD);
+            throw new GollabaException(GollabaErrorCode.FAIL_LOGIN);
         }
 
         String accessToken = jwtTokenProvider.createAccessToken(user.getUniqueId(), user.getNickName());
