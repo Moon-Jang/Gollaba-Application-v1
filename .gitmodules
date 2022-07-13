@@ -1,1 +1,4 @@
 
+[submodule "private-data"]
+	path = backend/src/main/resources/private
+	url = git@github.com:Moon-Jang/gollaba-private-data.git
