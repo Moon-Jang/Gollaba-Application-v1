@@ -14,25 +14,7 @@ import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import axios from "axios";
 
 const theme = createTheme({
   palette: {
@@ -43,13 +25,26 @@ const theme = createTheme({
 });
 
 export default function Index() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const input = new FormData(event.currentTarget);
+    const payload = {
+      id: input.get("id"),
+      password: input.get("password"),
+    };
+    console.log("handlesubmit payload>> ", payload);
+    let response;
+    try {
+      response = await axios.post(
+        "https://dev.api.gollaba.net/v1/login",
+        payload
+      );
+    } catch (e) {
+      response = e.response;
+      alert(response.data.error.message);
+    } finally {
+      console.log("success res >> ", response);
+    }
   };
 
   return (
@@ -58,20 +53,22 @@ export default function Index() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 5,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Typography
-            component="h1"
-            variant="h3"
-            sx={{ mt: 2.5, mb: 7.5, fontWeight: "bold" }}
-          >
-            Login
-          </Typography>
+          <div className="Header">
+            <Typography
+              component="h1"
+              variant="h3"
+              sx={{ mt: 2, mb: 7.5, fontWeight: "bold" }}
+            >
+              Login
+            </Typography>
+          </div>
 
           <Avatar
             src="../public/camera_icon.png"
@@ -88,9 +85,9 @@ export default function Index() {
               margin="normal"
               required
               fullWidth
-              id="Id"
+              id="id"
               label="아이디"
-              name="ID"
+              name="id"
               variant="standard"
               autoFocus
             />
@@ -142,7 +139,7 @@ export default function Index() {
                 underline="always"
                 level="body1"
                 variant="plain"
-                sx={{ fontStyle: "italic", mt: 1 }}
+                sx={{ fontStyle: "italic", mt: 0 }}
               >
                 Forgot your password?
               </Link>
