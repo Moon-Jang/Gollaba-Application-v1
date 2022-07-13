@@ -1,9 +1,8 @@
 # This is a basic workflow to help you get started with Actionshttps://github.com/Moon-Jang/Gollaba-Application/settings
-name: Backend-build
-
+name: backend-build-prod
 on:
   push:
-    branches: [ "develop-back" ]
+    branches: [ "master-back" ]
 
 jobs:
   back-end-build:
@@ -19,18 +18,17 @@ jobs:
           port: ${{ secrets.PORT }}
           timeout: 40s
           script: |
-            echo "테스트 출력"
             cd Gollaba-Application/backend
-            git checkout develop
+            git checkout master-back
             git pull
             git submodule update --remote --merge
             ./gradlew clean build || exit
-            sudo docker rm -f `sudo docker ps -a -q -f name="gollaba-springboot"`
-            sudo docker rmi -f gollaba-application/springboot
-            sudo docker build -t gollaba-application/springboot .
-            sudo docker run -d --name gollaba-springboot -p 8080:8080 -e PROFILES=dev gollaba-application/springboot
+            sudo docker rm -f gollaba-springboot-prod
+            sudo docker rmi -f gollaba-application/springboot-prod
+            sudo docker build -t gollaba-application/springboot-prod .
+            sudo docker run -d --name gollaba-springboot-prod -p 8081:8080 -e PROFILES=dev gollaba-application/springboot-prod
       - name: SSH
         uses: sarisia/actions-status-discord@v1
         if: always()
         with:
-          webhook: ${{ secrets.DEPLOY_WEBHOOK_DEV }}
+          webhook: ${{ secrets.DEPLOY_WEBHOOK_PROD }}
