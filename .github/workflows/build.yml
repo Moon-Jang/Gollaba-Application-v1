@@ -20,3 +20,8 @@ jobs:
           timeout: 40s
           script: |
             echo "테스트 출력"
+            cd Gollaba-Application/backend
+            git checkout develop
+            git pull
+            git submodule update --remote --merge
+            ./gradlew clean build || exit 0
