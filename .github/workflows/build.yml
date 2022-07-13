@@ -1,4 +1,4 @@
-# This is a basic workflow to help you get started with Actions
+# This is a basic workflow to help you get started with Actionshttps://github.com/Moon-Jang/Gollaba-Application/settings
 name: Backend-build
 
 on:
@@ -26,3 +26,8 @@ jobs:
             git submodule update --remote --merge
             ./gradlew clean build || exit
             echo "테스트 성공"
+      - name: SSH
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DEPLOY_WEBHOOK_DEV }}
