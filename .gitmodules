@@ -1,3 +1,4 @@
-[submodule "backend/src/main/resources/private"]
+
+[submodule "private-data"]
 	path = backend/src/main/resources/private
-	url = https://github.com/Moon-Jang/FPA-private-data.git
+	url = git@github.com:Moon-Jang/gollaba-private-data.git

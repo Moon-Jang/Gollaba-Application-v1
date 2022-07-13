@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### genreated
+src/main/generated/
+
+## CUSTOM
+src/main/resources/private/
