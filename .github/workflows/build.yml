@@ -2,8 +2,8 @@
 name: Backend-build
 
 on:
-  pull_request:
-    branches: [ "develop" ]
+  push:
+    branches: [ "develop-back" ]
 
 jobs:
   back-end-build:
@@ -25,7 +25,10 @@ jobs:
             git pull
             git submodule update --remote --merge
             ./gradlew clean build || exit
-            echo "테스트 성공"
+            sudo docker rm -f `sudo docker ps -a -q -f name="gollaba-springboot"`
+            sudo docker rmi -f gollaba-application/springboot
+            sudo docker build -t gollaba-application/springboot .
+            sudo docker run -d --name gollaba-springboot -p 8080:8080 -e PROFILES=dev gollaba-application/springboot
       - name: SSH
         uses: sarisia/actions-status-discord@v1
         if: always()
