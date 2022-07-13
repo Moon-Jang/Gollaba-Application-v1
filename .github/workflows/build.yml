@@ -1,0 +1,33 @@
+# This is a basic workflow to help you get started with Actionshttps://github.com/Moon-Jang/Gollaba-Application/settings
+name: Backend-build
+
+on:
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  back-end-build:
+    runs-on: ubuntu-latest
+    name: build
+    steps:
+      - name: SSH
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          timeout: 40s
+          script: |
+            echo "테스트 출력"
+            cd Gollaba-Application/backend
+            git checkout develop
+            git pull
+            git submodule update --remote --merge
+            ./gradlew clean build || exit
+            echo "테스트 성공"
+      - name: SSH
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DEPLOY_WEBHOOK_DEV }}
