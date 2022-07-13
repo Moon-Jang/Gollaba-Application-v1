@@ -1,0 +1,34 @@
+# This is a basic workflow to help you get started with Actionshttps://github.com/Moon-Jang/Gollaba-Application/settings
+name: backend-build-dev
+on:
+  push:
+    branches: [ "develop-back" ]
+
+jobs:
+  back-end-build:
+    runs-on: ubuntu-latest
+    name: build
+    steps:
+      - name: SSH
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          timeout: 40s
+          script: |
+            cd Gollaba-Application/backend
+            git checkout develop-back
+            git pull
+            git submodule update --remote --merge
+            ./gradlew clean build || exit
+            sudo docker rm -f gollaba-springboot-dev
+            sudo docker rmi -f gollaba-application/springboot-dev
+            sudo docker build -t gollaba-application/springboot-dev .
+            sudo docker run -d --name gollaba-springboot-dev -p 8080:8080 -e PROFILES=dev gollaba-application/springboot-dev
+      - name: SSH
+        uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DEPLOY_WEBHOOK_DEV }}
