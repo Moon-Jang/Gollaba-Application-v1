@@ -24,4 +24,5 @@ jobs:
             git checkout develop
             git pull
             git submodule update --remote --merge
-            ./gradlew clean build || exit 0
+            ./gradlew clean build || exit
+            echo "테스트 성공"
