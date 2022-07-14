@@ -43,6 +43,10 @@ public class AuthService implements UserDetailsService {
     }
 
     public void logout(String refreshToken) {
+        if (!userTokenRepository.existsByRefreshToken(refreshToken)) {
+            throw new GollabaException(GollabaErrorCode.NOT_EXIST_REFRESH_TOKEN);
+        }
+
         userTokenRepository.deleteByRefreshToken(refreshToken);
     }
 
@@ -53,5 +57,6 @@ public class AuthService implements UserDetailsService {
 
         return new PrincipalDetails(user);
     }
+
 
 }

@@ -12,6 +12,7 @@ public enum GollabaErrorCode {
     INVALID_JWT_TOKEN(1, HttpStatus.UNAUTHORIZED, "유효하지 않은 jwt 토큰입니다."),
     NOT_EXIST_JWT_TOKEN(2, HttpStatus.UNAUTHORIZED, "jwt 토큰이 존재 하지 않습니다."),
     NOT_MATCHED_PASSWORD(3, HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+    NOT_EXIST_REFRESH_TOKEN(4, HttpStatus.BAD_REQUEST, "존재하지 않는 리프레시 토큰입니다."),
     FAIL_LOGIN(4, HttpStatus.BAD_REQUEST, "로그인에 실패하였습니다. 아이디와 비밀번호를 확인해주세요."),
     UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED,"인증 정보가 없거나 부족합니다."),
     FORBIDDEN(403, HttpStatus.FORBIDDEN,"해당 자원에 접근할 수 없습니다."),
