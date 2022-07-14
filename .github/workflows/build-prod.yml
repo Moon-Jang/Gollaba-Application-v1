@@ -26,7 +26,7 @@ jobs:
             sudo docker rm -f gollaba-springboot-prod
             sudo docker rmi -f gollaba-application/springboot-prod
             sudo docker build -t gollaba-application/springboot-prod .
-            sudo docker run -d --name gollaba-springboot-prod -p 8081:8080 -e PROFILES=dev gollaba-application/springboot-prod
+            sudo docker run -d --name gollaba-springboot-prod -p 8081:8080 -e PROFILES=prod gollaba-application/springboot-prod
       - name: SSH
         uses: sarisia/actions-status-discord@v1
         if: always()
