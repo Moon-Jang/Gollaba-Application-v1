@@ -94,8 +94,7 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 	}
 
 	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth())
-				.forPaths(PathSelectors.any()).build();
+		return SecurityContext.builder().securityReferences(defaultAuth()).build();
 	}
 
 	List<SecurityReference> defaultAuth() {
