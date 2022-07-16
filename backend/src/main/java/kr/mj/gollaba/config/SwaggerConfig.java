@@ -1,8 +1,11 @@
 package kr.mj.gollaba.config;
 
+import com.fasterxml.classmate.TypeResolver;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.Server;
 import kr.mj.gollaba.common.Const;
+import kr.mj.gollaba.common.ErrorAPIResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,11 +31,14 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
     private String title;
 
 	@Bean
-	public Docket apiV1() {
+	public Docket apiV1(TypeResolver typeResolver) {
 		version = "v1";
 		title = "Gollaba API";
 
 		return new Docket(DocumentationType.OAS_30)
+				.additionalModels(
+						typeResolver.resolve(ErrorAPIResponse.class)
+				)
 				.consumes(getConsumeContentTypes())
 				.produces(getProduceContentTypes())
 				.useDefaultResponseMessages(false)

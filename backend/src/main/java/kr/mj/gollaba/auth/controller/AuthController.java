@@ -30,7 +30,7 @@ public class AuthController {
 
     @ApiOperation(value = "로그아웃")
     @PostMapping(path = "/logout", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity logout(@RequestHeader(value = "GA-Refresh-Token") String refreshToken) {
+    public ResponseEntity<?> logout(@RequestHeader(value = "GA-Refresh-Token") String refreshToken) {
         authService.logout(refreshToken);
 
         return ResponseEntity.status(HttpStatus.OK)
