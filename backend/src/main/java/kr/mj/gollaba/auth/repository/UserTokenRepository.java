@@ -9,6 +9,8 @@ public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
 
     Optional<UserToken> findByRefreshToken(String refreshToken);
 
+    boolean existsByRefreshToken(String refreshToken);
+
     void deleteByRefreshToken(String refreshToken);
 
 }

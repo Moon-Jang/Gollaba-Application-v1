@@ -62,7 +62,7 @@ class UserServiceTest extends ServiceTest {
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
                 //when
-                SignupResponse response =  userService.save(request);
+                SignupResponse response =  userService.create(request);
 
                 //then
                 assertThat(response.getUserId()).isEqualTo(UserFactory.TEST_ID);
@@ -88,7 +88,7 @@ class UserServiceTest extends ServiceTest {
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
                 //when then
-                assertThatThrownBy(() -> userService.save(request))
+                assertThatThrownBy(() -> userService.create(request))
                         .as(GollabaErrorCode.ALREADY_EXIST_USER.getDescription())
                         .isInstanceOf(GollabaException.class);
 
@@ -115,7 +115,7 @@ class UserServiceTest extends ServiceTest {
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
                 //when then
-                assertThatThrownBy(() -> userService.save(request))
+                assertThatThrownBy(() -> userService.create(request))
                         .as(GollabaErrorCode.ALREADY_EXIST_USER.getDescription())
                         .isInstanceOf(GollabaException.class);
 

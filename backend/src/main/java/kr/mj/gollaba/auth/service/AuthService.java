@@ -1,12 +1,12 @@
 package kr.mj.gollaba.auth.service;
 
-import kr.mj.gollaba.exception.GollabaErrorCode;
-import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.auth.JwtTokenProvider;
 import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.auth.dto.LoginRequest;
 import kr.mj.gollaba.auth.dto.LoginResponse;
 import kr.mj.gollaba.auth.repository.UserTokenRepository;
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +43,10 @@ public class AuthService implements UserDetailsService {
     }
 
     public void logout(String refreshToken) {
+        if (!userTokenRepository.existsByRefreshToken(refreshToken)) {
+            throw new GollabaException(GollabaErrorCode.NOT_EXIST_REFRESH_TOKEN);
+        }
+
         userTokenRepository.deleteByRefreshToken(refreshToken);
     }
 
@@ -53,5 +57,6 @@ public class AuthService implements UserDetailsService {
 
         return new PrincipalDetails(user);
     }
+
 
 }

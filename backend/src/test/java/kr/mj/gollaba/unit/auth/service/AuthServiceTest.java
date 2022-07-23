@@ -1,5 +1,6 @@
 package kr.mj.gollaba.unit.auth.service;
 
+import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.auth.JwtTokenProvider;
@@ -7,6 +8,7 @@ import kr.mj.gollaba.auth.dto.LoginRequest;
 import kr.mj.gollaba.auth.dto.LoginResponse;
 import kr.mj.gollaba.auth.repository.UserTokenRepository;
 import kr.mj.gollaba.auth.service.AuthService;
+import kr.mj.gollaba.unit.auth.factory.UserTokenFactory;
 import kr.mj.gollaba.unit.common.ServiceTest;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -55,7 +58,7 @@ class AuthServiceTest extends ServiceTest {
         @Nested
         class not_exist_id {
 
-            @DisplayName("에러 응답을 반환한다.")
+            @DisplayName("예외가 발생한다.")
             @Test
             public void return_error_response() throws Exception {
                 //given
@@ -79,9 +82,9 @@ class AuthServiceTest extends ServiceTest {
         @Nested
         class not_match_password {
 
-            @DisplayName("에러 응답을 반환한다.")
+            @DisplayName("예외가 발생한다.")
             @Test
-            public void return_error_response() throws Exception {
+            public void occur_exception() throws Exception {
                 //given
                 given(userRepository.findByUniqueId(anyString()))
                         .willReturn(Optional.empty());
@@ -134,7 +137,7 @@ class AuthServiceTest extends ServiceTest {
 
     }
 
-    @DisplayName("아이디와 비밀번호가 정상일 경우")
+    @DisplayName("logout 메서드는")
     @Nested
     class logout {
 
@@ -142,20 +145,94 @@ class AuthServiceTest extends ServiceTest {
         @Nested
         class not_exist_refresh_token {
 
-//            @Test
-//            public void return_error_response() throws Exception {
-//                //given
-//                given(userTokenRepository.findByRefreshToken(anyString()))
-//                        .willReturn(Optional.empty());
-//
-//                //when
-//
-//                //then
-//            }
+            @DisplayName("예외가 발생한다.")
+            @Test
+            public void occur_exception() throws Exception {
+                //given
+                given(userTokenRepository.existsByRefreshToken(anyString()))
+                        .willReturn(false);
+
+                String refreshToken = UserTokenFactory.TEST_REFRESH_TOKEN;
+
+                //when then
+                assertThatThrownBy(() -> authService.logout(refreshToken))
+                        .as(GollabaErrorCode.NOT_EXIST_REFRESH_TOKEN.getDescription())
+                        .isInstanceOf(GollabaException.class);
+
+                verify(userTokenRepository, times(1)).existsByRefreshToken(eq(refreshToken));
+            }
+        }
+
+        @DisplayName("존재하는 리프레시 토큰일 경우")
+        @Nested
+        class exist_refresh_token {
+
+            @DisplayName("토큰 정보가 정상적으로 삭제된다.")
+            @Test
+            public void remove_user_toekn() throws Exception {
+                //given
+                given(userTokenRepository.existsByRefreshToken(anyString()))
+                        .willReturn(true);
+
+                String refreshToken = UserTokenFactory.TEST_REFRESH_TOKEN;
+
+                //when then
+                authService.logout(refreshToken);
+
+                verify(userTokenRepository, times(1)).existsByRefreshToken(eq(refreshToken));
+                verify(userTokenRepository, times(1)).deleteByRefreshToken(eq(refreshToken));
+            }
         }
     }
 
-    @Test
-    void loadUserByUsername() {
+    @DisplayName("loadUserByUsername은")
+    @Nested
+    class loadUserByUsername {
+
+        @DisplayName("존재하지 않는 아이디일 경우")
+        @Nested
+        class not_exists_uniqueId {
+
+            @DisplayName("익셉션이 발생한다.")
+            @Test
+            public void occur_exception() throws Exception {
+                //given
+                given(userRepository.findByUniqueId(anyString()))
+                        .willReturn(Optional.empty());
+
+                String uniqueId = UserFactory.TEST_UNIQUE_ID;
+
+                //when then
+                assertThatThrownBy(() -> authService.loadUserByUsername(uniqueId))
+                        .as(GollabaErrorCode.NOT_EXIST_USER_BY_UNIQUE_ID.getDescription())
+                        .isInstanceOf(GollabaException.class);
+
+                verify(userRepository, times(1)).findByUniqueId(eq(uniqueId));
+            }
+        }
+
+        @DisplayName("존재하는 아이디일 경우")
+        @Nested
+        class exists_uniqueId {
+
+            @DisplayName("UserDetails 객체를 반환한다.")
+            @Test
+            void exist() {
+                //given
+                User user = UserFactory.create();
+                given(userRepository.findByUniqueId(anyString()))
+                        .willReturn(Optional.of(user));
+
+                String uniqueId = UserFactory.TEST_UNIQUE_ID;
+
+                //when
+                UserDetails result = authService.loadUserByUsername(uniqueId);
+
+                //then
+                assertThat(result).isInstanceOf(PrincipalDetails.class);
+                verify(userRepository, times(1)).findByUniqueId(eq(uniqueId));
+            }
+        }
+
     }
 }

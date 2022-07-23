@@ -18,6 +18,11 @@ public class GollabaException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    public GollabaException(GollabaErrorCode errorCode, String description) {
+        super(description);
+        this.errorCode = errorCode;
+    }
+
     public static ResponseEntity<ErrorAPIResponse> getResult(final Exception e) {
         if (e instanceof GollabaException) {
             GollabaErrorCode errorCode = ((GollabaException) e).getErrorCode();
