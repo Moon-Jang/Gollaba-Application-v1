@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PollingItemFactory {
+public class optionFactory {
 
     public static final Long TEST_ID = 1L;
     public static final String TEST_DESCRIPTION = "테스트_투표항목";
@@ -42,7 +42,7 @@ public class PollingItemFactory {
 
     public static List<Option> createList() {
         return IntStream.range(0, 4)
-                .mapToObj(i -> PollingItemFactory.create(i, null))
+                .mapToObj(i -> optionFactory.create(i, null))
                 .collect(Collectors.toList());
     }
 

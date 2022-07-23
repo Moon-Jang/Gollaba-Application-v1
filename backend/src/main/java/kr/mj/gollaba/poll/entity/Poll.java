@@ -32,7 +32,7 @@ public class Poll {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "creater_name", nullable = false)
+    @Column(name = "creator_name", nullable = false)
     private String creatorName;
 
     @Enumerated(EnumType.STRING)
@@ -66,7 +66,7 @@ public class Poll {
         this.endedAt = endedAt;
     }
 
-    public void addPollingItem(Option option) {
+    public void addoption(Option option) {
         this.options.add(option);
         option.setPoll(this);
     }

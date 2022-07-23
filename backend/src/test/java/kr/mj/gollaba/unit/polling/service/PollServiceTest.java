@@ -96,17 +96,17 @@ public class PollServiceTest extends ServiceTest {
             request.setResponseType(PollingResponseType.SINGLE);
             request.setIsBallot(false);
 
-            List<CreatePollRequest.PollingItemDto> pollingItemDtos = new ArrayList<>();
+            List<CreatePollRequest.OptionDto> optionDtos = new ArrayList<>();
 
             for (int i = 0; i < 4; i++) {
-                CreatePollRequest.PollingItemDto pollingItemDto = new CreatePollRequest.PollingItemDto();
-                pollingItemDto.setSequence(i);
-                pollingItemDto.setDescription("항목" + i);
+                CreatePollRequest.OptionDto optionDto = new CreatePollRequest.OptionDto();
+                optionDto.setSequence(i);
+                optionDto.setDescription("항목" + i);
 
-                pollingItemDtos.add(pollingItemDto);
+                optionDtos.add(optionDto);
             }
 
-            request.setPollingItemDtos(pollingItemDtos);
+            request.setOptionDtos(optionDtos);
 
             return request;
         }
