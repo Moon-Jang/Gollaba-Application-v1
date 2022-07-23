@@ -60,7 +60,7 @@ class AuthControllerTest extends IntegrationTest {
         //then
         resultActions
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.code", GollabaErrorCode.FAIL_LOGIN.getCode()).exists());
+                .andExpect(jsonPath("$.code", GollabaErrorCode.FAIL_LOGIN.getCode()).exists());
     }
 
 }

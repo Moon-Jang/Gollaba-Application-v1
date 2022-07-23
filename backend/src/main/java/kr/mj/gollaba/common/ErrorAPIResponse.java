@@ -16,10 +16,13 @@ import java.util.List;
 @ApiModel(value = "ErrorAPIResponse")
 public class ErrorAPIResponse {
 
+    @ApiModelProperty(position = 0, example = "true")
+    private final boolean error = true;
+
     @ApiModelProperty(position = 1, example = "1")
     private final int code;
 
-    @ApiModelProperty(position = 2, example = "존재하지 않는 데이터입니다.")
+    @ApiModelProperty(position = 2, example = "에러 문구")
     private final String message;
 
     @ApiModelProperty(position = 3, example = "[]")
@@ -55,6 +58,10 @@ public class ErrorAPIResponse {
                 .stream()
                 .map(m -> (FieldError) m)
                 .forEach(m -> invalidParameters.add(new InvalidParameter(m.getCode(), m.getDefaultMessage(), m.getField())));
+    }
+
+    class Error {
+
     }
 
     @Getter

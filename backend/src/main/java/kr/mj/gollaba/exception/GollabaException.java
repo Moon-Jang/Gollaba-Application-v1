@@ -4,6 +4,11 @@ import kr.mj.gollaba.common.ErrorAPIResponse;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 @Getter
 public class GollabaException extends RuntimeException {
 
@@ -12,6 +17,8 @@ public class GollabaException extends RuntimeException {
     public GollabaException(Exception e) {
         super(e);
     }
+
+    private static final int ERROR_STACK_LIMIT = 10;
 
     public GollabaException(GollabaErrorCode errorCode) {
         super(errorCode.getDescription());
@@ -32,9 +39,17 @@ public class GollabaException extends RuntimeException {
             return new ResponseEntity<>(new ErrorAPIResponse(errorCode), errorCode.getHttpStatus());
         } else {
             GollabaErrorCode errorCode = GollabaErrorCode.UNKNOWN_ERROR;
-            String errorMessage = errorCode.getDescription() + "  detail: " + e.getMessage();
+            String errorMessage = errorCode.getDescription() + "  detail: " + createDetails(e);
             return new ResponseEntity<>(new ErrorAPIResponse(errorCode, errorMessage), errorCode.getHttpStatus());
         }
+    }
+
+    private static String createDetails(Exception e) {
+        StringWriter errors = new StringWriter();
+        e.printStackTrace(new PrintWriter(errors));
+        return Arrays.stream(errors.toString().split("\r\n\tat"))
+                .limit(ERROR_STACK_LIMIT)
+                .collect(Collectors.joining("\n"));
     }
 
 }
