@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name = "poll_option")
 @Getter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Option {
 
     @Id
-    @Column(name = "option_id", nullable = false)
+    @Column(name = "poll_option_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
