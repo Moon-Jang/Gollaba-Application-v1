@@ -106,7 +106,7 @@ public class PollServiceTest extends ServiceTest {
                 optionDtos.add(optionDto);
             }
 
-            request.setOptionDtos(optionDtos);
+            request.setOptions(optionDtos);
 
             return request;
         }

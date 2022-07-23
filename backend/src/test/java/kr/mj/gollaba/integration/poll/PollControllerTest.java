@@ -58,7 +58,7 @@ class PollControllerTest extends IntegrationTest {
             optionDtos.add(optionDto);
         }
 
-        request.setOptionDtos(optionDtos);
+        request.setOptions(optionDtos);
 
         return request;
     }
