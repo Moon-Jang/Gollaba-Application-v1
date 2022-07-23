@@ -17,7 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public SignupResponse save(SignupRequest request) {
+    public SignupResponse create(SignupRequest request) {
         if (userRepository.existsByUniqueId(request.getId())) {
             throw new GollabaException(GollabaErrorCode.ALREADY_EXIST_USER);
         }

@@ -17,7 +17,7 @@ class UserControllerTest extends IntegrationTest {
 
     @DisplayName("회원 가입")
     @Test
-    public void signupByAvailableUser() throws Exception {
+    public void signup() throws Exception {
         //given
         SignupRequest request = new SignupRequest();
         request.setId(UserFactory.TEST_UNIQUE_ID);
@@ -32,7 +32,6 @@ class UserControllerTest extends IntegrationTest {
 
         //then
         resultActions
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.userId").isNumber());
+                .andExpect(status().isCreated());
     }
 }

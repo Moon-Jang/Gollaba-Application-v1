@@ -21,7 +21,8 @@ public enum GollabaErrorCode {
 
     /* 10000 ~ 19999 user */
     ALREADY_EXIST_USER(10000, HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다."),
-    NOT_EXIST_USER_BY_UNIQUE_ID(10001, HttpStatus.BAD_REQUEST, "해당 아이디로 가입된 회원이 존재하지 않습니다.");
+    NOT_EXIST_USER_BY_UNIQUE_ID(10001, HttpStatus.BAD_REQUEST, "해당 아이디로 가입된 회원이 존재하지 않습니다."),
+    NOT_EXIST_USER(10002, HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다.");
 
 
     private final int code;
