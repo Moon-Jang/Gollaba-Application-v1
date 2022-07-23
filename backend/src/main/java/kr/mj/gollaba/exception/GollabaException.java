@@ -33,6 +33,11 @@ public class GollabaException extends RuntimeException {
     public static ResponseEntity<ErrorAPIResponse> getResult(final Exception e) {
         if (e instanceof GollabaException) {
             GollabaErrorCode errorCode = ((GollabaException) e).getErrorCode();
+
+            if (errorCode.getCode() == GollabaErrorCode.INVALID_PARAMS.getCode()) {
+                return new ResponseEntity<>(new ErrorAPIResponse(errorCode, e.getMessage()), errorCode.getHttpStatus());
+            }
+
             return new ResponseEntity<>(new ErrorAPIResponse(errorCode), errorCode.getHttpStatus());
         } else if (e.getCause() instanceof GollabaException) {
             GollabaErrorCode errorCode = ((GollabaException) e).getErrorCode();

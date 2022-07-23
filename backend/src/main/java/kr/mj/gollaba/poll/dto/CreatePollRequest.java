@@ -42,18 +42,32 @@ public class CreatePollRequest implements BaseApiRequest {
 
     private LocalDateTime endedAt = LocalDateTime.now().plusDays(7L);
 
-    private List<PollingItemDto> pollingItemDtos = new ArrayList<>();
+    private List<OptionDto> options = new ArrayList<>();
 
     @Override
     public void validate() {
         LocalDateTime now = LocalDateTime.now();
 
-        if (pollingItemDtos.size() < 2) {
+        if (options.size() < 2) {
             throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "투표 항목은 2개 이상이어야 합니다.");
         }
 
-        if (now.plusMinutes(30L).isBefore(endedAt)) {
+        if (now.plusMinutes(30L).isAfter(endedAt)) {
             throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "투표 유효기간을 30분 미만으로 설정할 수 없습니다.");
+        }
+
+        int currentSequence = options.stream()
+                .mapToInt(el -> el.sequence)
+                .min()
+                .getAsInt();
+        final int optionDtosSize = options.size();
+        
+        for (int i = 0; i < optionDtosSize; i++) {
+            OptionDto optionDto = options.get(i);
+
+            if (optionDto.getSequence() != currentSequence++) {
+                throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "항목 순서가 잘못되었습니다. 해당 오류 지속적으로 발생시 관리자에게 문의해주세요.");
+            }
         }
     }
 
@@ -66,19 +80,19 @@ public class CreatePollRequest implements BaseApiRequest {
                 .endedAt(endedAt)
                 .build();
 
-        pollingItemDtos.stream()
+        options.stream()
                 .map(el -> Option.builder()
                         .sequence(el.getSequence())
                         .description(el.getDescription())
                         .build())
-                .forEach(el -> poll.addPollingItem(el));
+                .forEach(el -> poll.addoption(el));
 
         return poll;
     }
 
     @Getter
     @Setter
-    public static class PollingItemDto {
+    public static class OptionDto {
 
         @ApiModelProperty(example = "0", required = true)
         @Positive

@@ -6,7 +6,7 @@ import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.unit.common.RepositoryTest;
 import kr.mj.gollaba.unit.polling.factory.PollingFactory;
-import kr.mj.gollaba.unit.polling.factory.PollingItemFactory;
+import kr.mj.gollaba.unit.polling.factory.optionFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
@@ -35,7 +35,7 @@ class PollQueryRepositoryTest extends RepositoryTest {
         //given
         User user = UserFactory.create();
         userRepository.save(user);
-        List<Option> options = PollingItemFactory.createList();
+        List<Option> options = optionFactory.createList();
         Poll poll = PollingFactory.create(user, options);
 
         //when

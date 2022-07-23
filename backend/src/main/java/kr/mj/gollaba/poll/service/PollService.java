@@ -20,6 +20,7 @@ public class PollService {
     private final UserRepository userRepository;
 
     public void create(CreatePollRequest request) {
+        request.validate();
         Poll poll = request.toDto();
 
         if (request.getUserId() != null) {

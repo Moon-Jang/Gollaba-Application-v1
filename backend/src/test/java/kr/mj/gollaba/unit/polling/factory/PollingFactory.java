@@ -25,7 +25,7 @@ public class PollingFactory {
 
         poll.registerCreator(user);
         options.stream()
-                .forEach(el -> poll.addPollingItem(el));
+                .forEach(el -> poll.addoption(el));
 
         return poll;
     }
@@ -41,7 +41,7 @@ public class PollingFactory {
 
         poll.registerCreator(user);
         options.stream()
-                .forEach(el -> poll.addPollingItem(el));
+                .forEach(el -> poll.addoption(el));
 
         return poll;
     }
