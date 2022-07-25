@@ -1,12 +1,12 @@
-package kr.mj.gollaba.unit.polling.repository;
+package kr.mj.gollaba.unit.poll.repository;
 
 import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.unit.common.RepositoryTest;
-import kr.mj.gollaba.unit.polling.factory.OptionFactory;
-import kr.mj.gollaba.unit.polling.factory.PollingFactory;
+import kr.mj.gollaba.unit.poll.factory.OptionFactory;
+import kr.mj.gollaba.unit.poll.factory.PollingFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;

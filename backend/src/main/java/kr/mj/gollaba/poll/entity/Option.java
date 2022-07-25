@@ -27,9 +27,6 @@ public class Option {
     @JoinColumn(name = "poll_id" , nullable = true)
     private Poll poll;
 
-    @Column(name = "sequence", nullable = false)
-    private Integer sequence;
-
     @Column(name = "description", nullable = false)
     private String description;
 
@@ -45,16 +42,10 @@ public class Option {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Option(Long id, Integer sequence, String description) {
+    private Option(Long id, String description) {
         this.id = id;
-        this.sequence = sequence;
         this.description = description;
     }
-
-    public void updateSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
-
     public void updateDescription(String description) {
         this.description = description;
     }
