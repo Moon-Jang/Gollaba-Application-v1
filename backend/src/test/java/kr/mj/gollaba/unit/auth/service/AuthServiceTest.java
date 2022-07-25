@@ -112,10 +112,10 @@ class AuthServiceTest extends ServiceTest {
                 User user = UserFactory.createWithId();
                 given(userRepository.findByUniqueId(anyString()))
                         .willReturn(Optional.of(user));
-                given(jwtTokenProvider.createAccessToken(anyString(), anyString()))
-                        .willReturn("Bearer sdfsdf1234");
+                given(jwtTokenProvider.createAccessToken(any(User.class)))
+                        .willReturn(UserTokenFactory.TEST_ACCESS_TOKEN);
                 given(jwtTokenProvider.createRefreshToken())
-                        .willReturn("Bearer sdfsdf");
+                        .willReturn(UserTokenFactory.TEST_REFRESH_TOKEN);
 
                 LoginRequest request = new LoginRequest();
                 request.setId(UserFactory.TEST_UNIQUE_ID);
@@ -130,7 +130,7 @@ class AuthServiceTest extends ServiceTest {
 
                 verify(userRepository, times(1)).findByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
                 verify(passwordEncoder, times(1)).matches(eq(UserFactory.TEST_PASSWORD), eq(user.getPassword()));
-                verify(jwtTokenProvider, times(1)).createAccessToken(eq(UserFactory.TEST_UNIQUE_ID), eq(UserFactory.TEST_NICK_NAME));
+                verify(jwtTokenProvider, times(1)).createAccessToken(eq(user));
                 verify(jwtTokenProvider, times(1)).createRefreshToken();
             }
         }

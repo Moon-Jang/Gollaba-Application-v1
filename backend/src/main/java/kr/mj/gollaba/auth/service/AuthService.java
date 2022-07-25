@@ -33,7 +33,7 @@ public class AuthService implements UserDetailsService {
             throw new GollabaException(GollabaErrorCode.FAIL_LOGIN);
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(user.getUniqueId(), user.getNickName());
+        String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
         return LoginResponse.builder()
