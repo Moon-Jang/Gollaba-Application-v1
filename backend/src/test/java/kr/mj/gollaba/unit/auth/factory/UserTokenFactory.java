@@ -2,6 +2,7 @@ package kr.mj.gollaba.unit.auth.factory;
 
 import kr.mj.gollaba.auth.JwtTokenProvider;
 import kr.mj.gollaba.auth.entity.UserToken;
+import kr.mj.gollaba.unit.user.factory.UserFactory;
 
 public class UserTokenFactory {
 
@@ -12,7 +13,7 @@ public class UserTokenFactory {
 
     public static UserToken create(JwtTokenProvider jwtTokenProvider) {
         return UserToken.builder()
-                .accessToken(jwtTokenProvider.createAccessToken(TEST_UNIQUE_ID, TEST_NICK_NAME))
+                .accessToken(jwtTokenProvider.createAccessToken(UserFactory.create()))
                 .refreshToken(jwtTokenProvider.createRefreshToken())
                 .build();
     }

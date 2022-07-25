@@ -2,6 +2,7 @@ package kr.mj.gollaba.auth;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import kr.mj.gollaba.user.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,20 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .claim("uid", uniqueId)
                 .claim("un", nickName)
+                .setIssuedAt(now)
+                .setExpiration(expirationTime)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
+
+    public String createAccessToken(User user) {
+        Date now = new Date();
+        Date expirationTime = new Date(now.getTime() + accessExpirationTime);
+
+        return Jwts.builder()
+                .claim("id", user.getId())
+                .claim("uid", user.getUniqueId())
+                .claim("un", user.getNickName())
                 .setIssuedAt(now)
                 .setExpiration(expirationTime)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
