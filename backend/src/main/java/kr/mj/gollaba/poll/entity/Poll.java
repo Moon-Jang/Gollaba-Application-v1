@@ -46,6 +46,7 @@ public class Poll {
     private LocalDateTime endedAt;
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL)
+    @OrderColumn(name = "position")
     private List<Option> options = new ArrayList<>();
 
     @CreatedDate

@@ -1,4 +1,4 @@
-package kr.mj.gollaba.unit.polling.service;
+package kr.mj.gollaba.unit.poll.service;
 
 import kr.mj.gollaba.poll.dto.CreatePollRequest;
 import kr.mj.gollaba.poll.entity.Poll;
@@ -7,7 +7,7 @@ import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.poll.service.PollService;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.common.ServiceTest;
-import kr.mj.gollaba.unit.polling.factory.PollingFactory;
+import kr.mj.gollaba.unit.poll.factory.PollingFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
@@ -100,7 +100,6 @@ public class PollServiceTest extends ServiceTest {
 
             for (int i = 0; i < 4; i++) {
                 CreatePollRequest.OptionDto optionDto = new CreatePollRequest.OptionDto();
-                optionDto.setSequence(i);
                 optionDto.setDescription("항목" + i);
 
                 optionDtos.add(optionDto);

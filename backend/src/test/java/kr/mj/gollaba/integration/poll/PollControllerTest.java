@@ -4,9 +4,7 @@ import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.poll.dto.CreatePollRequest;
 import kr.mj.gollaba.poll.type.PollingResponseType;
-import kr.mj.gollaba.unit.polling.factory.PollingFactory;
-import kr.mj.gollaba.unit.user.factory.UserFactory;
-import kr.mj.gollaba.user.dto.SignupRequest;
+import kr.mj.gollaba.unit.poll.factory.PollingFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -52,7 +50,6 @@ class PollControllerTest extends IntegrationTest {
 
         for (int i = 0; i < 4; i++) {
             CreatePollRequest.OptionDto optionDto = new CreatePollRequest.OptionDto();
-            optionDto.setSequence(i);
             optionDto.setDescription("항목" + i);
 
             optionDtos.add(optionDto);

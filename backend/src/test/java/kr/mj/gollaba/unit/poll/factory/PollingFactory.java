@@ -1,4 +1,4 @@
-package kr.mj.gollaba.unit.polling.factory;
+package kr.mj.gollaba.unit.poll.factory;
 
 import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;

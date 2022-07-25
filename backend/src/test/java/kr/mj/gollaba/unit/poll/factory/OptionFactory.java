@@ -1,4 +1,4 @@
-package kr.mj.gollaba.unit.polling.factory;
+package kr.mj.gollaba.unit.poll.factory;
 
 import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Voter;
@@ -12,15 +12,15 @@ public class OptionFactory {
     public static final Long TEST_ID = 1L;
     public static final String TEST_DESCRIPTION = "테스트_투표항목";
 
-    public static Option create(int sequence, List<Voter> voters) {
+    public static Option create(List<Voter> voters) {
         Option option = Option.builder()
-                .sequence(sequence)
                 .description(TEST_DESCRIPTION)
                 .build();
 
-
-
-
+        if (voters != null) {
+            voters.stream()
+                    .forEach(el -> el.vote(option));
+        }
 
         return option;
     }
@@ -28,7 +28,6 @@ public class OptionFactory {
     public static Option createWithId(int sequence, List<Voter> voters) {
         Option option =  Option.builder()
                 .id(sequence + 10L)
-                .sequence(sequence)
                 .description(TEST_DESCRIPTION)
                 .build();
 
@@ -42,7 +41,7 @@ public class OptionFactory {
 
     public static List<Option> createList() {
         return IntStream.range(0, 4)
-                .mapToObj(i -> OptionFactory.create(i, null))
+                .mapToObj(i -> OptionFactory.create(null))
                 .collect(Collectors.toList());
     }
 

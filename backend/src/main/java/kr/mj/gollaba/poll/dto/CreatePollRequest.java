@@ -56,19 +56,6 @@ public class CreatePollRequest implements BaseApiRequest {
             throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "투표 유효기간을 30분 미만으로 설정할 수 없습니다.");
         }
 
-        int currentSequence = options.stream()
-                .mapToInt(el -> el.sequence)
-                .min()
-                .getAsInt();
-        final int optionDtosSize = options.size();
-        
-        for (int i = 0; i < optionDtosSize; i++) {
-            OptionDto optionDto = options.get(i);
-
-            if (optionDto.getSequence() != currentSequence++) {
-                throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "항목 순서가 잘못되었습니다. 해당 오류 지속적으로 발생시 관리자에게 문의해주세요.");
-            }
-        }
     }
 
     public Poll toDto() {
@@ -82,7 +69,6 @@ public class CreatePollRequest implements BaseApiRequest {
 
         options.stream()
                 .map(el -> Option.builder()
-                        .sequence(el.getSequence())
                         .description(el.getDescription())
                         .build())
                 .forEach(el -> poll.addoption(el));
@@ -94,13 +80,9 @@ public class CreatePollRequest implements BaseApiRequest {
     @Setter
     public static class OptionDto {
 
-        @ApiModelProperty(example = "0", required = true)
-        @Positive
-        private int sequence;
-
         @ApiModelProperty(example = "탕수육", required = true)
         @NotBlank
-        @Size(min = 4, max = 50)
+        @Size(min = 2, max = 50)
         private String description;
 
     }
