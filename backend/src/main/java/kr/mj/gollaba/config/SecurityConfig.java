@@ -23,6 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final String[] permitAllList = {
             "/v1/signup",
             "/v1/login",
+            "/v1/polls",
             "/health-check", // aws - target group
             "/h2-console/**", // h2-console
             "/v3/api-docs", // swagger
