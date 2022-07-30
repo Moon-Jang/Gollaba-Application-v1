@@ -25,7 +25,7 @@ public class Poll {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id" , nullable = true)
     private User user;
 

@@ -6,7 +6,7 @@ import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.unit.common.RepositoryTest;
 import kr.mj.gollaba.unit.poll.factory.OptionFactory;
-import kr.mj.gollaba.unit.poll.factory.PollingFactory;
+import kr.mj.gollaba.unit.poll.factory.PollFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
@@ -36,7 +36,7 @@ class PollRepositoryTest extends RepositoryTest {
         User user = UserFactory.create();
         userRepository.save(user);
         List<Option> options = OptionFactory.createList();
-        Poll poll = PollingFactory.create(user, options);
+        Poll poll = PollFactory.create(user, options);
 
         //when
         Poll savedPoll = pollRepository.save(poll);
@@ -56,7 +56,7 @@ class PollRepositoryTest extends RepositoryTest {
     void save_by_not_user() {
         //given
         List<Option> options = OptionFactory.createList();
-        Poll poll = PollingFactory.create(null, options);
+        Poll poll = PollFactory.create(null, options);
 
         //when
         Poll savedPoll = pollRepository.save(poll);
