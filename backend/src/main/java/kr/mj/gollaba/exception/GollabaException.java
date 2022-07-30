@@ -18,7 +18,7 @@ public class GollabaException extends RuntimeException {
         super(e);
     }
 
-    private static final int ERROR_STACK_LIMIT = 10;
+    private static final int ERROR_STACK_LIMIT = 5;
 
     public GollabaException(GollabaErrorCode errorCode) {
         super(errorCode.getDescription());
@@ -44,17 +44,18 @@ public class GollabaException extends RuntimeException {
             return new ResponseEntity<>(new ErrorAPIResponse(errorCode), errorCode.getHttpStatus());
         } else {
             GollabaErrorCode errorCode = GollabaErrorCode.UNKNOWN_ERROR;
-            String errorMessage = errorCode.getDescription() + "  detail: " + createDetails(e);
-            return new ResponseEntity<>(new ErrorAPIResponse(errorCode, errorMessage), errorCode.getHttpStatus());
+            return new ResponseEntity<>(new ErrorAPIResponse(errorCode, createDetails(e)), errorCode.getHttpStatus());
         }
     }
 
-    private static String createDetails(Exception e) {
+    private static ErrorAPIResponse.ErrorDetail createDetails(Exception e) {
         StringWriter errors = new StringWriter();
         e.printStackTrace(new PrintWriter(errors));
-        return Arrays.stream(errors.toString().split("\r\n\tat"))
+        String str =  Arrays.stream(errors.toString().split("\r\n\tat"))
                 .limit(ERROR_STACK_LIMIT)
                 .collect(Collectors.joining("\n"));
+
+        return new ErrorAPIResponse.ErrorDetail(str);
     }
 
 }
