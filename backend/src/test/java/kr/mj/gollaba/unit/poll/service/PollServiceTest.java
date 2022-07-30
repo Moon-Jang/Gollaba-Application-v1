@@ -7,7 +7,7 @@ import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.poll.service.PollService;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.common.ServiceTest;
-import kr.mj.gollaba.unit.poll.factory.PollingFactory;
+import kr.mj.gollaba.unit.poll.factory.PollFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
@@ -90,8 +90,8 @@ public class PollServiceTest extends ServiceTest {
         private CreatePollRequest generateRequest() {
             CreatePollRequest request = new CreatePollRequest();
 
-            request.setTitle(PollingFactory.TEST_TITLE);
-            request.setCreatorName(PollingFactory.TEST_CREATOR_NAME);
+            request.setTitle(PollFactory.TEST_TITLE);
+            request.setCreatorName(PollFactory.TEST_CREATOR_NAME);
             request.setEndedAt(LocalDateTime.now().plusDays(3L));
             request.setResponseType(PollingResponseType.SINGLE);
             request.setIsBallot(false);
@@ -108,6 +108,21 @@ public class PollServiceTest extends ServiceTest {
             request.setOptions(optionDtos);
 
             return request;
+        }
+    }
+
+    @DisplayName("findAll 메서드는")
+    @Nested
+    class findAll {
+
+        @DisplayName("주어진 조건들을 통해 검색 후 결과를 리턴한다.")
+        @Test
+        void return_search_result() {
+            //given
+
+            //when
+
+            //then
         }
     }
 }

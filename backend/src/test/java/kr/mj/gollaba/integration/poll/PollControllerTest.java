@@ -4,7 +4,7 @@ import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.poll.dto.CreatePollRequest;
 import kr.mj.gollaba.poll.type.PollingResponseType;
-import kr.mj.gollaba.unit.poll.factory.PollingFactory;
+import kr.mj.gollaba.unit.poll.factory.PollFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -40,8 +40,8 @@ class PollControllerTest extends IntegrationTest {
     private CreatePollRequest generateRequest() {
         CreatePollRequest request = new CreatePollRequest();
 
-        request.setTitle(PollingFactory.TEST_TITLE);
-        request.setCreatorName(PollingFactory.TEST_CREATOR_NAME);
+        request.setTitle(PollFactory.TEST_TITLE);
+        request.setCreatorName(PollFactory.TEST_CREATOR_NAME);
         request.setEndedAt(LocalDateTime.now().plusDays(3L));
         request.setResponseType(PollingResponseType.SINGLE);
         request.setIsBallot(false);
