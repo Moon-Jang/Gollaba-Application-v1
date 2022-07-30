@@ -36,7 +36,6 @@ public class PollQueryRepository {
                         likeTitle(filter.getTitle()))
                 .limit(filter.getLimit())
                 .offset(filter.getOffset())
-                .groupBy(poll.id)
                 .fetch();
     }
 
