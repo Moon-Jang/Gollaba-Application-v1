@@ -17,7 +17,7 @@ public enum GollabaErrorCode {
     INVALID_PARAMS(6, HttpStatus.BAD_REQUEST, "유효하지 않은 인자값 입니다."),
     UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED,"인증 정보가 없거나 부족합니다."),
     FORBIDDEN(403, HttpStatus.FORBIDDEN,"해당 자원에 접근할 수 없습니다."),
-    UNKNOWN_ERROR(9999, HttpStatus.BAD_REQUEST, "알 수 없는 에러입니다. 관리자에게 문의해주세요."),
+    UNKNOWN_ERROR(9999, HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러입니다. 관리자에게 문의해주세요."),
 
     /* 10000 ~ 19999 user */
     ALREADY_EXIST_USER(10000, HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다."),

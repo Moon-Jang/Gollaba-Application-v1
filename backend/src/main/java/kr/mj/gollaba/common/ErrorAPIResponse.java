@@ -1,8 +1,10 @@
 package kr.mj.gollaba.common;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.exception.GollabaErrorCode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindException;
@@ -28,6 +30,9 @@ public class ErrorAPIResponse {
     @ApiModelProperty(position = 3, example = "[]")
     private final List<InvalidParameter> invalidParameters = new ArrayList<>();
 
+    @ApiModelProperty(position = 4, hidden = true)
+    private ErrorDetail details;
+
     public ErrorAPIResponse(GollabaErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.message = errorCode.getDescription();
@@ -36,6 +41,12 @@ public class ErrorAPIResponse {
     public ErrorAPIResponse(GollabaErrorCode errorCode, String message) {
         this.code = errorCode.getCode();
         this.message = message;
+    }
+
+    public ErrorAPIResponse(GollabaErrorCode errorCode, ErrorDetail detail) {
+        this.code = errorCode.getCode();
+        this.message = errorCode.getDescription();
+        this.details = detail;
     }
 
     @SuppressWarnings("serial")
@@ -76,6 +87,15 @@ public class ErrorAPIResponse {
 
         @ApiModelProperty(example = "name")
         private final String field;
+
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ErrorDetail {
+
+        @JsonValue
+        private final String details;
 
     }
 }

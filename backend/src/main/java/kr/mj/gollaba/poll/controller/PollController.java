@@ -32,9 +32,9 @@ public class PollController {
 
     @ApiOperation(value = "투표 생성")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = Boolean.class))),
-            @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @PostMapping(path = "/polls", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> create(@Validated @RequestBody CreatePollRequest request) {
@@ -47,11 +47,11 @@ public class PollController {
 
     @ApiOperation(value = "투표 전체 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = FindAllPollResponse.class))),
-            @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = "application/json",
+            @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
-    @GetMapping(path = "/polls", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/polls")
     public ResponseEntity<FindAllPollResponse> findAll(@Validated FindAllPollRequest request) {
         return ResponseEntity
                 .status(HttpStatus.OK)
