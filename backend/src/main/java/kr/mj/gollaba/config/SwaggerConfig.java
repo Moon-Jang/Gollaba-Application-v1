@@ -1,8 +1,11 @@
 package kr.mj.gollaba.config;
 
+import com.fasterxml.classmate.TypeResolver;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.Server;
 import kr.mj.gollaba.common.Const;
+import kr.mj.gollaba.common.ErrorAPIResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,11 +31,14 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
     private String title;
 
 	@Bean
-	public Docket apiV1() {
+	public Docket apiV1(TypeResolver typeResolver) {
 		version = "v1";
-		title = "Free-Polling API";
+		title = "Gollaba API";
 
 		return new Docket(DocumentationType.OAS_30)
+				.additionalModels(
+						typeResolver.resolve(ErrorAPIResponse.class)
+				)
 				.consumes(getConsumeContentTypes())
 				.produces(getProduceContentTypes())
 				.useDefaultResponseMessages(false)
@@ -42,8 +48,8 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 				.paths(PathSelectors.ant(Const.ROOT_URL + "/**"))
 				.build()
 				.apiInfo(apiInfo(title, version))
-				.securityContexts(Arrays.asList(securityContext()))
-				.securitySchemes(Arrays.asList(apiKey()));
+				.securityContexts(List.of(securityContext()))
+				.securitySchemes(List.of(accessToken(), refreshToken()));
 	}
 
 	@Override
@@ -57,11 +63,11 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 
 		Server devServer = new Server();
 		devServer.setDescription("dev");
-		devServer.setUrl("https://dev.free.polling.com");
+		devServer.setUrl("https://dev.api.gollaba.net");
 
 		Server prodServer = new Server();
 		prodServer.setDescription("prod");
-		prodServer.setUrl("https://free.polling.com");
+		prodServer.setUrl("https://api.gollaba.net");
 
 		openApi.setServers(List.of(localServer, devServer, prodServer));
 
@@ -76,7 +82,7 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 	private ApiInfo apiInfo(String title, String version) {
         return new ApiInfo(
 				title,
-				"Free-Polling API Docs",
+				title + " Docs",
 				version,
 				null,
 				null,
@@ -84,14 +90,17 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 				null,
 				new ArrayList<>());
     }
-    
-	private ApiKey apiKey() {
-		return new ApiKey("JWT", "Authorization", "header");
+
+	private ApiKey accessToken() {
+		return new ApiKey("accessToken", Const.ACCESS_TOKEN_HEADER, "header");
+	}
+
+	private ApiKey refreshToken() {
+		return new ApiKey("refreshToken", Const.REFRESH_TOKEN_HEADER, "header");
 	}
 
 	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth())
-				.forPaths(PathSelectors.any()).build();
+		return SecurityContext.builder().securityReferences(defaultAuth()).build();
 	}
 
 	List<SecurityReference> defaultAuth() {

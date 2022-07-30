@@ -1,7 +1,7 @@
 package kr.mj.gollaba.integration.user;
 
 import kr.mj.gollaba.common.Const;
-import kr.mj.gollaba.integration.common.BaseIntegrationTest;
+import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -13,14 +13,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class UserControllerTest extends BaseIntegrationTest {
+class UserControllerTest extends IntegrationTest {
 
     @DisplayName("회원 가입")
     @Test
-    public void signupByAvailableUser() throws Exception {
+    public void signup() throws Exception {
         //given
         SignupRequest request = new SignupRequest();
-        request.setUniqueId(UserFactory.TEST_UNIQUE_ID);
+        request.setId(UserFactory.TEST_UNIQUE_ID);
         request.setNickName(UserFactory.TEST_NICK_NAME);
         request.setPassword(UserFactory.TEST_PASSWORD);
 
@@ -32,7 +32,6 @@ class UserControllerTest extends BaseIntegrationTest {
 
         //then
         resultActions
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.userId").isNumber());
+                .andExpect(status().isCreated());
     }
 }

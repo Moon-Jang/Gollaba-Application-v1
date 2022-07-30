@@ -2,14 +2,16 @@ package kr.mj.gollaba.unit.common;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+@Tag("UnitTest")
 public abstract class ValidationTest {
 
-    protected static ValidatorFactory factory;
+    private static ValidatorFactory factory;
 
     protected static Validator validator;
 
