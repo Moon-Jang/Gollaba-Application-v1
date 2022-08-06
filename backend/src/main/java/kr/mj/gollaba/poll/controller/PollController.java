@@ -62,7 +62,7 @@ public class PollController {
     @ApiOperation(value = "투표 상세 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = FindAllPollResponse.class))),
+                    schema = @Schema(implementation = FindPollResponse.class))),
             @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @GetMapping(path = "/polls/{pollId}")
