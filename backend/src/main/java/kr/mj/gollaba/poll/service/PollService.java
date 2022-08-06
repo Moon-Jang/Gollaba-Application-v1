@@ -2,10 +2,7 @@ package kr.mj.gollaba.poll.service;
 
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
-import kr.mj.gollaba.poll.dto.CreatePollRequest;
-import kr.mj.gollaba.poll.dto.FindAllPollRequest;
-import kr.mj.gollaba.poll.dto.FindAllPollResponse;
-import kr.mj.gollaba.poll.dto.FindPollResponse;
+import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
@@ -40,9 +37,12 @@ public class PollService {
 
     public FindAllPollResponse findAll(FindAllPollRequest request) {
         request.validate();
-        List<Poll> polls = pollQueryRepository.findAll(request.toFilter());
+        PollQueryFilter filter = request.toFilter();
+        final long totalCount = pollQueryRepository.findAllCount(filter);
+        List<Long> ids = pollQueryRepository.findIds(filter);
+        List<Poll> polls = pollQueryRepository.findAll(ids);
 
-        return new FindAllPollResponse(polls);
+        return new FindAllPollResponse(totalCount, polls);
     }
 
     public FindPollResponse find(Long pollId) {

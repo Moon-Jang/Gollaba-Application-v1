@@ -27,9 +27,12 @@ import java.util.stream.Collectors;
 @Getter
 public class FindAllPollResponse implements BaseApiResponse {
 
-    List<PollResponse> polls = new ArrayList<>();
+    private long totalCount;
 
-    public FindAllPollResponse(List<Poll> polls) {
+    private List<PollResponse> polls = new ArrayList<>();
+
+    public FindAllPollResponse(long totalCount, List<Poll> polls) {
+        this.totalCount = totalCount;
         this.polls = polls.stream()
                 .map(el -> PollResponse.builder()
                         .pollId(el.getId())
