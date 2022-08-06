@@ -48,6 +48,10 @@ public class PollService {
     public FindPollResponse find(Long pollId) {
         Poll poll = pollQueryRepository.findById(pollId);
 
+        if (poll == null) {
+            throw new GollabaException(GollabaErrorCode.NOT_EXIST_POLL);
+        }
+
         return new FindPollResponse(poll);
     }
 }
