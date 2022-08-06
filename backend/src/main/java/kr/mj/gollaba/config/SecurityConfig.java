@@ -24,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/v1/signup",
             "/v1/login",
             "/v1/polls",
+            "/v1/polls/{pollId}",
             "/health-check", // aws - target group
             "/h2-console/**", // h2-console
             "/v3/api-docs", // swagger

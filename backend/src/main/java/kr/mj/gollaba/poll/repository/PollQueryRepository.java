@@ -12,7 +12,9 @@ import java.util.List;
 
 import static kr.mj.gollaba.poll.entity.QPoll.poll;
 import static kr.mj.gollaba.poll.entity.QOption.option;
+import static kr.mj.gollaba.poll.entity.QVoter.voter;
 import static kr.mj.gollaba.user.entity.QUser.user;
+
 @Repository
 @RequiredArgsConstructor
 public class PollQueryRepository {
@@ -23,15 +25,18 @@ public class PollQueryRepository {
         return jpaQueryFactory.selectFrom(poll)
                 .join(poll.options, option).fetchJoin()
                 .leftJoin(poll.user, user).fetchJoin()
+                .leftJoin(option.voters, voter).fetchJoin()
                 .where(eqUserId(filter.getUserId()),
                         likeTitle(filter.getTitle()))
-                .fetch().size();
+                .fetch()
+                .size();
     }
 
     public List<Poll> findAll(PollQueryFilter filter) {
         return jpaQueryFactory.selectFrom(poll)
                 .join(poll.options, option).fetchJoin()
                 .leftJoin(poll.user, user).fetchJoin()
+                .leftJoin(option.voters, voter).fetchJoin()
                 .where(eqUserId(filter.getUserId()),
                         likeTitle(filter.getTitle()))
                 .limit(filter.getLimit())
@@ -43,6 +48,7 @@ public class PollQueryRepository {
         return jpaQueryFactory.selectFrom(poll)
                 .join(poll.options, option).fetchJoin()
                 .leftJoin(poll.user, user).fetchJoin()
+                .leftJoin(option.voters, voter).fetchJoin()
                 .where(poll.id.eq(id))
                 .fetchOne();
     }
@@ -61,6 +67,6 @@ public class PollQueryRepository {
             return null;
         }
 
-        return poll.title.like(title);
+        return poll.title.like("%" + title + "%");
     }
 }

@@ -5,6 +5,7 @@ import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.dto.CreatePollRequest;
 import kr.mj.gollaba.poll.dto.FindAllPollRequest;
 import kr.mj.gollaba.poll.dto.FindAllPollResponse;
+import kr.mj.gollaba.poll.dto.FindPollResponse;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
@@ -42,5 +43,11 @@ public class PollService {
         List<Poll> polls = pollQueryRepository.findAll(request.toFilter());
 
         return new FindAllPollResponse(polls);
+    }
+
+    public FindPollResponse find(Long pollId) {
+        Poll poll = pollQueryRepository.findById(pollId);
+
+        return new FindPollResponse(poll);
     }
 }

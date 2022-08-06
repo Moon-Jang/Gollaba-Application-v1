@@ -10,7 +10,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "poll_option")
 @Getter
@@ -31,7 +33,7 @@ public class Option {
     private String description;
 
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
-    private List<Voter> voters = new ArrayList<>();
+    private Set<Voter> voters = new HashSet<>();
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)

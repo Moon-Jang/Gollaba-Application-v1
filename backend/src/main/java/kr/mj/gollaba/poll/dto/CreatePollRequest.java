@@ -71,7 +71,7 @@ public class CreatePollRequest implements BaseApiRequest {
                 .map(el -> Option.builder()
                         .description(el.getDescription())
                         .build())
-                .forEach(el -> poll.addoption(el));
+                .forEach(el -> poll.addOption(el));
 
         return poll;
     }

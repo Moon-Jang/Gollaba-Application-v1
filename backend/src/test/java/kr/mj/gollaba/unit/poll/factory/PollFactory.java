@@ -31,7 +31,7 @@ public class PollFactory {
 
             OptionFactory.createList()
                     .stream()
-                    .forEach(el -> poll.addoption(el));
+                    .forEach(el -> poll.addOption(el));
 
             polls.add(poll);
         }
@@ -49,7 +49,7 @@ public class PollFactory {
 
         poll.registerCreator(user);
         options.stream()
-                .forEach(el -> poll.addoption(el));
+                .forEach(el -> poll.addOption(el));
 
         return poll;
     }
@@ -65,7 +65,7 @@ public class PollFactory {
 
         poll.registerCreator(user);
         options.stream()
-                .forEach(el -> poll.addoption(el));
+                .forEach(el -> poll.addOption(el));
 
         return poll;
     }
