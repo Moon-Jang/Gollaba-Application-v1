@@ -11,6 +11,7 @@ import kr.mj.gollaba.common.ErrorAPIResponse;
 import kr.mj.gollaba.poll.dto.CreatePollRequest;
 import kr.mj.gollaba.poll.dto.FindAllPollRequest;
 import kr.mj.gollaba.poll.dto.FindAllPollResponse;
+import kr.mj.gollaba.poll.dto.FindPollResponse;
 import kr.mj.gollaba.poll.service.PollService;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.SignupResponse;
@@ -56,6 +57,19 @@ public class PollController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(pollService.findAll(request));
+    }
+
+    @ApiOperation(value = "투표 상세 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = FindAllPollResponse.class))),
+            @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorAPIResponse.class)))})
+    @GetMapping(path = "/polls/{pollId}")
+    public ResponseEntity<FindPollResponse> find(@PathVariable Long pollId) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(pollService.find(pollId));
     }
 
 }

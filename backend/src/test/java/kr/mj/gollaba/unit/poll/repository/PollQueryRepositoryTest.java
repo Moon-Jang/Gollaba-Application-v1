@@ -1,43 +1,35 @@
 package kr.mj.gollaba.unit.poll.repository;
 
 import kr.mj.gollaba.poll.dto.PollQueryFilter;
-import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
-import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.unit.common.RepositoryTest;
-import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
-import kr.mj.gollaba.unit.user.factory.UserFactory;
-import kr.mj.gollaba.user.entity.User;
-import kr.mj.gollaba.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PollQueryRepositoryTest extends RepositoryTest {
-
-    @Autowired
-    private PollRepository pollRepository;
 
     @Autowired
     private PollQueryRepository pollQueryRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    //@Sql("classpath:sql/poll-create.sql")
+//    @BeforeAll
+//    public void init() {}
 
     @DisplayName("투표 객체 전체 조회 by filter")
     @Test
     void findAll() {
         //given
-        pollRepository.saveAll(PollFactory.createList());
-
-        flushAndClear();
-
         PollQueryFilter filter = PollQueryFilter.builder()
                 .limit(15)
                 .offset(0)
@@ -54,10 +46,6 @@ class PollQueryRepositoryTest extends RepositoryTest {
     @Test
     void findAll_title() {
         //given
-        pollRepository.saveAll(PollFactory.createList());
-
-        flushAndClear();
-
         PollQueryFilter filter = PollQueryFilter.builder()
                 .title(PollFactory.TEST_TITLE + 1)
                 .limit(15)
@@ -68,27 +56,22 @@ class PollQueryRepositoryTest extends RepositoryTest {
         List<Poll> foundPolls = pollQueryRepository.findAll(filter);
 
         //then
-        assertThat(foundPolls.size()).isEqualTo(1);
+        assertThat(foundPolls.size()).isEqualTo(15);
     }
 
     @DisplayName("투표 객체 조회 by Id")
     @Test
     void findById() {
         //given
-        User user = UserFactory.create();
-        userRepository.save(user);
-        List<Option> options = OptionFactory.createList();
-        Poll poll = PollFactory.create(user, options);
+        Long pollId = PollFactory.TEST_ID;
 
         //when
-        Poll savedPoll = pollRepository.save(poll);
-
-        flushAndClear();
-
-        Poll foundPoll = pollQueryRepository.findById(savedPoll.getId());
+        Poll foundPoll = pollQueryRepository.findById(pollId);
 
         //then
-        assertThat(savedPoll.getTitle()).isEqualTo(foundPoll.getTitle());
+        assertThat(foundPoll.getId()).isEqualTo(pollId);
+        assertThat(foundPoll.getTitle()).isEqualTo(PollFactory.TEST_TITLE + 1);
+        assertThat(foundPoll.getOptions().size()).isEqualTo(4);
     }
 
 }

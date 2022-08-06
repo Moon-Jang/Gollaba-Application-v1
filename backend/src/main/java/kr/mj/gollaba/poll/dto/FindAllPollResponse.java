@@ -1,5 +1,6 @@
 package kr.mj.gollaba.poll.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;
 import kr.mj.gollaba.common.BaseApiResponse;
@@ -8,6 +9,7 @@ import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.entity.Voter;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.user.entity.User;
+import kr.mj.gollaba.user.type.UserRoleType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +33,6 @@ public class FindAllPollResponse implements BaseApiResponse {
         this.polls = polls.stream()
                 .map(el -> PollResponse.builder()
                         .pollId(el.getId())
-                        .user(el.getUser())
                         .title(el.getTitle())
                         .creatorName(el.getCreatorName())
                         .responseType(el.getResponseType())
@@ -42,7 +43,6 @@ public class FindAllPollResponse implements BaseApiResponse {
                                 .map(option -> OptionResponse.builder()
                                         .optionId(option.getId())
                                         .description(option.getDescription())
-                                        //.voters(option.getVoters())
                                         .createdAt(option.getCreatedAt())
                                         .updatedAt(option.getUpdatedAt())
                                         .build())
@@ -58,8 +58,6 @@ public class FindAllPollResponse implements BaseApiResponse {
 
         private Long pollId;
 
-        private User user;
-
         private String title;
 
         private String creatorName;
@@ -72,14 +70,15 @@ public class FindAllPollResponse implements BaseApiResponse {
 
         private List<OptionResponse> options = new ArrayList<>();
 
+        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
 
+        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
 
         @Builder
-        private PollResponse(Long pollId, User user, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt, List<OptionResponse> options, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        private PollResponse(Long pollId, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt, List<OptionResponse> options, LocalDateTime createdAt, LocalDateTime updatedAt) {
             this.pollId = pollId;
-            this.user = user;
             this.title = title;
             this.creatorName = creatorName;
             this.responseType = responseType;
@@ -99,15 +98,14 @@ public class FindAllPollResponse implements BaseApiResponse {
 
         private String description;
 
-        //@ApiModelProperty(hidden = true)
-        //private List<Voter> voters = new ArrayList<>();
-
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
 
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime updatedAt;
 
         @Builder
-        private OptionResponse(Long optionId, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        public OptionResponse(Long optionId, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
             this.optionId = optionId;
             this.description = description;
             this.createdAt = createdAt;
@@ -115,6 +113,5 @@ public class FindAllPollResponse implements BaseApiResponse {
         }
 
     }
-
 
 }

@@ -1,12 +1,14 @@
 package kr.mj.gollaba.unit.poll.service;
 
-import kr.mj.gollaba.poll.dto.CreatePollRequest;
+import kr.mj.gollaba.poll.dto.*;
+import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.poll.service.PollService;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.common.ServiceTest;
+import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -119,10 +122,40 @@ public class PollServiceTest extends ServiceTest {
         @Test
         void return_search_result() {
             //given
+            List<Poll> polls = PollFactory.createList();
+            given(pollQueryRepository.findAll(any(PollQueryFilter.class)))
+                    .willReturn(polls);
+            FindAllPollRequest request = new FindAllPollRequest();
+            request.setOffset(0);
+            request.setLimit(15);
 
             //when
+            FindAllPollResponse result = pollService.findAll(request);
 
             //then
+            verify(pollQueryRepository, times(1)).findAll(any(PollQueryFilter.class));
+            assertThat(result.getPolls().size()).isEqualTo(polls.size());
+        }
+    }
+
+    @DisplayName("find 메서드는")
+    @Nested
+    class find {
+
+        @DisplayName("투표 id를 통해 검색 후 결과를 리턴한다.")
+        @Test
+        void return_search_result() {
+            //given
+            Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
+            given(pollQueryRepository.findById(any(Long.class)))
+                    .willReturn(poll);
+
+            //when
+            FindPollResponse result = pollService.find(poll.getId());
+
+            //then
+            verify(pollQueryRepository, times(1)).findById(eq(poll.getId()));
+            assertThat(result.getPollId()).isEqualTo(poll.getId());
         }
     }
 }
