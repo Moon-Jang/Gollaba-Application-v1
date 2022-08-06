@@ -123,7 +123,11 @@ public class PollServiceTest extends ServiceTest {
         void return_search_result() {
             //given
             List<Poll> polls = PollFactory.createList();
-            given(pollQueryRepository.findAll(any(PollQueryFilter.class)))
+            given(pollQueryRepository.findAllCount(any(PollQueryFilter.class)))
+                    .willReturn(150L);
+            given(pollQueryRepository.findIds(any((PollQueryFilter.class))))
+                    .willReturn(List.of(1L,2L,3L));
+            given(pollQueryRepository.findAll(any(List.class)))
                     .willReturn(polls);
             FindAllPollRequest request = new FindAllPollRequest();
             request.setOffset(0);
@@ -133,7 +137,9 @@ public class PollServiceTest extends ServiceTest {
             FindAllPollResponse result = pollService.findAll(request);
 
             //then
-            verify(pollQueryRepository, times(1)).findAll(any(PollQueryFilter.class));
+            verify(pollQueryRepository, times(1)).findAllCount(any(PollQueryFilter.class));
+            verify(pollQueryRepository, times(1)).findIds(any(PollQueryFilter.class));
+            verify(pollQueryRepository, times(1)).findAll(any(List.class));
             assertThat(result.getPolls().size()).isEqualTo(polls.size());
         }
     }

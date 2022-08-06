@@ -5,12 +5,10 @@ import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.unit.common.RepositoryTest;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -22,11 +20,39 @@ class PollQueryRepositoryTest extends RepositoryTest {
     @Autowired
     private PollQueryRepository pollQueryRepository;
 
-    //@Sql("classpath:sql/poll-create.sql")
-//    @BeforeAll
-//    public void init() {}
+    @DisplayName("투표 count 조회")
+    @Test
+    void findAllCount() {
+        //given
+        PollQueryFilter filter = PollQueryFilter.builder()
+                .title(PollFactory.TEST_TITLE + 1)
+                .build();
 
-    @DisplayName("투표 객체 전체 조회 by filter")
+        //when
+        long result = pollQueryRepository.findAllCount(filter);
+
+        //then
+        assertThat(result).isEqualTo(62);
+    }
+
+    @DisplayName("투표 해당 필터에 맞는 id 조회")
+    @Test
+    void findIds() {
+        //given
+        PollQueryFilter filter = PollQueryFilter.builder()
+                .title(PollFactory.TEST_TITLE + 1)
+                .offset(0)
+                .limit(15)
+                .build();
+
+        //when
+        List<Long> foundIds = pollQueryRepository.findIds(filter);
+
+        //then
+        assertThat(foundIds.size()).isEqualTo(15L);
+    }
+
+    @DisplayName("투표 객체 전체 조회")
     @Test
     void findAll() {
         //given
@@ -36,27 +62,32 @@ class PollQueryRepositoryTest extends RepositoryTest {
                 .build();
 
         //when
-        List<Poll> foundPolls = pollQueryRepository.findAll(filter);
+        List<Long> ids = pollQueryRepository.findIds(filter);
+        List<Poll> foundPolls = pollQueryRepository.findAll(ids);
 
         //then
         assertThat(foundPolls.size()).isEqualTo(15);
     }
 
-    @DisplayName("투표 객체 제목 조회 by filter")
+    @DisplayName("투표 객체 조회 by 투표 제목")
     @Test
     void findAll_title() {
         //given
+        String queryTitle = PollFactory.TEST_TITLE + 1;
         PollQueryFilter filter = PollQueryFilter.builder()
-                .title(PollFactory.TEST_TITLE + 1)
-                .limit(15)
+                .title(queryTitle)
+                .limit(100)
                 .offset(0)
                 .build();
 
         //when
-        List<Poll> foundPolls = pollQueryRepository.findAll(filter);
+        List<Long> ids = pollQueryRepository.findIds(filter);
+        List<Poll> foundPolls = pollQueryRepository.findAll(ids);
 
         //then
-        assertThat(foundPolls.size()).isEqualTo(15);
+        boolean isAllMatch = foundPolls.stream()
+                .allMatch(el -> el.getTitle().contains(queryTitle));
+        assertThat(isAllMatch).isTrue();
     }
 
     @DisplayName("투표 객체 조회 by Id")

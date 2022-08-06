@@ -59,6 +59,7 @@ class PollControllerTest extends IntegrationTest {
         //then
         resultActions
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("totalCount").value(150))
                 .andExpect(jsonPath("polls").isArray());
     }
 

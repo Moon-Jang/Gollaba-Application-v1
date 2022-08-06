@@ -21,26 +21,39 @@ public class PollQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public int findAllCount(PollQueryFilter filter) {
-        return jpaQueryFactory.selectFrom(poll)
-                .join(poll.options, option).fetchJoin()
-                .leftJoin(poll.user, user).fetchJoin()
-                .leftJoin(option.voters, voter).fetchJoin()
+    public long findAllCount(PollQueryFilter filter) {
+        return jpaQueryFactory.select(poll.countDistinct())
+                .from(poll)
+                .join(poll.options, option)
+                .leftJoin(poll.user, user)
+                .leftJoin(option.voters, voter)
                 .where(eqUserId(filter.getUserId()),
                         likeTitle(filter.getTitle()))
-                .fetch()
-                .size();
+                .fetchOne();
     }
 
-    public List<Poll> findAll(PollQueryFilter filter) {
-        return jpaQueryFactory.selectFrom(poll)
+
+
+    public List<Long> findIds(PollQueryFilter filter) {
+        return jpaQueryFactory.select(poll.id)
+                .from(poll)
+                .join(poll.options, option)
+                .leftJoin(poll.user, user)
+                .leftJoin(option.voters, voter)
+                .where(eqUserId(filter.getUserId()),
+                        likeTitle(filter.getTitle()))
+                .groupBy(poll.id)
+                .limit(filter.getLimit())
+                .offset(filter.getOffset())
+                .fetch();
+    }
+
+    public List<Poll> findAll(List<Long> ids) {
+        return jpaQueryFactory.selectFrom(poll).distinct()
                 .join(poll.options, option).fetchJoin()
                 .leftJoin(poll.user, user).fetchJoin()
                 .leftJoin(option.voters, voter).fetchJoin()
-                .where(eqUserId(filter.getUserId()),
-                        likeTitle(filter.getTitle()))
-                .limit(filter.getLimit())
-                .offset(filter.getOffset())
+                .where(poll.id.in(ids))
                 .fetch();
     }
 
