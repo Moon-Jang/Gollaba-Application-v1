@@ -1,4 +1,4 @@
-package kr.mj.gollaba.auth.utils;
+package kr.mj.gollaba.common.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

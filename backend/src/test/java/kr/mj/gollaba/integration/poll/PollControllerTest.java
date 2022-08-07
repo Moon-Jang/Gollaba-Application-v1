@@ -5,8 +5,12 @@ import kr.mj.gollaba.common.util.QueryStringGenerator;
 import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.poll.dto.CreatePollRequest;
 import kr.mj.gollaba.poll.dto.FindAllPollRequest;
+import kr.mj.gollaba.poll.dto.VoteRequest;
 import kr.mj.gollaba.poll.type.PollingResponseType;
+import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
+import kr.mj.gollaba.unit.poll.factory.VoterFactory;
+import kr.mj.gollaba.unit.user.factory.UserFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -67,8 +71,8 @@ class PollControllerTest extends IntegrationTest {
     @Test
     public void find() throws Exception {
         //given
-
         String url = Const.ROOT_URL + "/polls/1";
+
         //when
         ResultActions resultActions = mvc.perform(get(url)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,6 +83,31 @@ class PollControllerTest extends IntegrationTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("pollId").isNumber());
+    }
+
+    @DisplayName("투표하기")
+    @Test
+    public void vote() throws Exception {
+        //given
+        String url = Const.ROOT_URL + "/vote";
+
+        VoteRequest request = new VoteRequest();
+        request.setPollId(PollFactory.TEST_ID);
+        request.setUserId(UserFactory.TEST_ID);
+        request.setOptionId(OptionFactory.TEST_ID);
+        request.setVoterName(VoterFactory.TEST_VOTER_NAME);
+        request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+
+        //when
+        ResultActions resultActions = mvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        resultActions
+                .andExpect(status().isCreated());
     }
 
     private CreatePollRequest generateCreateRequest() {

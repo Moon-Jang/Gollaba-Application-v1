@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static kr.mj.gollaba.poll.entity.QPoll.poll;
 import static kr.mj.gollaba.poll.entity.QOption.option;
@@ -57,13 +58,15 @@ public class PollQueryRepository {
                 .fetch();
     }
 
-    public Poll findById(Long id) {
-        return jpaQueryFactory.selectFrom(poll)
+    public Optional<Poll> findById(Long id) {
+        Poll foundPoll = jpaQueryFactory.selectFrom(poll)
                 .join(poll.options, option).fetchJoin()
                 .leftJoin(poll.user, user).fetchJoin()
                 .leftJoin(option.voters, voter).fetchJoin()
                 .where(poll.id.eq(id))
                 .fetchOne();
+
+        return Optional.ofNullable(foundPoll);
     }
 
 

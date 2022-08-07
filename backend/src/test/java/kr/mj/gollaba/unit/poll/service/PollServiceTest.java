@@ -1,5 +1,6 @@
 package kr.mj.gollaba.unit.poll.service;
 
+import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;
@@ -10,6 +11,7 @@ import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.common.ServiceTest;
 import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
+import kr.mj.gollaba.unit.poll.factory.VoterFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
@@ -43,6 +45,9 @@ public class PollServiceTest extends ServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private CryptUtils cryptUtils;
 
     @DisplayName("create 메서드는")
     @Nested
@@ -154,7 +159,7 @@ public class PollServiceTest extends ServiceTest {
             //given
             Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
             given(pollQueryRepository.findById(any(Long.class)))
-                    .willReturn(poll);
+                    .willReturn(Optional.of(poll));
 
             //when
             FindPollResponse result = pollService.find(poll.getId());
@@ -162,6 +167,50 @@ public class PollServiceTest extends ServiceTest {
             //then
             verify(pollQueryRepository, times(1)).findById(eq(poll.getId()));
             assertThat(result.getPollId()).isEqualTo(poll.getId());
+        }
+    }
+
+    @DisplayName("vote 메서드는")
+    @Nested
+    class vote {
+
+        @DisplayName("요청한 투표id 와 항목id가 정상일 경우")
+        @Nested
+        class when_request_is_valid {
+
+            @DisplayName("해당 투표에 투표자를 저장한다.")
+            @Test
+            void save_voter() {
+                //given
+                User user = UserFactory.create();
+                List<Option> options = OptionFactory.createListWithId();
+                Poll poll =PollFactory.createWithId(user, options);
+                given(cryptUtils.encrypt(anyString()))
+                        .willReturn("encryptedString");
+                given(userRepository.findById(anyLong()))
+                        .willReturn(Optional.of(user));
+                given(pollQueryRepository.findById(anyLong()))
+                        .willReturn(Optional.of(poll));
+                given(pollRepository.save(any(Poll.class)))
+                        .willReturn(poll);
+
+                VoteRequest request = new VoteRequest();
+                request.setPollId(PollFactory.TEST_ID);
+                request.setUserId(UserFactory.TEST_ID);
+                request.setOptionId(options.get(0).getId());
+                request.setVoterName(VoterFactory.TEST_VOTER_NAME);
+                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+
+                //when
+                pollService.vote(request);
+
+                //then
+                verify(cryptUtils, times(1)).encrypt(eq(VoterFactory.TEST_IP_ADDRESS));
+                verify(userRepository, times(1)).findById(eq(UserFactory.TEST_ID));
+                verify(pollQueryRepository, times(1)).findById(eq(PollFactory.TEST_ID));
+                verify(pollRepository, times(1)).save(eq(poll));
+            }
+
         }
     }
 }

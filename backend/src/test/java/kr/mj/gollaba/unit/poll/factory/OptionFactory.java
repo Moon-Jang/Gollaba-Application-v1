@@ -45,4 +45,10 @@ public class OptionFactory {
                 .collect(Collectors.toList());
     }
 
+    public static List<Option> createListWithId() {
+        return IntStream.range(0, 4)
+                .mapToObj(i -> createWithId(i, null))
+                .collect(Collectors.toList());
+    }
+
 }

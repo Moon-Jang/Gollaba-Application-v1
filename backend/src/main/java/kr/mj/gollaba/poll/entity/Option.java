@@ -1,5 +1,7 @@
 package kr.mj.gollaba.poll.entity;
 
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,4 +56,10 @@ public class Option {
 
     public void setPoll(Poll poll) { this.poll = poll; }
 
+    public Voter findVoterByVoterId(Long voterId) {
+        return voters.stream()
+                .filter(voter -> voter.getId().equals(voterId))
+                .findFirst()
+                .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_VOTER));
+    }
 }
