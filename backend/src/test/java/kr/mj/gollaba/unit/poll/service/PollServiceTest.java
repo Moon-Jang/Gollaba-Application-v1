@@ -64,10 +64,12 @@ public class PollServiceTest extends ServiceTest {
                 User creator = UserFactory.createWithId();
                 CreatePollRequest request = generateRequest();
                 request.setUserId(creator.getId());
+                Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
 
                 given(userRepository.findById(anyLong()))
                         .willReturn(Optional.of(creator));
-
+                given(pollRepository.save(any(Poll.class)))
+                        .willReturn(poll);
                 //when
                 pollService.create(request);
 
@@ -86,6 +88,10 @@ public class PollServiceTest extends ServiceTest {
             void save_poll() {
                 //given
                 CreatePollRequest request = generateRequest();
+                Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
+
+                given(pollRepository.save(any(Poll.class)))
+                        .willReturn(poll);
 
                 //when
                 pollService.create(request);
