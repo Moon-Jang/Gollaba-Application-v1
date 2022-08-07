@@ -58,7 +58,7 @@ public class CreatePollRequest implements BaseApiRequest {
 
     }
 
-    public Poll toDto() {
+    public Poll toEntity() {
         Poll poll = Poll.builder()
                 .title(title)
                 .creatorName(creatorName)

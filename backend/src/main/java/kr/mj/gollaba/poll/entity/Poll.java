@@ -75,12 +75,15 @@ public class Poll {
     }
 
     public void vote(Long optionId, Voter voter) {
-        Option option = this.options.stream()
+        Option option = findOptionByOptionId(optionId);
+        voter.vote(option);
+    }
+
+    public Option findOptionByOptionId(Long optionId) {
+        return this.options.stream()
                 .filter(el -> el.getId().equals(optionId))
                 .findFirst()
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_OPTION));
-
-        voter.vote(option);
     }
 
     public void registerCreator(User user) {

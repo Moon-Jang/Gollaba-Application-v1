@@ -1,5 +1,7 @@
 package kr.mj.gollaba.unit.poll.repository;
 
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.dto.PollQueryFilter;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
@@ -97,7 +99,8 @@ class PollQueryRepositoryTest extends RepositoryTest {
         Long pollId = PollFactory.TEST_ID;
 
         //when
-        Poll foundPoll = pollQueryRepository.findById(pollId);
+        Poll foundPoll = pollQueryRepository.findById(pollId)
+                .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
         //then
         assertThat(foundPoll.getId()).isEqualTo(pollId);

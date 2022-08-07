@@ -28,7 +28,9 @@ public enum GollabaErrorCode {
     /* 20000 ~ 29999 poll */
     NOT_EXIST_POLL(20000, HttpStatus.BAD_REQUEST, "존재하지 않는 투표입니다."),
     NOT_EXIST_OPTION(20001, HttpStatus.BAD_REQUEST, "존재하지 않는 옵션입니다."),
-    NOT_EXIST_VOTER(20002, HttpStatus.BAD_REQUEST, "존재하지 않는 투표자입니다.");
+    NOT_EXIST_VOTER(20002, HttpStatus.BAD_REQUEST, "존재하지 않는 투표자입니다."),
+    INVALID_IP_ADDRESS(20003, HttpStatus.BAD_REQUEST, "잘못된 ip주소입니다."),
+    ALREADY_VOTE(20004, HttpStatus.BAD_REQUEST, "이미 해당 항목에 투표를 완료하셨습니다.");
 
 
     private final int code;

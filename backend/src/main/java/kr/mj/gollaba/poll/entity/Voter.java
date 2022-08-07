@@ -58,4 +58,8 @@ public class Voter {
         option.getVoters().add(this);
     }
 
+    public void registerUser(User user) {
+        this.user = user;
+    }
+
 }
