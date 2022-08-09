@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,28 +8,17 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import ProTip from "../src/ProTip";
-import Link from "../src/Link";
-import Checkbox from "@mui/material/Checkbox";
-import Grid from "@mui/material/Grid";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-
 import { Icon } from "@mui/material";
 import { padding } from "@mui/system";
+import { useInView } from "react-intersection-observer";
 
+import axios from "axios";
 import ButtonAppBar from "../components/buttonAppBar";
 import FooterNav from "../components/footerNav";
-import axios from "axios";
-
-import Description from "../components/voting/description";
-import MapOption from "../components/voting/mapOption";
-import CreateBtn from "../components/voting/createBtn";
-import { useRouter } from "next/router";
+import MapPoll from "../components/polls/mapPoll";
 
 const theme = createTheme({
   palette: {
@@ -40,21 +28,22 @@ const theme = createTheme({
   },
 });
 
-export default function Voting() {
-  const router = useRouter();
+export default function Polls() {
   let response;
-  const params = new URLSearchParams(window.location.search);
-  let pollId = params.get("pollId");
-
   const [polls, setPolls] = useState([]);
+  const [ref, inView] = useInView();
+  const [isLoading, setIsLoading] = useState(false);
+  const [offset, setOffset] = useState(0);
 
   const getData = async () => {
+    setIsLoading(true);
     try {
       response = await axios.get(
-        "https://dev.api.gollaba.net/v1/polls/" + pollId
+        `https://dev.api.gollaba.net/v1/polls?limit=15&offset=${offset * 15}`
       );
-      setPolls(response.data);
-      console.log("polls", polls);
+      let arr = [...polls, ...response.data.polls];
+      setPolls(arr);
+      setIsLoading(false);
     } catch (e) {
       response = e.response;
       alert(response.data.error.message);
@@ -65,7 +54,13 @@ export default function Voting() {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [offset]);
+
+  useEffect(() => {
+    if (inView && !isLoading) {
+      setOffset((prevState) => prevState + 1);
+    }
+  }, [inView, isLoading]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -82,14 +77,14 @@ export default function Voting() {
           }}
         >
           <div className="header">
-            <ButtonAppBar titletext={"Voting"} />
+            <ButtonAppBar titletext={"Polls"} />
           </div>
 
           <div className="body" flex="1">
-            <Description data={polls} />
-            <MapOption data={polls} />
+            <MapPoll data={polls} />
+            <Box ref={ref} />
           </div>
-          <CreateBtn />
+
           <div className="footer">
             <FooterNav />
           </div>

@@ -1,20 +1,18 @@
-import * as React from "react";
+import React, { useState } from "react";
+import Router, { userRouter } from "next/router";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import ProTip from "../src/ProTip";
 import Link from "../src/Link";
-import Checkbox from "@mui/material/Checkbox";
-import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import { CookiesProvider, useCookies } from "react-cookie";
+import CommonValidator from "../utils/CommonValidator";
 
 const theme = createTheme({
   palette: {
@@ -25,14 +23,51 @@ const theme = createTheme({
 });
 
 export default function Index() {
+  const [cookies, setCookies, removeCookies] = useCookies(null);
+  const [isErrorId, setIsErrorId] = useState(false);
+  const [helperTextId, setHelperTextId] = useState("");
+  const [isErrorPassword, setIsErrorPassword] = useState(false);
+  const [helperTextPassword, setHelperTextPassword] = useState("");
+
+  const handleChangeId = (event) => {
+    if (
+      event.target.name === "id" &&
+      !CommonValidator.validate("id", event.target.value)
+    ) {
+      setIsErrorId(true);
+      setHelperTextId("ID는 8~32자의 숫자, 문자로 구성되어야 합니다.");
+      return;
+    }
+    setIsErrorId(false);
+    setHelperTextId("");
+  };
+
+  const handleChangePassword = (event) => {
+    if (
+      event.target.name === "password" &&
+      !CommonValidator.validate("password", event.target.value)
+    ) {
+      setIsErrorPassword(true);
+      setHelperTextPassword(
+        "비밀번호는 8~24자의 숫자, 문자, 특수문자가 모두 포함되어야 합니다."
+      );
+      return;
+    }
+    setIsErrorPassword(false);
+    setHelperTextPassword("");
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (isErrorId || isErrorPassword) {
+      alert("Id와 비밀번호가 조건에 맞는지 확인하세요.");
+      return;
+    }
     const input = new FormData(event.currentTarget);
     const payload = {
       id: input.get("id"),
       password: input.get("password"),
     };
-    console.log("handlesubmit payload>> ", payload);
     let response;
     try {
       response = await axios.post(
@@ -42,8 +77,12 @@ export default function Index() {
     } catch (e) {
       response = e.response;
       alert(response.data.error.message);
+      return;
     } finally {
-      console.log("success res >> ", response);
+      if (response.status === 400) return;
+      setCookies("accessToken", response.data.accessToken);
+      setCookies("refreshToken", response.data.refreshToken);
+      Router.push("/polls");
     }
   };
 
@@ -89,6 +128,9 @@ export default function Index() {
               label="아이디"
               name="id"
               variant="standard"
+              helperText={helperTextId}
+              error={isErrorId ? true : false}
+              onChange={handleChangeId}
               autoFocus
             />
             <TextField
@@ -99,7 +141,9 @@ export default function Index() {
               label="비밀번호"
               type="password"
               id="password"
-              autoComplete="current-password"
+              helperText={helperTextPassword}
+              error={isErrorPassword ? true : false}
+              onChange={handleChangePassword}
             />
 
             <Button

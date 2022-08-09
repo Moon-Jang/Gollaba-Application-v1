@@ -21,9 +21,21 @@ const theme = createTheme({
 
 export default function signup() {
   const [res, setRes] = useState(null);
+
+  const [isErrorId, setIsErrorId] = useState(false);
+  const [helperTextId, setHelperTextId] = useState("");
+
+  const [password, setPassword] = useState("");
+  const [isErrorPassword, setIsErrorPassword] = useState(false);
+  const [helperTextPassword, setHelperTextPassword] = useState("");
+
+  const [isErrorNickname, setIsErrorNickname] = useState(false);
+  const [helperTextNickname, setHelperTextNickname] = useState("");
+
+  const [isErrorPasswordCheck, setIsErrorPasswordCheck] = useState(false);
+  const [helperTextPasswordCheck, setHelperTextPasswordCheck] = useState("");
+
   const router = useRouter();
-  let data;
-  // const onValid = (data) => console.log(data, "onvalid");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -70,6 +82,60 @@ export default function signup() {
     }
   };
 
+  const handleChangeId = (event) => {
+    if (
+      event.target.name === "id" &&
+      !CommonValidator.validate("id", event.target.value)
+    ) {
+      setIsErrorId(true);
+      setHelperTextId("ID는 8~32자의 숫자, 문자로 구성되어야 합니다.");
+      return;
+    }
+    setIsErrorId(false);
+    setHelperTextId("");
+  };
+
+  const handleChangeNickName = (event) => {
+    if (
+      event.target.name === "nickName" &&
+      !CommonValidator.validate("nickName", event.target.value)
+    ) {
+      setIsErrorNickname(true);
+      setHelperTextNickname(
+        "닉네임은 2~20자의 숫자, 문자로 구성되어야 합니다."
+      );
+      return;
+    }
+    setIsErrorNickname(false);
+    setHelperTextNickname("");
+  };
+
+  const handleChangePassword = (event) => {
+    setPassword(event.target.value);
+    if (
+      event.target.name === "password" &&
+      !CommonValidator.validate("password", event.target.value)
+    ) {
+      setIsErrorPassword(true);
+      setHelperTextPassword(
+        "비밀번호는 8~24자의 숫자, 문자, 특수문자가 모두 포함되어야 합니다."
+      );
+      return;
+    }
+    setIsErrorPassword(false);
+    setHelperTextPassword("");
+  };
+
+  const handleChangePasswordCheck = (event) => {
+    if (event.target.value !== password) {
+      setIsErrorPasswordCheck(true);
+      setHelperTextPasswordCheck("비밀번호와 비밀번호 확인이 서로 다릅니다.");
+      return;
+    }
+    setIsErrorPasswordCheck(false);
+    setHelperTextPasswordCheck("");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -105,7 +171,9 @@ export default function signup() {
               label="아이디"
               name="id"
               variant="standard"
-              autoFocus
+              helperText={helperTextId}
+              error={isErrorId ? true : false}
+              onChange={handleChangeId}
             />
 
             <TextField
@@ -116,6 +184,9 @@ export default function signup() {
               variant="standard"
               label="닉네임"
               id="nickName"
+              helperText={helperTextNickname}
+              error={isErrorNickname ? true : false}
+              onChange={handleChangeNickName}
             />
 
             <TextField
@@ -127,6 +198,9 @@ export default function signup() {
               label="비밀번호"
               type="password"
               id="password"
+              helperText={helperTextPassword}
+              error={isErrorPassword ? true : false}
+              onChange={handleChangePassword}
             />
 
             <TextField
@@ -138,6 +212,9 @@ export default function signup() {
               label="비밀번호 확인"
               type="password"
               id="passwordCheck"
+              helperText={helperTextPasswordCheck}
+              error={isErrorPasswordCheck ? true : false}
+              onChange={handleChangePasswordCheck}
             />
 
             <Button
@@ -148,7 +225,7 @@ export default function signup() {
               style={{ verticalAlign: "middle", color: "#000000" }}
               sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
             >
-              Sign up
+              회원가입
             </Button>
           </Box>
         </Box>

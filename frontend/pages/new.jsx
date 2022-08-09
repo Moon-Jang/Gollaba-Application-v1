@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -25,12 +24,12 @@ import { padding } from "@mui/system";
 
 import ButtonAppBar from "../components/buttonAppBar";
 import FooterNav from "../components/footerNav";
-import axios from "axios";
+import TitleAndCheckbox from "../components/new/titleAndCheckbox";
 
-import Description from "../components/voting/description";
-import MapOption from "../components/voting/mapOption";
-import CreateBtn from "../components/voting/createBtn";
-import { useRouter } from "next/router";
+import AddAndDelete from "../components/new/addAndDelete";
+import Option from "../components/new/option";
+import Options from "../components/new/options";
+import CreateBtn from "../components/new/createBtn";
 
 const theme = createTheme({
   palette: {
@@ -40,32 +39,25 @@ const theme = createTheme({
   },
 });
 
-export default function Voting() {
-  const router = useRouter();
-  let response;
-  const params = new URLSearchParams(window.location.search);
-  let pollId = params.get("pollId");
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  console.log("hello");
+};
 
-  const [polls, setPolls] = useState([]);
+const initPollingItems = [
+  {
+    description: "",
+  },
+  {
+    description: "",
+  },
+];
 
-  const getData = async () => {
-    try {
-      response = await axios.get(
-        "https://dev.api.gollaba.net/v1/polls/" + pollId
-      );
-      setPolls(response.data);
-      console.log("polls", polls);
-    } catch (e) {
-      response = e.response;
-      alert(response.data.error.message);
-    } finally {
-      return response;
-    }
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
+export default function Polls() {
+  const [title, setTitle] = useState("");
+  const [responseType, setResponseType] = useState("SINGLE");
+  const [isBallot, setIsBallot] = useState(false);
+  const [pollingItems, setPollingItems] = useState([...initPollingItems]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -82,14 +74,39 @@ export default function Voting() {
           }}
         >
           <div className="header">
-            <ButtonAppBar titletext={"Voting"} />
+            <ButtonAppBar titletext={"New"} />
           </div>
 
-          <div className="body" flex="1">
-            <Description data={polls} />
-            <MapOption data={polls} />
-          </div>
-          <CreateBtn />
+          <Box
+            className="body"
+            flex="1"
+            component="form"
+            onSubmit={handleSubmit}
+          >
+            <TitleAndCheckbox
+              setTitle={setTitle}
+              responseType={responseType}
+              setResponseType={setResponseType}
+              isBallot={isBallot}
+              setIsBallot={setIsBallot}
+            />
+
+            <Options
+              pollingItems={pollingItems}
+              setPollingItems={setPollingItems}
+            />
+            <AddAndDelete
+              pollingItems={pollingItems}
+              setPollingItems={setPollingItems}
+            />
+          </Box>
+
+          <CreateBtn
+            title={title}
+            responseType={responseType}
+            isBallot={isBallot}
+            pollingItems={pollingItems}
+          />
           <div className="footer">
             <FooterNav />
           </div>
