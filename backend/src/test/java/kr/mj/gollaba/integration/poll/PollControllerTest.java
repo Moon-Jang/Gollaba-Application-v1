@@ -94,7 +94,7 @@ class PollControllerTest extends IntegrationTest {
         VoteRequest request = new VoteRequest();
         request.setPollId(PollFactory.TEST_ID);
         request.setUserId(UserFactory.TEST_ID);
-        request.setOptionId(OptionFactory.TEST_ID);
+        request.setOptionIds(List.of(OptionFactory.TEST_ID));
         request.setVoterName(VoterFactory.TEST_VOTER_NAME);
         request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
 

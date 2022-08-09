@@ -1,9 +1,12 @@
 package kr.mj.gollaba.unit.poll.service;
 
 import kr.mj.gollaba.common.util.CryptUtils;
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;
+import kr.mj.gollaba.poll.entity.Voter;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.poll.service.PollService;
@@ -25,8 +28,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -180,7 +185,99 @@ public class PollServiceTest extends ServiceTest {
     @Nested
     class vote {
 
-        @DisplayName("요청한 투표id 와 항목id가 정상일 경우")
+        @DisplayName("단일 투표일 경우")
+        @Nested
+        class when_response_type_single {
+
+            @DisplayName("투표를 중복으로하면 유효성 검사를 실패한다.")
+            @Test
+            void throw_exception_by_multi_option() {
+                //given
+                List<Option> options = OptionFactory.createListWithId();
+                Poll poll = PollFactory.createWithId(null, options);
+                poll.updateResponseType(PollingResponseType.SINGLE);
+                VoteRequest request = new VoteRequest();
+                request.setPollId(PollFactory.TEST_ID);
+                request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
+                request.setVoterName(VoterFactory.TEST_VOTER_NAME);
+                request.setUserId(null);
+                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                given(pollQueryRepository.findById(anyLong()))
+                        .willReturn(Optional.of(poll));
+
+                //when then
+                assertThatThrownBy(() -> pollService.vote(request))
+                        .hasMessage(GollabaErrorCode.NOT_AVAILABLE_MULTI_VOTE_BY_RESPONSE_TYPE.getDescription())
+                        .isInstanceOf(GollabaException.class);
+
+                verify(pollQueryRepository, times(1)).findById(eq(PollFactory.TEST_ID));
+            }
+
+        }
+
+        @DisplayName("익명 투표일 경우")
+        @Nested
+        class when_ballot_poll {
+
+            @DisplayName("투표자를 이름을 입력하면 유효성 검사를 실패한다.")
+            @Test
+            void throw_exception_by_voter_name() {
+                //given
+                List<Option> options = OptionFactory.createListWithId();
+                Poll poll = PollFactory.createWithIdAndBallot(null, options);
+                poll.updateResponseType(PollingResponseType.MULTI);
+                VoteRequest request = new VoteRequest();
+                request.setPollId(PollFactory.TEST_ID);
+                request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
+                request.setVoterName(VoterFactory.TEST_VOTER_NAME);
+                request.setUserId(null);
+                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                given(pollQueryRepository.findById(anyLong()))
+                        .willReturn(Optional.of(poll));
+
+                //when then
+                assertThatThrownBy(() -> pollService.vote(request))
+                        .hasMessage(GollabaErrorCode.DONT_NEED_VOTER_NAME.getDescription())
+                        .isInstanceOf(GollabaException.class);
+
+                verify(pollQueryRepository, times(1)).findById(eq(PollFactory.TEST_ID));
+            }
+        }
+
+        @DisplayName("동일한 ip 주소로 여러번 요청활 경우")
+        @Nested
+        class when_duplicate_ip_address {
+
+            @DisplayName("ip 중복으로 유효성 검사를 실패한다.")
+            @Test
+            void throw_exception_by_duplicated_ipAddress() {
+                //given
+                List<Option> options = OptionFactory.createListWithId();
+                Voter voter = VoterFactory.createWithId(options.get(0), null);
+                Poll poll = PollFactory.createWithId(null, options);
+                poll.updateResponseType(PollingResponseType.MULTI);
+                VoteRequest request = new VoteRequest();
+                request.setPollId(PollFactory.TEST_ID);
+                request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
+                request.setVoterName(VoterFactory.TEST_VOTER_NAME);
+                request.setUserId(null);
+                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                given(pollQueryRepository.findById(anyLong()))
+                        .willReturn(Optional.of(poll));
+                given(cryptUtils.decrypt(anyString()))
+                        .willReturn(VoterFactory.TEST_IP_ADDRESS);
+
+                //when then
+                assertThatThrownBy(() -> pollService.vote(request))
+                        .hasMessage(GollabaErrorCode.ALREADY_VOTE.getDescription())
+                        .isInstanceOf(GollabaException.class);
+
+                verify(pollQueryRepository, times(1)).findById(eq(PollFactory.TEST_ID));
+            }
+
+        }
+
+        @DisplayName("정상 요청일 경우")
         @Nested
         class when_request_is_valid {
 
@@ -203,7 +300,7 @@ public class PollServiceTest extends ServiceTest {
                 VoteRequest request = new VoteRequest();
                 request.setPollId(PollFactory.TEST_ID);
                 request.setUserId(UserFactory.TEST_ID);
-                request.setOptionId(options.get(0).getId());
+                request.setOptionIds(List.of(options.get(0).getId()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
 

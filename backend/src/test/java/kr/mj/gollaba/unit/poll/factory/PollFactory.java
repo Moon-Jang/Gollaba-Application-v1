@@ -70,4 +70,20 @@ public class PollFactory {
         return poll;
     }
 
+    public static Poll createWithIdAndBallot(User user, List<Option> options) {
+        Poll poll = Poll.builder()
+                .id(TEST_ID)
+                .title(TEST_TITLE)
+                .creatorName(TEST_CREATOR_NAME)
+                .responseType(TEST_RESPONSE_TYPE)
+                .isBallot(true)
+                .build();
+
+        poll.registerCreator(user);
+        options.stream()
+                .forEach(el -> poll.addOption(el));
+
+        return poll;
+    }
+
 }

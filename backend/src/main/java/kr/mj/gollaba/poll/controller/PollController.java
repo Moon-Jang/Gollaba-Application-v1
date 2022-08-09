@@ -76,7 +76,6 @@ public class PollController {
     public ResponseEntity<Boolean> vote(@Validated @RequestBody VoteRequest request) {
         request.setIpAddress(HttpRequestUtils.getClientIpAddress());
 
-        System.out.println();
         pollService.vote(request);
 
         return ResponseEntity

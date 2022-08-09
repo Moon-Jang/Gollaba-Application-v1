@@ -36,14 +36,22 @@ public class CryptUtils {
         return encryptedStr;
     }
 
-    public byte[] decryptToBytes(String key, byte[] bytesToDecrypt) throws Exception {
+    public byte[] decryptToBytes(String key, byte[] bytesToDecrypt) {
         SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        return  cipher.doFinal(bytesToDecrypt);
+        byte[] result = null;
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            result = cipher.doFinal(bytesToDecrypt);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return  result;
     }
 
-    public String decrypt(String strToDecrypt) throws Exception {
+    public String decrypt(String strToDecrypt) {
         byte[] bytesToDecrypt = Base64.getDecoder().decode(strToDecrypt);
         String decreptedStr = new String(decryptToBytes(encryptKey, bytesToDecrypt));
         return decreptedStr;
