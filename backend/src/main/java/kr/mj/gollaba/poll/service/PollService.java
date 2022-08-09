@@ -8,13 +8,13 @@ import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.entity.Voter;
 import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
+import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,20 +63,31 @@ public class PollService {
     }
 
     public void vote(VoteRequest request) {
-        request.validate();
-        Voter voter = request.toEntity(cryptUtils);
-
-        if (request.getUserId() != null) {
-            User user = userRepository.findById(request.getUserId())
-                    .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_USER));
-            voter.registerUser(user);
-        }
-
+        User user = null;
         Poll poll = pollQueryRepository.findById(request.getPollId())
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
-        poll.vote(request.getOptionId(), voter);
+        request.validate(poll, cryptUtils);
+
+        if (request.getUserId() != null) {
+            user = userRepository.findById(request.getUserId())
+                    .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_USER));
+        }
+
+        for (Long optionId : request.getOptionIds()) {
+            Voter voter = Voter.builder()
+                    .voterName(request.getVoterName() != null ? request.getVoterName() : request.generateVoterName(poll))
+                    .ipAddress(cryptUtils.encrypt(request.getIpAddress()))
+                    .build();
+
+            if (user != null) {
+                voter.registerUser(user);
+            }
+
+            poll.vote(optionId, voter);
+        }
 
         pollRepository.save(poll);
     }
+
 }
