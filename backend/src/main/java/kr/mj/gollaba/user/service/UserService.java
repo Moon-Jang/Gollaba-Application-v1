@@ -5,7 +5,7 @@ import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.SignupResponse;
 import kr.mj.gollaba.user.entity.User;
-import kr.mj.gollaba.unit.repository.UserRepository;
+import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public SignupResponse save(SignupRequest request) {
-        if (userRepository.existsByUniqueId(request.getUniqueId())) {
+        if (userRepository.existsByUniqueId(request.getId())) {
             throw new GollabaException(GollabaErrorCode.ALREADY_EXIST_USER);
         }
 

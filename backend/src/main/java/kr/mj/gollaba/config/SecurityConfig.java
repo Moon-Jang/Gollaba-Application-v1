@@ -1,17 +1,14 @@
 package kr.mj.gollaba.config;
 
-import kr.mj.gollaba.security.JwtAuthenticationEntryPoint;
-import kr.mj.gollaba.security.JwtTokenFilter;
+import kr.mj.gollaba.auth.JwtAuthenticationEntryPoint;
+import kr.mj.gollaba.auth.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -22,9 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final JwtTokenFilter jwtTokenFilter;
+
     private final String[] permitAllList = {
-            "/api/v1/signup",
-            "/api/v1/login",
+            "/v1/signup",
+            "/v1/login",
             "/health-check", // aws - target group
             "/h2-console/**", // h2-console
             "/v3/api-docs", // swagger
@@ -32,12 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**", // swagger
             "/webjars/**", // swagger
     };
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

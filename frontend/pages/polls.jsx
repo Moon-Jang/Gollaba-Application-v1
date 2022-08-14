@@ -12,7 +12,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import { Icon } from "@mui/material";
-import { padding } from "@mui/system";
 import { useInView } from "react-intersection-observer";
 
 import axios from "axios";
