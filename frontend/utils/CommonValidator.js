@@ -8,12 +8,20 @@ const CommonValidator = {
     message: "비밀번호는 8~24개의 숫자, 문자, 특수문자로 이루어져야 합니다.",
   },
   nickName: {
-    regExp: /[a-zA-Z0-9]{2,20}$/,
+    regExp: /^[a-zA-Z0-9]{2,20}$/,
     message: "닉네임은 2~20개의 숫자, 문자로 이루어져야 합니다.",
+  },
+  pollcreatorName: {
+    regExp: /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]{2,50}$/,
+    message: "작성자 이름는 최소 4글자에서 최대 50글자 입니다.",
   },
   pollTitle: {
     regExp: /^.{4,50}$/,
     message: "투표 주제는 최소 4글자에서 최대 50글자 입니다.",
+  },
+  pollItem: {
+    regExp: /^.{2,50}$/,
+    message: "최소 2글자에서 최대 50글자 입니다.",
   },
   validate: (key, target) => {
     const { regExp } = CommonValidator[key];
