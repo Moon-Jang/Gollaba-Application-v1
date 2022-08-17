@@ -20,13 +20,9 @@ import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 
-import { Icon } from "@mui/material";
-import { padding } from "@mui/system";
-
 import ButtonAppBar from "../components/buttonAppBar";
 import FooterNav from "../components/footerNav";
 import axios from "axios";
-
 import Description from "../components/voting/description";
 import MapOption from "../components/voting/mapOption";
 import CreateBtn from "../components/voting/createBtn";
@@ -37,6 +33,10 @@ const theme = createTheme({
     primary: {
       main: "#808080",
     },
+  },
+  typography: {
+    fontFamily: "'Jua', sans-serif",
+    //fontFamily: "GmarketSansMedium",
   },
 });
 

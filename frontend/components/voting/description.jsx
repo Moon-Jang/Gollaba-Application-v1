@@ -45,7 +45,7 @@ export default function Description(props) {
               justifyContent: "center",
               alignItems: "center",
               fontWeight: "bold",
-              fontSize: 17,
+              fontSize: 15,
             }}
           >
             {data.title}
