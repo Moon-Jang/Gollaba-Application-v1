@@ -22,7 +22,7 @@ export default function FooterNav() {
       <BottomNavigation
         sx={{}}
         showLabels
-        fullWidth
+        // fullWidth
         value={value}
         onChange={(event, newValue) => {
           setValue(newValue);

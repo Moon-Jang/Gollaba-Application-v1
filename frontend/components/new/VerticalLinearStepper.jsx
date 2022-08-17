@@ -1,31 +1,86 @@
-import { Button, Paper, Step, StepContent, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, CircularProgress, Paper, Step, StepContent, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import React, { useState } from "react";
 import { useRef } from "react";
-import CommonValidator from "../../utils/CommonValidator";
 import IdGenerator from "../../utils/IdGenerator";
 import DraggableList from "./DraggableList";
-  
+import AddPollButtion from "./AddPollButton";
+import PollTitle from "./PollTitle";
+import ApiGateway from "../../apis/ApiGateway";
+import { useRouter } from "next/router";
+import PollCreatorName from "./PollCreatorName";
+
+const RESPONSE_TYPE_SIGNLE = "SINGNLE";
+const RESPONSE_TYPE_MULTI = "MULTI";
+
+const steps = ['작성자 이름을 입력해주세요.', '투표 주제를 입력해주세요.', '투표 항목을 생성해주세요.', '투표 옵션을 선택해주세요.'];
+
 export default function VerticalLinearStepper() {
   const classes = useStyles();
+  const router = useRouter();
   const [activeStep, setActiveStep] = useState(0);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const nameRef = useRef({value: "", isInvalid: false});
   const titleRef = useRef({ value: "", isInvalid: false });
-  const itemsRef = useRef([{ value: { id: IdGenerator.generate(), description: "test" }, isInvalid: false }, { id: IdGenerator.generate(), value: { description: "test2" }, isInvalid: false }]);
-  const optionsValue = useRef({ isBallot : false, responseType: "SINGLE" });
-  const steps = getSteps();
+  const itemsRef = useRef([{ id: IdGenerator.generate(), value: { description: "" }, isInvalid: false }, { id: IdGenerator.generate(), value: { description: "" }, isInvalid: false }]);
+  const optionsRef = useRef({ isBallot : false, responseType: RESPONSE_TYPE_SIGNLE });
 
   const handleNext = () => {
-    if (titleRef.current.isInvalid) return;
+    if (isSubmit) return;
+
+    switch(activeStep) {
+      case 0:
+        if (nameRef.current.value === "" || nameRef.current.isInvalid) return;
+        break;
+      case 1:
+        if (titleRef.current.value === "" || titleRef.current.isInvalid) return;
+        break;
+      case 2:
+        if (itemsRef.current.some(el => el.isInvalid === true)) return;
+        break;
+      case 3:
+        handleSubmmit();
+        return;
+      default:
+        console.error("존재하지 않는 스텝입니다.");
+    }
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
+  const handleSubmmit = async () => {
+    //setIsSubmit(true)
+
+    if (itemsRef.current.some(el => el.value.description === "")) {
+        alert("빈 항목이 존재합니다. 항목을 수정해주세요.")
+        setIsSubmit(false)
+        return;
+    }
+    const currentTimestamp = +new Date();
+    const defaultEndedAt = new Date(currentTimestamp + (1000 * 60 * 60 * 24 * 7)).toISOString();
+
+    const payload = {
+      title: titleRef.current.value,
+      creatorName: nameRef.current.value,
+      options: itemsRef.current.map(el => ({description: el.value.description})),
+      endedAt: defaultEndedAt,
+      isBallot: optionsRef.current.isBallot,
+      responseType: optionsRef.current.responseType,
+    }
+    
+    const response = await ApiGateway.createPoll(payload);
+
+    if (response.error) {
+      alert(response);
+      setIsSubmit(false);
+      return;
+    }
+
+    router.push("/voting/" + response.pollId);
+  }
+
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
   };
 
   return (
@@ -35,7 +90,7 @@ export default function VerticalLinearStepper() {
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <StepContent>
-              <Typography>{getStepContent(index, [titleRef, itemsRef, optionsValue])}</Typography>
+              {getStepContent(index, [nameRef, titleRef, itemsRef, optionsRef])}
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -43,7 +98,7 @@ export default function VerticalLinearStepper() {
                     onClick={handleBack}
                     className={classes.button}
                   >
-                    Back
+                    이전
                   </Button>
                   <Button
                     variant="contained"
@@ -51,7 +106,8 @@ export default function VerticalLinearStepper() {
                     onClick={handleNext}
                     className={classes.button}
                   >
-                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                    {isSubmit && <CircularProgress size={24} color="info" />}
+                    {!isSubmit && (activeStep === steps.length - 1 ? '완료' : '다음')}
                   </Button>
                 </div>
               </div>
@@ -59,14 +115,6 @@ export default function VerticalLinearStepper() {
           </Step>
         ))}
       </Stepper>
-      {activeStep === steps.length && (
-        <Paper square elevation={0} className={classes.resetContainer}>
-          <Typography>All steps completed - you&apos;re finished</Typography>
-          <Button onClick={handleReset} className={classes.button}>
-            Reset
-          </Button>
-        </Paper>
-      )}
     </div>
   );
 }
@@ -88,74 +136,43 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
   },
 }));
-  
-function getSteps() {
-  return ['투표 주제를 입력해주세요.', '투표 항목을 생성해주세요.', '투표 옵션을 선택해주세요.'];
-}
 
 function getStepContent(step, refs) {
   switch (step) {
     case 0:
-      return <PollTitle titleRef={refs[step]} />;
+      return <PollCreatorName nameRef={refs[step]} />;
     case 1:
-      return <PollItems itemsRef={refs[step]} />;
+      return <PollTitle titleRef={refs[step]} />;
     case 2:
-      return `Try out different ad text to see what brings in the most customers,
-              and learn how to enhance your ads using features like ad extensions.
-              If you run into any problems with your ads, find out how to tell if
-              they're running and how to resolve approval issues.`;
+      return <PollItemsWrapper itemsRef={refs[step]}/>;
+    case 3:
+      return <PollOptionsWrapper optionsRef={refs[step]}/>;
     default:
       return 'Unknown step';
   }
 }
 
+export const PollItemsContext = React.createContext(null);
 
-const pollTitleStyles = makeStyles((themes) => ({
-  inputTitle: {
-    width:"100%"
-  }
-}))
+function PollItemsWrapper({itemsRef}) {
+    const itemListState = useState(itemsRef.current);
 
-function PollTitle({titleRef}) {
-  const classes = pollTitleStyles();
-  const [isInvalid, setIsInvalid] = useState(false);
-  const [title, setTitle] = useState(titleRef.current.value);
-  
-  const handleChange = (event) => {
-    const {value} = event.target;
-
-    if (!CommonValidator.validate("pollTitle", value)) {
-      titleRef.current.isInvalid = true;
-      setIsInvalid(true)
-    } else {
-      titleRef.current.isInvalid = false;
-      setIsInvalid(false)
-    }
-
-    titleRef.current.value = value;
-    setTitle(value);
-  };
-
-  return <TextField className={classes.inputTitle}
-            label=""
-            variant="standard"
-            name="pollTitle"
-            value={title}
-            error={isInvalid}
-            helperText={isInvalid ? CommonValidator.pollTitle.message : ""}
-            onChange={handleChange} 
-            />;
+    return <PollItemsContext.Provider value={{itemsRef, itemListState}}>
+        <PollItems itemsRef={itemsRef} itemListState={itemListState} />
+        <AddPollButtion itemsRef={itemsRef} itemListState={itemListState} />
+    </PollItemsContext.Provider>
 }
 
-function PollItems({itemsRef}) {
-  const [items, setItems] = useState(itemsRef.current);
+function PollItems({itemsRef, itemListState}) {
+  const [items, setItems] = itemListState;
 
   const onDragEnd = ({ destination, source }) => {
     // dropped outside the list
     if (!destination) return;
 
     const newItems = reorder(items, source.index, destination.index);
-
+    
+    itemsRef.current = newItems;
     setItems(newItems);
   };
 
@@ -168,41 +185,70 @@ function PollItems({itemsRef}) {
   }
 
   return <DraggableList items={itemsRef.current} onDragEnd={onDragEnd} />
-  //return itemsRef.current.map(el => <PollItem itemRef={el} />)
 }
 
+const pollOptionStyles = makeStyles((theme) => ({
+    container: {
+      width: "100%",
+      height: "100px",
+      display: "flex",
+      flexDirection: "column"
+    },
+    wrapper: {
+        width: "100%",
+        height: "40px",
+        marginTop: "8px"
+    },
+    actionsContainer: {
+      marginBottom: theme.spacing(2),
+    },
+    resetContainer: {
+      padding: theme.spacing(3),
+    },
+  }));
 
-const pollItemStyles = makeStyles((themes) => ({
-  container: {
-    width: "100%",
-    height: "64px",
-    marginTop: themes.spacing(2),
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  dragIconWrap: {
-    width: "40px",
-    height: "40px"
-  },
-  descriptionWrap: {
-    flex: 1
-  },
-  deleteIconWrap: {
-    width: "40px",
-    height: "40px"
-  }
-}))
+function PollOptionsWrapper({optionsRef}) {
+    const classes = pollOptionStyles();
+    const [checkedIsBallot, setCheckedIsBallot] = useState(optionsRef.current.isBallot);
+    const [checkedResponseType, setCheckedResponseType] = useState(optionsRef.current.responseType === RESPONSE_TYPE_SIGNLE ? false : true);
 
-function PollItem({itemRef}) {
-  const classes = pollItemStyles();
-  const [description, setDescription] = useState(itemRef.value.description);
-  const [isInvalid, setIsInvalid] = useState(false);
+    const handleChangeIsBallot = () => {
+        optionsRef.current.isBallot = !optionsRef.current.isBallot;
+        setCheckedIsBallot((prev) => !prev);
+    }
 
-  return <div className={classes.container}>
-    <div className={classes.dragIconWrap}></div>
-    <div className={classes.descriptionWrap}>{description}</div>
-    <div className={classes.deleteIconWrap}></div>
-  </div>;
+    const handleChangeResponseType = () => {
+        if (optionsRef.current.responseType === RESPONSE_TYPE_SIGNLE) {
+            optionsRef.current.responseType = RESPONSE_TYPE_MULTI;
+            setCheckedResponseType(prev => !prev);
+            return;
+        }
 
+        if (optionsRef.current.responseType === RESPONSE_TYPE_MULTI) {
+            optionsRef.current.responseType = RESPONSE_TYPE_SIGNLE;
+            setCheckedResponseType(prev => !prev);
+            return;
+        }
+    }
+
+    return <div className={classes.container}>
+        <PollOption onChange={handleChangeIsBallot} checked={checkedIsBallot} label={"익명 투표"}/>
+        <PollOption onChange={handleChangeResponseType} checked={checkedResponseType} label={"복수 선택"}/>
+    </div>;
 }
+
+function PollOption({onChange, checked, label}) {
+    const classes = pollOptionStyles();
+
+    return (
+        <div className={classes.wrapper}>
+            <Checkbox
+                checked={checked}
+                color="primary"
+                onChange={onChange}
+            />
+            <Typography component={"span"}>{label}</Typography>
+        </div>
+    )
+}
+
