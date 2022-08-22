@@ -4,14 +4,14 @@ import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
-import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.entity.Option;
+import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,9 +34,11 @@ public class CreatePollRequest implements BaseApiRequest {
     @Size(min = 2, max = 50)
     private String creatorName;
 
+    @NotNull
     @ApiModelProperty(example = "SINGLE", required = true)
     private PollingResponseType responseType;
 
+    @NotNull
     @ApiModelProperty(example = "true", required = true)
     private Boolean isBallot;
 

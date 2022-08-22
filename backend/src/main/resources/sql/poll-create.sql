@@ -163,7 +163,7 @@ VALUES
 (DEFAULT, 9, '테스트 투표149', 'example149', 'SINGLE', 0, '2023-08-01 20:19:09', '2022-07-25 20:19:09', '2022-07-25 20:19:09'),
 (DEFAULT, 10, '테스트 투표150', 'example150', 'SINGLE', 0, '2023-08-01 20:19:09', '2022-07-25 20:19:09', '2022-07-25 20:19:09');
 
-INSERT INTO poll_option (poll_option_id, poll_id, description, position, created_at, updated_at)
+INSERT INTO poll_option (poll_option_id, poll_id, description, `position`, created_at, updated_at)
 VALUES
 (DEFAULT, 1, '항목0', 0, '2022-07-23 18:41:05', '2022-07-23 18:41:05'),
 (DEFAULT, 1, '항목1', 1, '2022-07-23 18:41:05', '2022-07-23 18:41:05'),
@@ -765,3 +765,4 @@ VALUES
 (DEFAULT, 150, '항목1', 1, '2022-07-23 18:41:05', '2022-07-23 18:41:05'),
 (DEFAULT, 150, '항목2', 2, '2022-07-23 18:41:05', '2022-07-23 18:41:05'),
 (DEFAULT, 150, '항목3', 3, '2022-07-23 18:41:05', '2022-07-23 18:41:05');
+

@@ -42,31 +42,8 @@ public class VoteRequest implements BaseApiRequest {
 
     @Override
     public void validate() {
-
-    }
-
-    public void validate(Poll poll, CryptUtils cryptUtils) {
         if (!StringUtils.hasText(ipAddress)) {
             throw new GollabaException(GollabaErrorCode.INVALID_IP_ADDRESS);
-        }
-
-        if (poll.getResponseType() == PollingResponseType.SINGLE && this.getOptionIds().size() > 1) {
-            throw new GollabaException(GollabaErrorCode.NOT_AVAILABLE_MULTI_VOTE_BY_RESPONSE_TYPE);
-        }
-
-        if (poll.getIsBallot() && voterName != null) {
-            throw new GollabaException(GollabaErrorCode.DONT_NEED_VOTER_NAME);
-        }
-
-        final boolean isAlreadyVote = poll.getOptions()
-                .stream()
-                .flatMap(option -> option.getVoters().stream())
-                .filter(voter -> optionIds.contains(voter.getOption().getId()))
-                .map(voter -> cryptUtils.decrypt(voter.getIpAddress()))
-                .anyMatch(address -> address.equals(this.ipAddress));
-
-        if (isAlreadyVote) {
-            throw new GollabaException(GollabaErrorCode.ALREADY_VOTE);
         }
     }
 

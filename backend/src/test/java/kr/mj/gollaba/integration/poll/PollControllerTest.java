@@ -23,6 +23,7 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +43,7 @@ class PollControllerTest extends IntegrationTest {
 
         //then
         resultActions
+                .andDo(print())
                 .andExpect(status().isCreated());
     }
 
@@ -62,6 +64,7 @@ class PollControllerTest extends IntegrationTest {
 
         //then
         resultActions
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("totalCount").value(150))
                 .andExpect(jsonPath("polls").isArray());
@@ -81,6 +84,7 @@ class PollControllerTest extends IntegrationTest {
 
         //then
         resultActions
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("pollId").isNumber());
     }
@@ -107,6 +111,7 @@ class PollControllerTest extends IntegrationTest {
 
         //then
         resultActions
+                .andDo(print())
                 .andExpect(status().isCreated());
     }
 
