@@ -56,7 +56,7 @@ public class PollServiceTest extends ServiceTest {
 
     @DisplayName("create 메서드는")
     @Nested
-    class save {
+    class create {
 
         @DisplayName("회원일 경우")
         @Nested

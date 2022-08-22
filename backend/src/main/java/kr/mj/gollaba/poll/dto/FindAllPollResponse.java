@@ -46,6 +46,7 @@ public class FindAllPollResponse implements BaseApiResponse {
                                 .map(option -> OptionResponse.builder()
                                         .optionId(option.getId())
                                         .description(option.getDescription())
+                                        .voteCount(option.getVoters().size())
                                         .createdAt(option.getCreatedAt())
                                         .updatedAt(option.getUpdatedAt())
                                         .build())
@@ -101,6 +102,8 @@ public class FindAllPollResponse implements BaseApiResponse {
 
         private String description;
 
+        private int voteCount;
+
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
 
@@ -108,7 +111,7 @@ public class FindAllPollResponse implements BaseApiResponse {
         private LocalDateTime updatedAt;
 
         @Builder
-        public OptionResponse(Long optionId, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        public OptionResponse(Long optionId, String description, int voteCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
             this.optionId = optionId;
             this.description = description;
             this.createdAt = createdAt;

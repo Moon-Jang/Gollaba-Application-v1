@@ -13,6 +13,7 @@ import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -63,11 +64,12 @@ public class PollService {
     }
 
     public void vote(VoteRequest request) {
+        request.validate();
         User user = null;
         Poll poll = pollQueryRepository.findById(request.getPollId())
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
-        request.validate(poll, cryptUtils);
+        validateVote(poll, request);
 
         if (request.getUserId() != null) {
             user = userRepository.findById(request.getUserId())
@@ -88,6 +90,27 @@ public class PollService {
         }
 
         pollRepository.save(poll);
+    }
+
+    private void validateVote(Poll poll, VoteRequest request) {
+        if (poll.getResponseType() == PollingResponseType.SINGLE && request.getOptionIds().size() > 1) {
+            throw new GollabaException(GollabaErrorCode.NOT_AVAILABLE_MULTI_VOTE_BY_RESPONSE_TYPE);
+        }
+
+        if (poll.getIsBallot() && request.getVoterName() != null) {
+            throw new GollabaException(GollabaErrorCode.DONT_NEED_VOTER_NAME);
+        }
+
+        final boolean isAlreadyVote = poll.getOptions()
+                .stream()
+                .flatMap(option -> option.getVoters().stream())
+                .filter(voter -> request.getOptionIds().contains(voter.getOption().getId()))
+                .map(voter -> cryptUtils.decrypt(voter.getIpAddress()))
+                .anyMatch(address -> address.equals(request.getIpAddress()));
+
+        if (isAlreadyVote) {
+            throw new GollabaException(GollabaErrorCode.ALREADY_VOTE);
+        }
     }
 
 }
