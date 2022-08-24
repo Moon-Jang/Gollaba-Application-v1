@@ -1,3 +1,5 @@
+import Logout from './logout'
+
 export default function AccountMenu() {
     return (
         <>
@@ -5,6 +7,7 @@ export default function AccountMenu() {
             <div>즐겨찾기</div>
             <div>비밀번호 변경</div>
             <div>로그아웃</div>
+            <Logout />
         </>
     )
 }
