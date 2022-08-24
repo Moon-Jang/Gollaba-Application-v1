@@ -10,13 +10,20 @@ export default function Poll(props) {
   const data = props.data;
   const options = data.options;
   const [isExtend, setIsExtend] = useState(false);
+  console.log("opts>", options);
+
+  let temp = 0;
+  for (let i = 0; i < options.length; i++) {
+    temp = temp + options[i].voteCount;
+  }
 
   //const map1 = options.map((el) => console.log("map?", el.description));
   const map1 = options.map((el) => {
+    console.log("props>>", el);
     return (
       <Box mt={0.5} mr={1} mb={0.5}>
         {el.description}
-        <LinearProgress variant="determinate" value={10} />
+        <LinearProgress variant="determinate" value={el.voteCount / temp} />
       </Box>
     );
   });
