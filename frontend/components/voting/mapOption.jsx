@@ -3,17 +3,18 @@ import Option from "./option";
 
 const MapOption = (props) => {
   const data = props.data.options;
-  const [chosenOption, setChosenOption] = useState(0);
-  console.log("mapoption data>>", data);
+  const voted = props.voted;
+  const setVoted = props.setVoted;
+  const responseType = props.data.responseType;
 
   if (!data) return <></>;
-
   return data.map((el, index) => (
     <Option
       data={el}
+      responseType={responseType}
       index={index}
-      chosenOption={chosenOption}
-      setChosenOption={setChosenOption}
+      voted={voted}
+      setVoted={setVoted}
     />
   ));
 };

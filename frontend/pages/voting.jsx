@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -46,6 +46,7 @@ export default function Voting() {
   const params = new URLSearchParams(window.location.search);
   let pollId = params.get("pollId");
 
+  const [selected, setSelected] = useState([]);
   const [polls, setPolls] = useState([]);
 
   const getData = async () => {
@@ -54,7 +55,7 @@ export default function Voting() {
         "https://dev.api.gollaba.net/v1/polls/" + pollId
       );
       setPolls(response.data);
-      console.log("polls", polls);
+      console.log(">>>", response.data);
     } catch (e) {
       response = e.response;
       alert(response.data.error.message);
@@ -66,6 +67,8 @@ export default function Voting() {
   useEffect(() => {
     getData();
   }, []);
+
+  const [voted, setVoted] = useState([]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -79,20 +82,29 @@ export default function Voting() {
             flexDirection: "column",
             alignItems: "left",
             justifyContent: "center",
+            height: "83vh",
           }}
         >
-          <div className="header">
+          <Box className="header">
             <ButtonAppBar titletext={"Voting"} />
-          </div>
-
-          <div className="body" flex="1">
+          </Box>
+          <Box
+            className="body"
+            flex="1"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <Description data={polls} />
-            <MapOption data={polls} />
-          </div>
-          <CreateBtn />
-          <div className="footer">
+            <MapOption data={polls} voted={voted} setVoted={setVoted} />
+          </Box>
+
+          <CreateBtn pollId={pollId} voted={voted} />
+
+          <Box className="footer">
             <FooterNav />
-          </div>
+          </Box>
         </Box>
       </Container>
     </ThemeProvider>
