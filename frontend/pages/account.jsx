@@ -11,6 +11,7 @@ import Profile from '../components/account/profile'
 import ButtonAppBar from '../components/buttonAppBar'
 import FooterNav from '../components/footerNav'
 import theme from '../src/theme'
+import React, { useState } from 'react'
 
 // const AccountTheme = createTheme(theme)
 export default function Accounts() {
