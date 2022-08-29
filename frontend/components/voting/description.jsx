@@ -14,7 +14,7 @@ export default function Description(props) {
         maxWidth: "100%",
         height: "180px",
         // minHeight: 180,
-        mt: 0.6,
+        mt: 1.5,
         mb: 2,
         borderRadius: "5px",
         padding: 0.5,
