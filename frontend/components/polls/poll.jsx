@@ -30,7 +30,7 @@ export default function Poll(props) {
 
   const buttonClick = () => {
     const pollId = data.pollId;
-    router.push("/voting?pollId=" + pollId);
+    router.push("/voting/" + pollId);
   };
 
   const extendClick = () => {

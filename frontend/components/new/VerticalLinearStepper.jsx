@@ -105,7 +105,7 @@ export default function VerticalLinearStepper() {
     const response = await ApiGateway.createPoll(payload);
 
     if (response.error) {
-      alert(response);
+      alert(response.message);
       setIsSubmit(false);
       return;
     }

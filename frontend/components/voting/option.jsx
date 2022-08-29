@@ -53,9 +53,8 @@ export default function Option(props) {
       }
       sx={{
         maxWidth: "100%",
-        height: 45,
         mt: 1.5,
-        mb: 1,
+        mb: 1.5,
         borderRadius: "5px",
         padding: 0.5,
         boxShadow: 2,
@@ -65,7 +64,8 @@ export default function Option(props) {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        fontSize: 25,
+        fontSize: 22,
+        flex: 0.1,
       }}
     >
       {data.description}

@@ -12,6 +12,7 @@ import Description from "../../components/voting/description";
 import MapOption from "../../components/voting/mapOption";
 import CreateBtn from "../../components/voting/createBtn";
 import { useRouter } from "next/router";
+import ApiGateway from "../../apis/ApiGateway";
 
 const theme = createTheme({
   palette: {
@@ -28,24 +29,14 @@ const theme = createTheme({
 export default function Voting() {
   const router = useRouter();
   let response;
-  const {pollId} = router.query;
-  console.log(pollId)
+  const { pollId } = router.query;
+  console.log(pollId);
   const [selected, setSelected] = useState([]);
   const [polls, setPolls] = useState([]);
 
   const getData = async () => {
-    try {
-      response = await axios.get(
-        "https://dev.api.gollaba.net/v1/polls/" + pollId
-      );
-      setPolls(response.data);
-      console.log(">>>", response.data);
-    } catch (e) {
-      response = e.response;
-      alert(response.data.error.message);
-    } finally {
-      return response;
-    }
+    response = await ApiGateway.getPoll(pollId);
+    setPolls(response);
   };
 
   useEffect(() => {
@@ -83,10 +74,24 @@ export default function Voting() {
             }}
           >
             <Description data={polls} />
-            <MapOption data={polls} voted={voted} setVoted={setVoted} />
+            <Box display={"flex"} flexDirection={"column"} flex={"1"}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 10,
+                  justifyContent: "center",
+                }}
+              >
+                <MapOption data={polls} voted={voted} setVoted={setVoted} />
+              </Box>
+              <CreateBtn
+                pollId={pollId}
+                isBallot={polls.isBallot}
+                voted={voted}
+              />
+            </Box>
           </Box>
-
-          <CreateBtn pollId={pollId} voted={voted} />
 
           <Box className="footer">
             <FooterNav />

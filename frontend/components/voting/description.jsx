@@ -21,6 +21,7 @@ export default function Description(props) {
         boxShadow: 2,
         letterSpacing: 1.2,
         display: "flex",
+        //flex: 1,
         borderColor: "grey.500",
         flexDirection: "column",
       }}

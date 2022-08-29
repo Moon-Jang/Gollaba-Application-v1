@@ -4,12 +4,13 @@ import Box from "@mui/material/Box";
 import { Checkbox, TextField } from "@mui/material";
 import { CookiesProvider, useCookies } from "react-cookie";
 import jwt_decode from "jwt-decode";
+import ApiGateway from "../../apis/ApiGateway";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function CreateBtn(props) {
   const [nickname, setNickname] = useState("");
-  const [cookies, setCookies, removeCookies] = useCookies(null);
+  const [cookies, setCookies, removeCookies] = useCookies({});
 
   const nicknameChanged = (event) => {
     setNickname(event.target.value);
@@ -17,23 +18,34 @@ export default function CreateBtn(props) {
 
   const btnClicked = async () => {
     const userId = null;
-    if (cookies) {
+
+    if (Object.keys(cookies).length !== 0) {
       const decoded = jwt_decode(cookies.accessToken);
       userId = decoded.id;
     }
 
     const payload = {
       optionIds: props.voted,
-      pollId: props.pollId,
+      pollId: Number(props.pollId),
       userId: userId,
-      voterName: nickname,
+      voterName: nickname.length !== 0 ? nickname : null,
     };
 
-    console.log(payload, "clicked");
+    const response = await ApiGateway.vote(payload);
+    if (response.error) {
+      alert(response.message);
+      return;
+    }
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
+    <Box
+      sx={{
+        display: "flex",
+        flex: 1,
+        flexDirection: "row",
+      }}
+    >
       <Box
         className="nickname"
         sx={{
@@ -42,12 +54,16 @@ export default function CreateBtn(props) {
           pt: 2,
         }}
       >
-        <TextField
-          label="닉네임"
-          variant="outlined"
-          size="small"
-          onChange={nicknameChanged}
-        />
+        {props.isBallot ? (
+          <TextField
+            label="닉네임"
+            variant="outlined"
+            size="small"
+            onChange={nicknameChanged}
+          />
+        ) : (
+          <></>
+        )}
       </Box>
       <Box
         className="button"
