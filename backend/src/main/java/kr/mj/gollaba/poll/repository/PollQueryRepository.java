@@ -44,6 +44,7 @@ public class PollQueryRepository {
                 .where(eqUserId(filter.getUserId()),
                         likeTitle(filter.getTitle()))
                 .groupBy(poll.id)
+                .orderBy(poll.id.desc())
                 .limit(filter.getLimit())
                 .offset(filter.getOffset())
                 .fetch();
@@ -55,6 +56,7 @@ public class PollQueryRepository {
                 .leftJoin(poll.user, user).fetchJoin()
                 .leftJoin(option.voters, voter).fetchJoin()
                 .where(poll.id.in(ids))
+                .orderBy(poll.id.desc())
                 .fetch();
     }
 
