@@ -5,8 +5,8 @@ export default function PasswordChange() {
     return (
         <>
             <div>비밀번호 변경 기능 컴포넌트</div>
-            <div>새로운 화면 구현할 것</div>
-            <Link href='/*'>
+            <div>현재 구현 기능 : 비밀번호 변경 화면 구현</div>
+            <Link href='/pwchange'>
                 <Button
                     color='primary'
                     type='submit'

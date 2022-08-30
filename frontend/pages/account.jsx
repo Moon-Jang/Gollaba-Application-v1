@@ -1,7 +1,6 @@
 import {
     Box,
     Container,
-    createTheme,
     CssBaseline,
     Divider,
     ThemeProvider,

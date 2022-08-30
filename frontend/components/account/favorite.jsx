@@ -1,13 +1,12 @@
 import { Button } from '@mui/material'
 import Link from 'next/link'
 
-export default function Logout() {
-    // useRouter , NextLink
+export default function Favorite() {
     return (
         <>
-            <div>로그아웃 기능 컴포넌트</div>
-            <div>현재 구현 기능 : 버튼을 누르면 메인페이지로 이동</div>
-            <Link href='/'>
+            <div>즐겨찾기 기능 컴포넌트</div>
+            <div>새로운 화면 구현할 것</div>
+            <Link href='/favorites'>
                 <Button
                     color='primary'
                     type='submit'
@@ -16,7 +15,7 @@ export default function Logout() {
                     style={{ verticalAlign: 'middle', color: '#000000' }}
                     sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
                 >
-                    로그아웃
+                    즐겨찾기
                 </Button>
             </Link>
         </>
