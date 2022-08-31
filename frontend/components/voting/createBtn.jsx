@@ -5,10 +5,12 @@ import { Checkbox, TextField } from "@mui/material";
 import { CookiesProvider, useCookies } from "react-cookie";
 import jwt_decode from "jwt-decode";
 import ApiGateway from "../../apis/ApiGateway";
+import { useRouter } from "next/router";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function CreateBtn(props) {
+  const router = useRouter();
   const [nickname, setNickname] = useState("");
   const [cookies, setCookies, removeCookies] = useCookies({});
 
@@ -34,15 +36,25 @@ export default function CreateBtn(props) {
     const response = await ApiGateway.vote(payload);
     if (response.error) {
       alert(response.message);
+      if (response.code === 20004) {
+        router.push("/result/" + props.pollId);
+      }
       return;
     }
+    router.push("/result/" + props.pollId);
   };
 
   return (
     <Box
       sx={{
+        background: "white",
+        position: "fixed",
+        width: "92vw",
+        pr: 1,
+        mb: -1,
+        maxHeight: 1,
+        bottom: 60,
         display: "flex",
-        flex: 1,
         flexDirection: "row",
       }}
     >
