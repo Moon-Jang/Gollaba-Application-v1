@@ -4,9 +4,7 @@ import Link from 'next/link'
 export default function Favorite() {
     return (
         <>
-            <div>즐겨찾기 기능 컴포넌트</div>
-            <div>새로운 화면 구현할 것</div>
-            <Link href='/favorites'>
+            <Link href='/account/favorites'>
                 <Button
                     color='primary'
                     type='submit'
@@ -21,3 +19,4 @@ export default function Favorite() {
         </>
     )
 }
+// 현재 상태 : 즐겨찾기 화면 구현, 맵핑 기능은 후순위로 미룸

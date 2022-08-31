@@ -1,12 +1,12 @@
 import Favorite from './favorite'
 import Logout from './logout'
-import MyPolls from './myPolls'
+import MyPoll from './myPoll'
 import PasswordChange from './passwordChange'
 
 export default function AccountMenu() {
     return (
         <>
-            <MyPolls />
+            <MyPoll />
             <Favorite />
             <PasswordChange />
             <Logout />

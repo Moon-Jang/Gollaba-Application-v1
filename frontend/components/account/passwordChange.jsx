@@ -4,9 +4,7 @@ import Link from 'next/link'
 export default function PasswordChange() {
     return (
         <>
-            <div>비밀번호 변경 기능 컴포넌트</div>
-            <div>현재 구현 기능 : 비밀번호 변경 화면 구현</div>
-            <Link href='/pwchange'>
+            <Link href='/account/pwchange'>
                 <Button
                     color='primary'
                     type='submit'
@@ -21,3 +19,4 @@ export default function PasswordChange() {
         </>
     )
 }
+// 현재 상태 : 비밀번호 변경 화면 구현 (토큰은 아직)

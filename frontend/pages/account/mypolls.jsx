@@ -3,18 +3,18 @@ import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useState } from 'react'
-import ButtonAppBar from '../components/buttonAppBar'
-import FooterNav from '../components/footerNav'
-import PollsMap from '../components/polls/mapPoll'
+import ButtonAppBar from '../../components/buttonAppBar'
+import FooterNav from '../../components/footerNav'
+import PollsMap from '../../components/polls/mapPoll'
 import { useInView } from 'react-intersection-observer'
-import theme from './../src/theme'
+import theme from '../../src/theme'
 import axios from 'axios'
 import { useEffect } from 'react'
-import PollsMapFavorite from '../components/account/mapPollFavorite'
+import PollsMapFavorite from '../../components/account/mapPollFavorite'
 
 const PollTheme = createTheme(theme)
 
-export default function Favorites(props) {
+export default function Mypolls(props) {
     let response
     const [polls, setPolls] = useState([])
     const [ref, inView] = useInView()
@@ -59,13 +59,21 @@ export default function Favorites(props) {
             <ThemeProvider theme={theme}>
                 <Container component='main' maxwidth='xs'>
                     <CssBaseline />
-                    <Box>
+                    <Box
+                        sx={{
+                            marginTop: 7,
+                            marginBottom: 10,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'left',
+                            justifyContent: 'center',
+                        }}
+                    >
                         <div className='header'>
-                            <ButtonAppBar titletext={'Favorites'} />
+                            <ButtonAppBar titletext={'My Polls'} />
                         </div>
 
-                        <div className='body'>
-                            <div>내가 즐겨찾기한 투표 목록</div>
+                        <div className='body' flex='1'>
                             <PollsMapFavorite data={polls} />
                             <Box ref={ref} />
                         </div>

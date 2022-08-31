@@ -8,9 +8,9 @@ import {
     ThemeProvider,
     Typography,
 } from '@mui/material'
-import theme from '../src/theme'
+import theme from '../../src/theme'
 import React, { useState } from 'react'
-import CommonValidator from './../utils/CommonValidator'
+import CommonValidator from '../../utils/CommonValidator'
 import { useRouter } from 'next/router'
 
 // const AccountTheme = createTheme(theme)

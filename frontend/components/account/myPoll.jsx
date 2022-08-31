@@ -1,12 +1,10 @@
 import { Button } from '@mui/material'
 import Link from 'next/link'
 
-export default function MyPolls() {
+export default function MyPoll() {
     return (
         <>
-            <div>내 투표 확인 기능 컴포넌트</div>
-            <div>새로운 화면 구현할 것</div>
-            <Link href='/내투표'>
+            <Link href='/account/mypolls'>
                 <Button
                     color='primary'
                     type='submit'
@@ -21,3 +19,4 @@ export default function MyPolls() {
         </>
     )
 }
+//현재 상태 : 내 투표 화면 구현, 맵핑은 아직 (후순위)
