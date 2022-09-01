@@ -46,12 +46,4 @@ public class VoteRequest implements BaseApiRequest {
             throw new GollabaException(GollabaErrorCode.INVALID_IP_ADDRESS);
         }
     }
-
-    public String generateVoterName(Poll poll) {
-        int count = (int) poll.getOptions().stream()
-                .flatMap(el -> el.getVoters().stream())
-                .count();
-
-        return ANONYMOUS_NAME + count + 1;
-    }
 }

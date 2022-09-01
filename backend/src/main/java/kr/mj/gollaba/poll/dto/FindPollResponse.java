@@ -1,6 +1,7 @@
 package kr.mj.gollaba.poll.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiResponse;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.type.PollingResponseType;
@@ -17,141 +18,147 @@ import java.util.stream.Collectors;
 @Getter
 public class FindPollResponse implements BaseApiResponse {
 
-    private Long pollId;
+	private Long pollId;
 
-    private UserResponse user;
+	private UserResponse user;
 
-    private String title;
+	private String title;
 
-    private String creatorName;
+	private String creatorName;
 
-    private PollingResponseType responseType;
+	private PollingResponseType responseType;
 
-    private Boolean isBallot;
+	private Boolean isBallot;
 
-    private LocalDateTime endedAt;
+	private LocalDateTime endedAt;
 
-    private List<OptionResponse> options = new ArrayList<>();
+	private Long totalVoteCount;
 
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDateTime createdAt;
+	private List<OptionResponse> options = new ArrayList<>();
 
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDateTime updatedAt;
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+	private LocalDateTime createdAt;
 
-    public FindPollResponse(Poll poll) {
-        this.pollId = poll.getId();
-        this.user = poll.getUser() == null
-                ? null
-                : UserResponse.builder()
-                .userId(poll.getUser().getId())
-                .nickName(poll.getUser().getNickName())
-                .uniqueId(poll.getUser().getUniqueId())
-                .userRole(poll.getUser().getUserRole())
-                .build();
-        this.title = poll.getTitle();
-        this.creatorName = poll.getCreatorName();
-        this.responseType = poll.getResponseType();
-        this.isBallot = poll.getIsBallot();
-        this.endedAt = poll.getEndedAt();
-        this.options = poll.getOptions()
-                .stream()
-                .map(option -> OptionResponse.builder()
-                    .optionId(option.getId())
-                    .description(option.getDescription())
-                    .voters(option.getVoters() == null
-                            ? null
-                            : option.getVoters()
-                            .stream()
-                            .map(voter -> VoterResponse.builder()
-                                    .voterId(voter.getId())
-                                    .userId(voter.getUser() == null ? null : voter.getUser().getId())
-                                    .ipAddress(voter.getIpAddress())
-                                    .voterName(voter.getVoterName())
-                                    .createdAt(voter.getCreatedAt())
-                                    .updatedAt(voter.getUpdatedAt())
-                                    .build())
-                            .collect(Collectors.toList()))
-                    .createdAt(option.getCreatedAt())
-                    .updatedAt(option.getUpdatedAt())
-                    .build())
-                .collect(Collectors.toList());
-        this.createdAt = poll.getCreatedAt();
-        this.updatedAt = poll.getUpdatedAt();
-    }
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+	private LocalDateTime updatedAt;
 
-    @Getter
-    public static class OptionResponse {
+	public FindPollResponse(Poll poll) {
+		this.pollId = poll.getId();
+		this.user = poll.getUser() == null
+				? null
+				: UserResponse.builder()
+				.userId(poll.getUser().getId())
+				.nickName(poll.getUser().getNickName())
+				.uniqueId(poll.getUser().getUniqueId())
+				.userRole(poll.getUser().getUserRole())
+				.build();
+		this.title = poll.getTitle();
+		this.creatorName = poll.getCreatorName();
+		this.responseType = poll.getResponseType();
+		this.isBallot = poll.getIsBallot();
+		this.endedAt = poll.getEndedAt();
+		this.options = poll.getOptions()
+				.stream()
+				.map(option -> OptionResponse.builder()
+						.optionId(option.getId())
+						.description(option.getDescription())
+						.voters(option.getVoters() == null
+								? null
+								: option.getVoters()
+								.stream()
+								.map(voter -> VoterResponse.builder()
+										.voterId(voter.getId())
+										.userId(voter.getUser() == null ? null : voter.getUser().getId())
+										.ipAddress(voter.getIpAddress())
+										.voterName(voter.getVoterName())
+										.createdAt(voter.getCreatedAt())
+										.updatedAt(voter.getUpdatedAt())
+										.build())
+								.collect(Collectors.toList()))
+						.createdAt(option.getCreatedAt())
+						.updatedAt(option.getUpdatedAt())
+						.build())
+				.collect(Collectors.toList());
+		this.createdAt = poll.getCreatedAt();
+		this.updatedAt = poll.getUpdatedAt();
+		this.totalVoteCount = Long.valueOf(poll.getOptions()
+				.stream()
+				.mapToInt(option -> option.getVoters().size())
+				.sum());
+	}
 
-        private Long optionId;
+	@Getter
+	public static class OptionResponse {
 
-        private String description;
+		private Long optionId;
 
-        private List<VoterResponse> voters = new ArrayList<>();
+		private String description;
 
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime createdAt;
+		private List<VoterResponse> voters = new ArrayList<>();
 
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime updatedAt;
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+		private LocalDateTime createdAt;
 
-        @Builder
-        public OptionResponse(Long optionId, String description, List<VoterResponse> voters, LocalDateTime createdAt, LocalDateTime updatedAt) {
-            this.optionId = optionId;
-            this.description = description;
-            this.voters = voters;
-            this.createdAt = createdAt;
-            this.updatedAt = updatedAt;
-        }
-    }
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+		private LocalDateTime updatedAt;
 
-    @Getter
-    public static class UserResponse {
+		@Builder
+		public OptionResponse(Long optionId, String description, List<VoterResponse> voters, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			this.optionId = optionId;
+			this.description = description;
+			this.voters = voters;
+			this.createdAt = createdAt;
+			this.updatedAt = updatedAt;
+		}
+	}
 
-        private Long userId;
+	@Getter
+	public static class UserResponse {
 
-        private String uniqueId;
+		private Long userId;
 
-        private String nickName;
+		private String uniqueId;
 
-        private UserRoleType userRole;
+		private String nickName;
 
-        @Builder
-        private UserResponse(Long userId, String uniqueId, String nickName, UserRoleType userRole) {
-            this.userId = userId;
-            this.uniqueId = uniqueId;
-            this.nickName = nickName;
-            this.userRole = userRole;
-        }
+		private UserRoleType userRole;
 
-    }
+		@Builder
+		private UserResponse(Long userId, String uniqueId, String nickName, UserRoleType userRole) {
+			this.userId = userId;
+			this.uniqueId = uniqueId;
+			this.nickName = nickName;
+			this.userRole = userRole;
+		}
 
-    @Getter
-    public static class VoterResponse {
+	}
 
-        private Long voterId;
+	@Getter
+	public static class VoterResponse {
 
-        private Long userId;
+		private Long voterId;
 
-        private String voterName;
+		private Long userId;
 
-        private String ipAddress;
+		private String voterName;
 
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime createdAt;
+		private String ipAddress;
 
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime updatedAt;
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+		private LocalDateTime createdAt;
 
-        @Builder
-        private VoterResponse(Long voterId, Long userId, String voterName, String ipAddress, LocalDateTime createdAt, LocalDateTime updatedAt) {
-            this.voterId = voterId;
-            this.userId = userId;
-            this.voterName = voterName;
-            this.ipAddress = ipAddress;
-            this.createdAt = createdAt;
-            this.updatedAt = updatedAt;
-        }
-    }
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+		private LocalDateTime updatedAt;
+
+		@Builder
+		private VoterResponse(Long voterId, Long userId, String voterName, String ipAddress, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			this.voterId = voterId;
+			this.userId = userId;
+			this.voterName = voterName;
+			this.ipAddress = ipAddress;
+			this.createdAt = createdAt;
+			this.updatedAt = updatedAt;
+		}
+	}
 
 }
