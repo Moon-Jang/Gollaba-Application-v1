@@ -15,6 +15,8 @@ public enum GollabaErrorCode {
     NOT_EXIST_REFRESH_TOKEN(4, HttpStatus.BAD_REQUEST, "존재하지 않는 리프레시 토큰입니다."),
     FAIL_LOGIN(5, HttpStatus.BAD_REQUEST, "로그인에 실패하였습니다. 아이디와 비밀번호를 확인해주세요."),
     INVALID_PARAMS(6, HttpStatus.BAD_REQUEST, "유효하지 않은 인자값 입니다."),
+    NOT_SUPPORTED_HTTP_MEDIA_TYPE(7, HttpStatus.BAD_REQUEST, "Content-Type이 잘못되었습니다. 수정 후 다시 시도해주세요."),
+    NOT_EXIST_HTTP_MEDIA_TYPE(8, HttpStatus.BAD_REQUEST, "Content-Type이 존재하지 않습니다. 수정 후 다시 시도해주세요."),
     UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED,"인증 정보가 없거나 부족합니다."),
     FORBIDDEN(403, HttpStatus.FORBIDDEN,"해당 자원에 접근할 수 없습니다."),
     UNKNOWN_ERROR(9999, HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러입니다. 관리자에게 문의해주세요."),
@@ -23,7 +25,7 @@ public enum GollabaErrorCode {
     ALREADY_EXIST_USER(10000, HttpStatus.BAD_REQUEST, "이미 존재하는 회원입니다."),
     NOT_EXIST_USER_BY_UNIQUE_ID(10001, HttpStatus.BAD_REQUEST, "해당 아이디로 가입된 회원이 존재하지 않습니다."),
     NOT_EXIST_USER(10002, HttpStatus.BAD_REQUEST, "존재하지 않는 회원입니다."),
-
+    ALREADY_EXIST_NICKNAME(10003, HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다,"),
 
     /* 20000 ~ 29999 poll */
     NOT_EXIST_POLL(20000, HttpStatus.BAD_REQUEST, "존재하지 않는 투표입니다."),
