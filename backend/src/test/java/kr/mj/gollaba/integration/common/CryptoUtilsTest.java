@@ -1,8 +1,9 @@
-package kr.mj.gollaba.unit.common;
+package kr.mj.gollaba.integration.common;
 
 
 import kr.mj.gollaba.common.util.CryptUtils;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag(IntegrationConst.INTEGRATION_TEST_TAG_NAME)
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(properties = { "spring.config.location=classpath:private/application-test.yaml", "security.aes.encrypt-key=asd" })
+@TestPropertySource(properties = { "spring.config.location=classpath:private/application-test.yaml"})
 @ActiveProfiles("test")
 public class CryptoUtilsTest {
 
