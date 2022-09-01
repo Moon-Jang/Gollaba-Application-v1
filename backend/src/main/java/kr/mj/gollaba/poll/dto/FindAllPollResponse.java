@@ -27,97 +27,104 @@ import java.util.stream.Collectors;
 @Getter
 public class FindAllPollResponse implements BaseApiResponse {
 
-    private long totalCount;
+	private long totalCount;
 
-    private List<PollResponse> polls = new ArrayList<>();
+	private List<PollResponse> polls = new ArrayList<>();
 
-    public FindAllPollResponse(long totalCount, List<Poll> polls) {
-        this.totalCount = totalCount;
-        this.polls = polls.stream()
-                .map(el -> PollResponse.builder()
-                        .pollId(el.getId())
-                        .title(el.getTitle())
-                        .creatorName(el.getCreatorName())
-                        .responseType(el.getResponseType())
-                        .isBallot(el.getIsBallot())
-                        .endedAt(el.getEndedAt())
-                        .options(el.getOptions()
-                                .stream()
-                                .map(option -> OptionResponse.builder()
-                                        .optionId(option.getId())
-                                        .description(option.getDescription())
-                                        .voteCount(option.getVoters().size())
-                                        .createdAt(option.getCreatedAt())
-                                        .updatedAt(option.getUpdatedAt())
-                                        .build())
-                                .collect(Collectors.toList()))
-                        .createdAt(el.getCreatedAt())
-                        .updatedAt(el.getUpdatedAt())
-                        .build())
-                .collect(Collectors.toList());
-    }
+	public FindAllPollResponse(long totalCount, List<Poll> polls) {
+		this.totalCount = totalCount;
+		this.polls = polls.stream()
+				.map(el -> PollResponse.builder()
+						.pollId(el.getId())
+						.title(el.getTitle())
+						.creatorName(el.getCreatorName())
+						.responseType(el.getResponseType())
+						.isBallot(el.getIsBallot())
+						.endedAt(el.getEndedAt())
+						.options(el.getOptions()
+								.stream()
+								.map(option -> OptionResponse.builder()
+										.optionId(option.getId())
+										.description(option.getDescription())
+										.voteCount(option.getVoters().size())
+										.createdAt(option.getCreatedAt())
+										.updatedAt(option.getUpdatedAt())
+										.build())
+								.collect(Collectors.toList()))
+						.createdAt(el.getCreatedAt())
+						.updatedAt(el.getUpdatedAt())
+						.build())
+				.collect(Collectors.toList());
+	}
 
-    @Getter
-    public static class PollResponse {
+	@Getter
+	public static class PollResponse {
 
-        private Long pollId;
+		private Long pollId;
 
-        private String title;
+		private String title;
 
-        private String creatorName;
+		private String creatorName;
 
-        private PollingResponseType responseType;
+		private PollingResponseType responseType;
 
-        private Boolean isBallot;
+		private Boolean isBallot;
 
-        private LocalDateTime endedAt;
+		private LocalDateTime endedAt;
 
-        private List<OptionResponse> options = new ArrayList<>();
+		private Long totalVoteCount;
 
-        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-        private LocalDateTime createdAt;
+		private List<OptionResponse> options = new ArrayList<>();
 
-        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-        private LocalDateTime updatedAt;
+		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+		private LocalDateTime createdAt;
 
-        @Builder
-        private PollResponse(Long pollId, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt, List<OptionResponse> options, LocalDateTime createdAt, LocalDateTime updatedAt) {
-            this.pollId = pollId;
-            this.title = title;
-            this.creatorName = creatorName;
-            this.responseType = responseType;
-            this.isBallot = isBallot;
-            this.endedAt = endedAt;
-            this.options = options;
-            this.createdAt = createdAt;
-            this.updatedAt = updatedAt;
-        }
+		@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+		private LocalDateTime updatedAt;
 
-    }
+		@Builder
+		private PollResponse(Long pollId, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt, List<OptionResponse> options, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			this.pollId = pollId;
+			this.title = title;
+			this.creatorName = creatorName;
+			this.responseType = responseType;
+			this.isBallot = isBallot;
+			this.endedAt = endedAt;
+			this.options = options;
+			this.createdAt = createdAt;
+			this.updatedAt = updatedAt;
+			this.totalVoteCount = Long.valueOf(options
+					.stream()
+					.mapToInt(option -> option.getVoteCount())
+					.sum());
+		}
 
-    @Getter
-    public static class OptionResponse {
+	}
 
-        private Long optionId;
+	@Getter
+	public static class OptionResponse {
 
-        private String description;
+		private Long optionId;
 
-        private int voteCount;
+		private String description;
 
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime createdAt;
+		private Integer voteCount;
 
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
-        private LocalDateTime updatedAt;
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+		private LocalDateTime createdAt;
 
-        @Builder
-        public OptionResponse(Long optionId, String description, int voteCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
-            this.optionId = optionId;
-            this.description = description;
-            this.createdAt = createdAt;
-            this.updatedAt = updatedAt;
-        }
+		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+		private LocalDateTime updatedAt;
 
-    }
+		@Builder
+		public OptionResponse(Long optionId, String description, int voteCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			this.optionId = optionId;
+			this.description = description;
+			this.voteCount = voteCount;
+			this.createdAt = createdAt;
+			this.updatedAt = updatedAt;
+		}
+
+	}
 
 }
