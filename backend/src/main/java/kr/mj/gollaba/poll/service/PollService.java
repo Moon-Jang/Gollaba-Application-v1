@@ -25,6 +25,7 @@ public class PollService {
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
     private final CryptUtils cryptUtils;
+    private final static String ANONYMOUS_NAME = "익명";
 
     public CreatePollResponse create(CreatePollRequest request) {
         request.validate();
@@ -78,7 +79,7 @@ public class PollService {
 
         for (Long optionId : request.getOptionIds()) {
             Voter voter = Voter.builder()
-                    .voterName(request.getVoterName() != null ? request.getVoterName() : request.generateVoterName(poll))
+                    .voterName(request.getVoterName() != null ? request.getVoterName() : generateAnonymousName(poll))
                     .ipAddress(cryptUtils.encrypt(request.getIpAddress()))
                     .build();
 
@@ -90,6 +91,14 @@ public class PollService {
         }
 
         pollRepository.save(poll);
+    }
+
+    private String generateAnonymousName(Poll poll) {
+        final int count = (int) poll.getOptions().stream()
+                .flatMap(el -> el.getVoters().stream())
+                .count();
+
+        return ANONYMOUS_NAME + (count + 1);
     }
 
     private void validateVote(Poll poll, VoteRequest request) {
