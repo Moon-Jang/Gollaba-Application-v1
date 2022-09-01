@@ -1,4 +1,4 @@
-package kr.mj.gollaba.config;
+package kr.mj.gollaba.config.filter;
 
 import com.querydsl.core.util.StringUtils;
 import org.apache.commons.io.IOUtils;
