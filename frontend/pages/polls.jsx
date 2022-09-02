@@ -67,22 +67,46 @@ export default function Polls() {
           <CssBaseline />
           <Box
             sx={{
-              marginTop: 7,
-              marginBottom: 10,
+              marginTop: 9,
+              marginBottom: 7,
               display: "flex",
               flexDirection: "column",
               alignItems: "left",
               justifyContent: "center",
+              height: "83vh",
+              maxHeight: "83vh",
+              overflow: "hidden",
             }}
           >
             <div className="header">
               <ButtonAppBar titletext={"Polls"} />
             </div>
-
-            <div className="body" flex="1">
-              <PollsMap data={polls} />
+            <Box
+              className="body"
+              flex="1"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Box display={"flex"} flexDirection={"column"} flex={"1"}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                    overflow: "auto",
+                    maxHeight: "90vh",
+                    mt: 5,
+                    pl: 1.2,
+                    pr: 1.2,
+                  }}
+                >
+                  <PollsMap data={polls} />
+                </Box>
+              </Box>
               <Box ref={ref} />
-            </div>
+            </Box>
 
             <div className="footer">
               <FooterNav />

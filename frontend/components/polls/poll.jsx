@@ -10,7 +10,7 @@ export default function Poll(props) {
   const data = props.data;
   const options = data.options;
   const [isExtend, setIsExtend] = useState(false);
-  console.log("opts>", options);
+  console.log("opts>", props.data.totalVoteCount);
 
   let temp = 0;
   for (let i = 0; i < options.length; i++) {
@@ -23,7 +23,14 @@ export default function Poll(props) {
     return (
       <Box mt={0.5} mr={1} mb={0.5}>
         {el.description}
-        <LinearProgress variant="determinate" value={el.voteCount / temp} />
+        <LinearProgress
+          variant="determinate"
+          value={
+            props.data.totalVoteCount !== 0
+              ? (el.voteCount / props.data.totalVoteCount) * 100
+              : 0
+          }
+        />
       </Box>
     );
   });

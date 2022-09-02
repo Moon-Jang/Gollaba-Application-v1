@@ -8,9 +8,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ButtonAppBar from "../../components/buttonAppBar";
 import FooterNav from "../../components/footerNav";
 import axios from "axios";
-import Description from "../../components/voting/description";
-import MapOption from "../../components/voting/mapOption";
-import CreateBtn from "../../components/voting/createBtn";
+import Description from "../../components/result/description";
+import MapOption from "../../components/result/mapOption";
+import InfoBox from "../../components/result/infoBox";
 import { useRouter } from "next/router";
 import ApiGateway from "../../apis/ApiGateway";
 
@@ -53,20 +53,17 @@ export default function Voting() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 9,
+            marginTop: 7,
             marginBottom: 7,
-            pl: 0.3,
-            pr: 0.3,
             display: "flex",
             flexDirection: "column",
             alignItems: "left",
             justifyContent: "center",
             height: "83vh",
-            overflow: "hidden",
           }}
         >
           <Box className="header">
-            <ButtonAppBar titletext={"Voting"} />
+            <ButtonAppBar titletext={"Result"} />
           </Box>
           <Box
             className="body"
@@ -77,23 +74,18 @@ export default function Voting() {
             }}
           >
             <Description data={polls} />
+            <InfoBox data={polls.totalVoteCount} />
             <Box display={"flex"} flexDirection={"column"} flex={"1"}>
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
                   flex: 1,
-                  //maxHeight: "42vh",
-                  overflow: "auto",
+                  //justifyContent: "center",
                 }}
               >
-                <MapOption data={polls} voted={voted} setVoted={setVoted} />
+                <MapOption data={polls} voted={voted} />
               </Box>
-              <CreateBtn
-                pollId={pollId}
-                isBallot={polls.isBallot}
-                voted={voted}
-              />
             </Box>
           </Box>
 
