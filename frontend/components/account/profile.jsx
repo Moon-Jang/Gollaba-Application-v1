@@ -1,55 +1,34 @@
 import { Avatar, Box } from '@mui/material'
 import { useRef, useState } from 'react'
-import { axiosDefaultInstance } from 'axios'
 
 export default function Profile() {
-    // 파일 업로드 핸들러 다시 만들기
-    const [image, setImage] = useState('public/camera_icon.png')
-    const fileInput = useRef(null)
-    let username = 'useridx'
-    const setFile = (e) => {
-        const target = e.currentTarget
-        const files = target.files[0]
-        if (files === undefined) {
-            return
-        }
+    // photoInput.current.click() is not a function
+    // Cannot read properties of null (reading 'click')
+    const photoInput = useRef()
+    const PROFILE_BASIC =
+        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+    const handleClick = () => {
+        photoInput.current.click()
     }
-    const profileImageChangeHandler = async (e) => {
-        if (file !== undefined) {
-            try {
-                const formData = new FormData()
-                formData.append('file', file)
-                const axiosResponse =
-                    (await axiosDefaultInstance.post) <
-                    ApiResponse <
-                    FileUploadResponse >>
-                        ('/files',
-                        formData,
-                        { headers: { 'content-type': 'multipart/form-data' } })
+    const [profileImage, setProfileImage] = useState(PROFILE_BASIC)
 
-                if (
-                    axiosResponse.status < 200 ||
-                    axiosResponse.status >= 300 ||
-                    axiosResponse.data.resultCode !== 0
-                ) {
-                    throw Error(
-                        axiosResponse.data.message || '문제가 발생했어요'
-                    )
-                }
-                alert('파일 업로드 성공!')
-                console.log(axiosResponse.data.data)
-            } catch {
-                console.error(e)
-                alert(e.message)
+    const handlePhoto = (e) => {
+        const photoToAdd = e.target.files
+
+        if (photoToAdd[0]) {
+            setProfileImage(photoToAdd[0])
+        } else {
+            setProfileImage(PROFILE_BASIC)
+        }
+        const reader = new FileReader()
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                setProfileImage(reader.result)
             }
         }
-        if (e.target.files[0]) {
-            setFile(e.target.files[0])
-        } else {
-            setImage('public/camera_icon.png')
-            return
-        }
+        reader.readAsDataURL(photoToAdd[0])
     }
+
     return (
         <>
             <Box
@@ -61,24 +40,21 @@ export default function Profile() {
                     justifyContent: 'center',
                 }}
             >
-                <Avatar
-                    src={image}
-                    sx={{ width: 215, height: 215 }}
-                    onClick={
-                        profileImageChangeHandler
-                        // () => {fileInput.current.click()}
-                    }
-                >
-                    <input
-                        type='file'
-                        style={{ display: 'none' }}
-                        accept='image/*'
-                        id='selectFile'
-                        name={`profile_img_${username}`}
-                        onClick={profileImageChangeHandler}
-                        ref={fileInput}
-                    ></input>
-                </Avatar>
+                <div>
+                    <Avatar
+                        src={profileImage}
+                        sx={{ width: 215, height: 215 }}
+                        onClick={handleClick}
+                    >
+                        <input
+                            type='file'
+                            style={{ display: 'none' }}
+                            accept='image/jpg image/jpeg image/png'
+                            onChange={(e) => handlePhoto(e)}
+                            ref={photoInput}
+                        ></input>
+                    </Avatar>
+                </div>
                 <div>배경이미지</div>
                 <div>프로필이미지 (수정 가능)</div>
                 <div>닉네임 공간 (수정 가능)</div>
