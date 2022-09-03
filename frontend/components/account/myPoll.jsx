@@ -8,10 +8,10 @@ export default function MyPoll() {
                 <Button
                     color='primary'
                     type='submit'
-                    variant='outlined'
+                    variant='text'
                     fullWidth
                     style={{ verticalAlign: 'middle', color: '#000000' }}
-                    sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
+                    // sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
                 >
                     내 투표
                 </Button>
