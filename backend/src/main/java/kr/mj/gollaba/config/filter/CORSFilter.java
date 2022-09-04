@@ -2,6 +2,7 @@ package kr.mj.gollaba.config.filter;
 
 import kr.mj.gollaba.common.Const;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@Order(0)
 public class CORSFilter implements Filter {
 
 	@Override
