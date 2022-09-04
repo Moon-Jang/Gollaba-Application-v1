@@ -47,6 +47,7 @@ export default function Voting() {
 
   const [voted, setVoted] = useState([]);
 
+  console.log(polls.isBallot);
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">

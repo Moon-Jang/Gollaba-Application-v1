@@ -93,7 +93,7 @@ export default function Description(props) {
           color: "#808080",
         }}
       >
-        {data.isBallot ? "기명투표" : "익명투표"}{" "}
+        {data.isBallot ? "익명투표" : "기명투표"}{" "}
         {data.responseType === "SINGLE" ? "단일투표" : "복수투표"}
       </Box>
     </Box>

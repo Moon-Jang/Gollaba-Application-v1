@@ -33,8 +33,11 @@ export default function CreateBtn(props) {
       voterName: nickname.length !== 0 ? nickname : null,
     };
 
+    console.log("페이", payload);
+
     const response = await ApiGateway.vote(payload);
-    if (response?.error) {
+    console.log("대답", response);
+    if (response.error) {
       alert(response.message);
       if (response.code === 20004) {
         router.push("/result/" + props.pollId);
@@ -67,14 +70,14 @@ export default function CreateBtn(props) {
         }}
       >
         {props.isBallot ? (
+          <></>
+        ) : (
           <TextField
             label="닉네임"
             variant="outlined"
             size="small"
             onChange={nicknameChanged}
           />
-        ) : (
-          <></>
         )}
       </Box>
       <Box
