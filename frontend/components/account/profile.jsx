@@ -1,6 +1,7 @@
 import { Avatar, Box } from '@mui/material'
 import { useRef, useState } from 'react'
-import EditIcon from '@mui/icons-material/Edit'
+
+import Nickname from './nickname'
 
 export default function Profile() {
     // photoInput.current.click() is not a function
@@ -34,7 +35,7 @@ export default function Profile() {
         <>
             <Box
                 sx={{
-                    marginTop: 8,
+                    marginTop: 10,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -58,10 +59,8 @@ export default function Profile() {
                         ref={photoInput}
                     />
                 </div>
-                <div>배경이미지</div>
 
-                <div>닉네임 공간 (수정 가능)</div>
-                <EditIcon />
+                <Nickname />
             </Box>
         </>
     )

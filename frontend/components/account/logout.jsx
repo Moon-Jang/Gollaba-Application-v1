@@ -1,6 +1,7 @@
 import { Button } from '@mui/material'
 import Link from 'next/link'
 import { useCookies } from 'react-cookie'
+import LogoutIcon from '@mui/icons-material/Logout'
 
 export default function Logout() {
     const [cookies, setCookies, removeCookies] = useCookies(null)
@@ -9,20 +10,37 @@ export default function Logout() {
         removeCookies('accessToken', { path: '/' })
     }
     // useRouter , NextLink
+
+    const leftalign = {
+        float: 'left',
+    }
+    const iconStyle = {
+        fontSize: '24px',
+        margin: '0 15 0 15',
+    }
     return (
         <>
             <Link href='/'>
-                <Button
-                    color='primary'
-                    type='submit'
-                    variant='outlined'
-                    fullWidth
-                    style={{ verticalAlign: 'middle', color: '#000000' }}
-                    sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
-                    onChange={handleChangeLogout}
-                >
-                    로그아웃
-                </Button>
+                <div style={leftalign}>
+                    <Button
+                        color='primary'
+                        type='submit'
+                        variant='text'
+                        fullWidth
+                        style={{
+                            verticalAlign: 'middle',
+                            color: '#000000',
+                            fontSize: '24px',
+                            textAlign: 'left',
+                            padding: '0 0 0 0',
+                        }}
+                        // sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
+                        onChange={handleChangeLogout}
+                    >
+                        <LogoutIcon style={iconStyle} />
+                        로그아웃
+                    </Button>
+                </div>
             </Link>
         </>
     )

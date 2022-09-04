@@ -22,11 +22,19 @@ export default function AccountMenu() {
                     <MyPoll />
                 </ListItem>
                 <Divider />
+                <ListItem button>
+                    <Favorite />
+                </ListItem>
+                <Divider />
+                <ListItem button>
+                    <PasswordChange />
+                </ListItem>
+                <Divider />
+                <ListItem button>
+                    <Logout />
+                </ListItem>
+                <Divider />
             </List>
-
-            <Favorite />
-            <PasswordChange />
-            <Logout />
         </>
     )
 }
