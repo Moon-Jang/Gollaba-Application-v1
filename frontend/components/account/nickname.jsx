@@ -21,7 +21,7 @@ export default function Nickname() {
                 <Box
                     sx={{
                         marginTop: 2,
-                        marginBottom: 5,
+                        marginBottom: 6,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',

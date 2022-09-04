@@ -35,7 +35,7 @@ export default function Accounts() {
 
                         <div className='body'>
                             <Profile />
-                            <Divider />
+                            {/* <Divider /> */}
                             <AccountMenu />
                         </div>
 

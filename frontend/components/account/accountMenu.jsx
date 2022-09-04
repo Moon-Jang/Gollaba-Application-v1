@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText'
 import Divider from '@mui/material/Divider'
 
 export default function AccountMenu() {
-    const style = {
+    const listStyle = {
         width: '100%',
         maxWidth: 360,
         bgcolor: 'background.paper',
@@ -17,7 +17,8 @@ export default function AccountMenu() {
 
     return (
         <>
-            <List sx={style} component='nav' aria-label='mailbox folders'>
+            <List sx={listStyle} component='nav' aria-label='mailbox folders'>
+                <Divider />
                 <ListItem button>
                     <MyPoll />
                 </ListItem>

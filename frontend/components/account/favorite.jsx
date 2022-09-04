@@ -5,6 +5,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 export default function Favorite() {
     const leftalign = {
         float: 'left',
+        marginTop: 7,
+        marginBottom: 7,
     }
     const iconStyle = {
         fontSize: '24px',

@@ -5,6 +5,8 @@ import HowToRegIcon from '@mui/icons-material/HowToReg'
 export default function MyPoll() {
     const leftalign = {
         float: 'left',
+        marginTop: 7,
+        marginBottom: 7,
     }
     const iconStyle = {
         fontSize: '24px',
@@ -12,8 +14,8 @@ export default function MyPoll() {
     }
     return (
         <>
-            <Link href='/account/mypolls'>
-                <div style={leftalign}>
+            <div style={leftalign}>
+                <Link href='/account/mypolls'>
                     <Button
                         color='primary'
                         type='submit'
@@ -25,15 +27,12 @@ export default function MyPoll() {
                             fontSize: '24px',
                             textAlign: 'left',
                             padding: '0 0 0 0',
-                            // border: '0 0 0 0',
                         }}
-                        // startIcon={}
-                        // sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
                     >
                         <HowToRegIcon style={iconStyle} />내 투표
                     </Button>
-                </div>
-            </Link>
+                </Link>
+            </div>
         </>
     )
 }

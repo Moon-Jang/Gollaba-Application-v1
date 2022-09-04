@@ -5,6 +5,8 @@ import LockResetIcon from '@mui/icons-material/LockReset'
 export default function PasswordChange() {
     const leftalign = {
         float: 'left',
+        marginTop: 7,
+        marginBottom: 7,
     }
     const iconStyle = {
         fontSize: '24px',
