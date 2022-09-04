@@ -13,6 +13,7 @@ import MapOption from "../../components/result/mapOption";
 import InfoBox from "../../components/result/infoBox";
 import { useRouter } from "next/router";
 import ApiGateway from "../../apis/ApiGateway";
+import ShareBar from "../../components/result/shareBar";
 
 const theme = createTheme({
   palette: {
@@ -85,6 +86,7 @@ export default function Voting() {
                 }}
               >
                 <MapOption data={polls} voted={voted} />
+                <ShareBar />
               </Box>
             </Box>
           </Box>

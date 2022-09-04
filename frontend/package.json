@@ -29,6 +29,7 @@
     "react-hook-form": "^7.33.1",
     "react-intersection-observer": "^9.4.0",
     "react-router-dom": "^5.3.3",
+    "react-share": "^4.4.0",
     "typescript": "^4.7.4"
   },
   "devDependencies": {
