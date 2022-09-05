@@ -1,16 +1,30 @@
 import { useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit'
 import Box from '@mui/material/Box'
+import { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import userSlice from './reducers/user'
 
+// react-redux toolkit이용해 만들어 보려 했으나 redux쪽에서 자꾸 컴파일 실패하여 보류
 export default function Nickname() {
-    const [userName, setUserName] = useState(null)
-    const userNameSpan = () => {
-        if (userName == null) {
-            setUserName('닉네임을 정하지 않았습니다')
-        } else {
-            setUserName(`${userName}님의 페이지입니다.`)
-        }
-    }
+    const dispatch = useDispatch()
+    const nickname = useSelector((state) => state.user.data.nickname)
+    const [isEdit, setIsEdit] = useState(false)
+    const onClickNickname = useCallback(() => {
+        setIsEdit(!isEdit)
+    }, [isEdit])
+    const [nickname_, setNickname_] = useState(nickname)
+    const onChangeNickname_ = useCallback((e) => {
+        setNickname_(e.target.value)
+    }, [])
+    const editNickname = useCallback(
+        (e) => {
+            e.preventDefault()
+            dispatch(userSlice.actions.editNickname(nickname_))
+            setIsEdit(!isEdit)
+        },
+        [dispatch, nickname_, isEdit]
+    )
 
     const nicknameStyle = {
         fontSize: '24px',
@@ -28,10 +42,19 @@ export default function Nickname() {
                         justifyContent: 'center',
                     }}
                 >
-                    <span>
-                        {userName}닉네임 공간
+                    <span onClick={onClickNickname}>
+                        {nickname}의 페이지입니다.
                         <EditIcon style={{ margin: '0 0 0 10' }} />
                     </span>
+                    {isEdit ? (
+                        <form>
+                            <input
+                                value={nickname_}
+                                onChange={onChangeNickname_}
+                            ></input>
+                            <button onClick={editNickname}></button>
+                        </form>
+                    ) : null}
                 </Box>
             </div>
         </>
