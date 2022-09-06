@@ -203,4 +203,28 @@ class UserServiceTest extends ServiceTest {
 		}
 	}
 
+	@DisplayName("updatePassword 메서드는")
+	@Nested
+	class updatePassword {
+
+		@DisplayName("1. 입력 값 검증에 실패할 경우")
+		@Nested
+		class  when_invalid_params{
+
+			@DisplayName("잘못된 요청 에러가 발생한다.")
+			@Test
+			void throw_INVALID_PARARMS() {
+			    //given
+			    UpdateRequest request = new UpdateRequest();
+				request.setUpdateType(UpdateRequest.UpdateType.PASSWORD);
+
+			    //when then
+//				assertThatThrownBy(() -> userService.updateNickName(request, user))
+//						.hasMessage(GollabaErrorCode.ALREADY_EXIST_NICKNAME.getDescription())
+//						.isInstanceOf(GollabaException.class);
+			}
+		}
+
+	}
+
 }

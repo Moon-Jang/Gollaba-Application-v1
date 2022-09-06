@@ -1,6 +1,7 @@
 package kr.mj.gollaba.integration.user;
 
 import kr.mj.gollaba.common.Const;
+import kr.mj.gollaba.common.util.MultiValueMapGenerator;
 import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
@@ -11,9 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +26,9 @@ class UserControllerTest extends IntegrationTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@DisplayName("회원 가입")
 	@Test
@@ -39,11 +47,13 @@ class UserControllerTest extends IntegrationTest {
 
 		//then
 		resultActions
+				.andDo(print())
 				.andExpect(status().isCreated());
 	}
 
-	
+
 	@DisplayName("닉네임 변경")
+	@WithUserDetails(value = UserFactory.TEST_UNIQUE_ID)
 	@Test
 	public void update_nickname() throws Exception {
 		//given
@@ -53,13 +63,38 @@ class UserControllerTest extends IntegrationTest {
 		request.setNickName(testNickName);
 
 		//when
-		ResultActions resultActions = mvc.perform(post(Const.ROOT_URL + "/signup")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(request))
+		ResultActions resultActions = mvc.perform(multipart(Const.ROOT_URL + "/users/update")
+				.contentType(MediaType.MULTIPART_FORM_DATA)
+						.params(MultiValueMapGenerator.generate(request))
 				.accept(MediaType.APPLICATION_JSON));
 
 		//then
 		resultActions
-				.andExpect(status().isCreated());
+				.andDo(print())
+				.andExpect(status().isOk());
+	}
+
+	@DisplayName("비밀번호 변경")
+	@WithUserDetails(value = UserFactory.TEST_UNIQUE_ID)
+	@Test
+	public void update_password() throws Exception {
+		//given
+		String testPassword = "testPass123456!@";
+		UpdateRequest request = new UpdateRequest();
+		request.setUpdateType(UpdateRequest.UpdateType.PASSWORD);
+		request.setCurrentPassword(UserFactory.TEST_PASSWORD);
+		request.setNewPassword(testPassword);
+
+		boolean res = passwordEncoder.matches(UserFactory.TEST_PASSWORD, "$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy");
+		//when
+		ResultActions resultActions = mvc.perform(multipart(Const.ROOT_URL + "/users/update")
+				.contentType(MediaType.MULTIPART_FORM_DATA)
+				.params(MultiValueMapGenerator.generate(request))
+				.accept(MediaType.APPLICATION_JSON));
+
+		//then
+		resultActions
+				.andDo(print())
+				.andExpect(status().isOk());
 	}
 }

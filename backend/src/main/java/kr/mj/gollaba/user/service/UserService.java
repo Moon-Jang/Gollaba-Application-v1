@@ -3,11 +3,13 @@ package kr.mj.gollaba.user.service;
 import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
+import kr.mj.gollaba.user.dto.FindUserResponse;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.SignupResponse;
 import kr.mj.gollaba.user.dto.UpdateRequest;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
+import kr.mj.gollaba.user.type.UserRoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,4 +52,17 @@ public class UserService {
 		userRepository.save(user);
 	}
 
+	public void updatePassword(UpdateRequest request, User user) {
+
+	}
+
+	public FindUserResponse find(Long userId, PrincipalDetails principalDetails) {
+		User user = principalDetails.getUser();
+
+		if (user.getUserRole() != UserRoleType.ROLE_ADMIN && user.getId().equals(userId) == false) {
+			throw new GollabaException(GollabaErrorCode.FORBIDDEN);
+		}
+
+		return FindUserResponse.create(principalDetails.getUser());
+	}
 }
