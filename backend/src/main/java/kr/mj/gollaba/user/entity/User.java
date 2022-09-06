@@ -31,6 +31,12 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "profile_image_url", nullable = true)
+    private String profileImageUrl;
+
+    @Column(name = "background_image_url", nullable = true)
+    private String backgroundImageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
     private UserRoleType userRole;

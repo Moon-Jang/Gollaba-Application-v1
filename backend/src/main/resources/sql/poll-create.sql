@@ -1,14 +1,14 @@
-INSERT INTO user (user_id, unique_id, nickname, password, user_role, created_at, updated_at)
-VALUES (DEFAULT, 'testid1231', '홍길동1', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1232', '홍길동2', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1233', '홍길동3', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1234', '홍길동4', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1235', '홍길동5', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1236', '홍길동6', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1237', '홍길동7', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1238', '홍길동8', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid1239', '홍길동9', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
-(DEFAULT, 'testid12310', '홍길동10', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36');
+INSERT INTO `user` (user_id, unique_id, nickname, password, user_role, created_at, updated_at)
+VALUES (DEFAULT, 'testid1231', '관리자', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_ADMIN', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1232', '홍길동', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1233', '홍길동1', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1234', '홍길동2', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1235', '홍길동3', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1236', '홍길동4', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1237', '홍길동5', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1238', '홍길동6', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid1239', '홍길동7', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36'),
+       (DEFAULT, 'testid12310', '홍길동8', '$2a$10$tQFqs1ZnUn.InIntVZkFlOO2PzYVzKY0HPDH/812okQo4bDNCQYIy', 'ROLE_USER', '2022-07-12 12:38:36', '2022-07-12 12:38:36');
 
 INSERT INTO poll (poll_id, user_id, title, creator_name, response_type, is_ballot, ended_at, created_at, updated_at)
 VALUES

@@ -92,22 +92,24 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
     }
 
 	private ApiKey accessToken() {
-		return new ApiKey("accessToken", Const.ACCESS_TOKEN_HEADER, "header");
+		return new ApiKey(Const.ACCESS_TOKEN_HEADER, Const.ACCESS_TOKEN_HEADER, "header");
 	}
 
 	private ApiKey refreshToken() {
-		return new ApiKey("refreshToken", Const.REFRESH_TOKEN_HEADER, "header");
+		return new ApiKey(Const.REFRESH_TOKEN_HEADER, Const.REFRESH_TOKEN_HEADER,"header");
 	}
 
 	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth()).build();
+		return SecurityContext.builder()
+				.securityReferences(defaultAuth())
+				.build();
 	}
 
 	List<SecurityReference> defaultAuth() {
 		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
 		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
 		authorizationScopes[0] = authorizationScope;
-		return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+		return Arrays.asList(new SecurityReference(Const.ACCESS_TOKEN_HEADER, authorizationScopes), new SecurityReference(Const.REFRESH_TOKEN_HEADER, authorizationScopes));
 	}
 	
 	private Set<String> getConsumeContentTypes() {

@@ -3,6 +3,7 @@ package kr.mj.gollaba.exception;
 import kr.mj.gollaba.common.ErrorAPIResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,5 +33,10 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
 	public ResponseEntity<ErrorAPIResponse> handleHttpMediaTypeNotSupportedExceptions(HttpServletRequest request, HttpMediaTypeNotSupportedException e) {
 		return new ResponseEntity<>(new ErrorAPIResponse(GollabaErrorCode.NOT_SUPPORTED_HTTP_MEDIA_TYPE), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ErrorAPIResponse> handleAccessDeniedExceptions(HttpServletRequest request, AccessDeniedException e) {
+		return new ResponseEntity<>(new ErrorAPIResponse(GollabaErrorCode.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
 	}
 }
