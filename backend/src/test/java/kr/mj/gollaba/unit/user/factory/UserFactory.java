@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class UserFactory {
 
     public static final Long TEST_ID = 1L;
-    public static final String TEST_UNIQUE_ID = "testid1231";
-    public static final String TEST_NICK_NAME = "홍길동";
+    public static final String TEST_UNIQUE_ID = "testid123";
+    public static final String TEST_NICK_NAME = "홍길동99";
     public static final String TEST_PASSWORD = "test1234*";
     public static final String TEST_REG_NO = "860824-1655068";
     public static final UserRoleType TEST_USER_ROLE_TYPE = UserRoleType.ROLE_USER;
