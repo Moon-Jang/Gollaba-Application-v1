@@ -12,6 +12,7 @@ export default function TokenEx() {
 
     const result = JSON.stringify(decoded)
     return (
+        // cookie에서 컴포넌트
         <>
             <div>
                 <span>{result}</span>
