@@ -6,16 +6,14 @@ export default function TokenEx() {
 
     const decoded = jwt.decode(cookies.accessToken)
     console.log('decoded', decoded)
-    const payload = {
-        userId: cookies.accessToken,
-    }
 
-    const result = JSON.stringify(decoded)
     return (
-        // cookie에서 컴포넌트
         <>
             <div>
-                <span>{result}</span>
+                토큰 정보
+                <span>idx: {decoded.id}</span>
+                <span>uid: {decoded.uid}</span>
+                <span>un: {decoded.un}</span>
             </div>
         </>
     )
