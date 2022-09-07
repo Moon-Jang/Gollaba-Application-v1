@@ -2,6 +2,10 @@ import { Avatar, Box } from '@mui/material'
 import { useRef, useState } from 'react'
 
 import Nickname from './nickname'
+import TokenEx from './tokenEx'
+import { useCookies } from 'react-cookie'
+import jwt from 'jsonwebtoken'
+import EditIcon from '@mui/icons-material/Edit'
 
 export default function Profile() {
     // photoInput.current.click() is not a function
@@ -31,6 +35,13 @@ export default function Profile() {
         reader.readAsDataURL(photoToAdd[0])
     }
 
+    //tokenEx
+    const [cookies, setCookies, removeCookies] = useCookies([])
+
+    const decoded = jwt.decode(cookies.accessToken)
+    console.log('decoded', decoded)
+
+    console.log('un', decoded.un)
     return (
         <>
             <Box
@@ -59,8 +70,25 @@ export default function Profile() {
                         ref={photoInput}
                     />
                 </div>
-
-                <Nickname />
+                {/* <TokenEx /> */}
+                <div style={{ fontSize: '24px' }}>
+                    <Box
+                        sx={{
+                            marginTop: 2,
+                            marginBottom: 6,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <span>
+                            {decoded.un}님의 페이지입니다.
+                            <EditIcon style={{ margin: '0 0 -3 10' }} />
+                        </span>
+                    </Box>
+                </div>
+                {/* <Nickname /> */}
             </Box>
         </>
     )
