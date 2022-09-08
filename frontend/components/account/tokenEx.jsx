@@ -10,10 +10,12 @@ export default function TokenEx() {
     return (
         <>
             <div>
-                토큰 정보
-                <span>idx: {decoded.id}</span>
-                <span>uid: {decoded.uid}</span>
-                <span>un: {decoded.un}</span>
+                토큰 정보 <br />
+                <span>idx: {decoded.id}</span> <br />
+                <span>사용자 아이디: {decoded.uid}</span> <br />
+                <span>사용자 이름: {decoded.un}</span> <br />
+                <span>발생시간: {decoded.iat}</span> <br />
+                <span>만료시간: {decoded.exp}</span> <br />
             </div>
         </>
     )
