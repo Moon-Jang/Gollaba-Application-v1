@@ -48,7 +48,22 @@ const ApiTemplate = {
         return result.data
     },
     getApi: async (method, url, body) => {
+        let result = null
         console.log(method, url, body)
+        if (body) {
+            try {
+                result = await instance[method](url, body)
+            } catch (e) {
+                if (
+                    e.response.status === 401 &&
+                    e.message === EXPIRED_ACCESS_TOKEN
+                ) {
+                }
+                return e.response.data
+            }
+            return result.data
+        }
+        console.log('result: ', result.data)
     },
 }
 
