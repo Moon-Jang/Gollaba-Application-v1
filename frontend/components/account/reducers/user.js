@@ -1,37 +1,22 @@
-// const { createSlice } = require('@reduxjs/toolkit')
-// const { login } = require('../actions/user')
+import { useState } from 'react'
+import axios from 'axios'
+import { useCookies } from 'react-cookie'
+import jwt from 'jsonwebtoken'
 
-const initialState = {
-    isLoggingIn: false,
-    isLoggedIn: true,
-    loginError: false,
-    data: {
-        id: 0,
-        nickname: '[사용자 닉네임]',
-    },
+const [cookies, setCookies, removeCookies] = useCookies([])
+const token = jwt.decode(cookies.accessToken)
+console.log(token['id'])
+const userId = token['id']
+const [data, setData] = useState(null)
+
+const userInfo = async () => {
+    try {
+        const response = await axios.get(
+            `https://dev/api.gollaba.net/v1/user/${userId}`
+        )
+        setData(response.data)
+    } catch (e) {
+        console.log(e)
+    }
 }
-
-// const userSlice = createSlice({
-//     name: 'user',
-//     initialState,
-//     reducers: {
-//         editNickname(state, action) {
-//             state.data.nickname = action.payload
-//         },
-//     },
-//     extraReducers: {
-//         [login.pending](state, action) {
-//             state.isLoggingIn = true
-//         },
-//         [login.fulfilled](state, action) {
-//             state.isLoggingIn = false
-//             state.isLoggedIn = true
-//             state.data = action.payload
-//         },
-//         [login.rejected](state, action) {
-//             state.isLoggingIn = false
-//             state.data = null
-//         },
-//     },
-// })
-// module.exports = userSlice
+export default userInfo

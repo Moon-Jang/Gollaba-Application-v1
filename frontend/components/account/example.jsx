@@ -32,6 +32,7 @@ export default function KMExample() {
             return
         }
     }
+    // TypeError: Cannot read properties of undefined 'value'
 
     const [cookies, setCookies, removeCookies] = useCookies([])
     const token = jwt.decode(cookies.accessToken)
