@@ -16,8 +16,12 @@ const AxiosEx = () => {
     const userInfo = async () => {
         try {
             const response = await axios.get(
-                `https://dev.api.gollaba.net/v1/user/${token.id}`,
-                { headers: { Authorization: `Bearer ${cookies?.accessToken}` } }
+                `https://dev.api.gollaba.net/v1/users/${token.id}`,
+                {
+                    headers: {
+                        'GA-Access-Token': `Bearer ${cookies?.accessToken}`,
+                    },
+                }
             )
             setData(response.data)
         } catch (e) {
@@ -31,7 +35,7 @@ const AxiosEx = () => {
             </div>
             {data && (
                 <textarea
-                    rows={7}
+                    rows={20}
                     value={JSON.stringify(data, null, 2)}
                     readOnly={true}
                 />
