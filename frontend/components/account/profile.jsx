@@ -47,10 +47,16 @@ export default function Profile() {
             setBackgroundImage(BACKGROUND_IMAGE)
         }
         const reader = new FileReader()
-        const readerUrl = reader.readAsDataURL(reader.result)
+        // const readerUrl = reader.readAsDataURL(reader.result)
+        if (BackgroundToAdd && BackgroundToAdd?.type.match('image.*')) {
+            reader.readAsDataURL(reader.result)
+        } else {
+            img.css('display', 'none')
+            img.attr('src', 'BACKGROUND_IMAGE')
+        }
         reader.onload = () => {
             if (reader.readyState === 2) {
-                setProfileImage(readerUrl)
+                setProfileImage(reader.result)
             }
         }
     }
