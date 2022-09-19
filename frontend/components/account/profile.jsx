@@ -1,10 +1,12 @@
-import { Avatar, Box } from '@mui/material'
+import { Avatar, Box, IconButton } from '@mui/material'
 import { useRef, useState, useEffect } from 'react'
 
 import TokenEx from './tokenEx'
 import { useCookies } from 'react-cookie'
 import jwt from 'jsonwebtoken'
 import EditIcon from '@mui/icons-material/Edit'
+import axios from 'axios'
+import ApiGateway from './../../apis/ApiGateway'
 
 export default function Profile() {
     const BACKGROUND_IMAGE =
@@ -35,25 +37,22 @@ export default function Profile() {
         reader.onload = () => {
             if (reader.readyState === 2) {
                 setProfileImage(reader.result)
+                console.log('reader :', reader.result)
             }
         }
         reader.readAsDataURL(photoToAdd[0])
     }
     const handleBackground = (e) => {
         const BackgroundToAdd = e.target.files
+        console.log('bgimg :', BackgroundToAdd)
         if (BackgroundToAdd[0]) {
             setBackgroundImage(BackgroundToAdd[0])
+            console.log('bgimg[0]', BackgroundToAdd[0])
         } else {
             setBackgroundImage(BACKGROUND_IMAGE)
         }
         const reader = new FileReader()
-        // const readerUrl = reader.readAsDataURL(reader.result)
-        if (BackgroundToAdd && BackgroundToAdd?.type.match('image.*')) {
-            reader.readAsDataURL(reader.result)
-        } else {
-            img.css('display', 'none')
-            img.attr('src', 'BACKGROUND_IMAGE')
-        }
+        console.log('result: ', reader.result)
         reader.onload = () => {
             if (reader.readyState === 2) {
                 setProfileImage(reader.result)
@@ -61,15 +60,32 @@ export default function Profile() {
         }
     }
 
-    //tokenEx
+    // 끄아아악 아니 프로필 사진은 멀쩡하게 reader.data가 알아서 들어갔것만 왜 배경 사진은 [object File] 이렇게 들어가서 ㅇㅈㄹ인거지 후
+
+    // 일단 유저정보 받아오기
     const [cookies, setCookies, removeCookies] = useCookies([])
     const [token, setToken] = useState(null)
+    const [data, setData] = useState(null)
+    const showUser = async () => {
+        if (!token) return
+        try {
+            //await ApiGateway.updateNickName(formData, cookies.accessToken);
+            const userInfo = await ApiGateway.showUser(
+                token.id,
+                cookies.accessToken
+            )
 
+            setData(userInfo)
+        } catch (e) {
+            console.log(e)
+        }
+    }
     useEffect(() => {
         setToken(jwt.decode(cookies.accessToken))
     }, [])
     console.log('token', token)
     // console.log('un', token.un)
+    // showUser() 자꾸 렌더링 되어서 한번만 나오는거로
 
     const backgroundStyle = {
         backgroundColor: 'pink',
@@ -156,9 +172,12 @@ export default function Profile() {
                         }}
                     >
                         <span>
-                            {token?.un}님의 페이지입니다.
-                            <EditIcon style={{ margin: '0 0 -3 10' }} />
+                            {data?.nickName}
+                            <IconButton aria-label='edit'>
+                                <EditIcon style={{ margin: '0 0 3 10' }} />
+                            </IconButton>
                         </span>
+                        {/* <button onClick={showUser}>회원정보 요청</button> */}
                     </Box>
                 </div>
             </Box>

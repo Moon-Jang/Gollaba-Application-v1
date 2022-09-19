@@ -5,7 +5,7 @@ export default function Example() {
     return (
         <>
             <KMExample />
-            <AxiosEx />
+            {/* <AxiosEx /> */}
         </>
     )
 }

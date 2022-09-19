@@ -8,7 +8,6 @@ const AxiosEx = () => {
     const [token, setToken] = useState(null)
     const [data, setData] = useState(null)
 
-    // 현재상황 : 헤더 요청으로 토큰 권한까지 넣어서 요청했음에도 404 응답이 나오는 상황. 백엔드 체크 요청
     console.log('cookies1 :', cookies)
     console.log('token1 :', token)
     console.log('data1: ', data)
@@ -29,7 +28,7 @@ const AxiosEx = () => {
     }
     useEffect(() => {
         setToken(jwt.decode(cookies.accessToken))
-        userInfo()
+        // userInfo()
         console.log('cookies2 :', cookies)
         console.log('token2 :', token)
         console.log('data2 :', data)
