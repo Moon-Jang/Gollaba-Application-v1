@@ -22,7 +22,7 @@ export default function ButtonAppBar(title) {
             onClick={() => {
               alert("미구현 기능입니다.");
             }}
-            sx={{ mr: -1.5 }}
+            sx={{ mr: -2 }}
           >
             <NotificationsIcon sx={{}} />
           </Button>

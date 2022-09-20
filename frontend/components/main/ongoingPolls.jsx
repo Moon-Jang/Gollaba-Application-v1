@@ -34,8 +34,8 @@ export default function OngoingPolls(props) {
     return data.map((el) => <OngoingPollsPoll data={el} />);
   };
   return (
-    <Box sx={{ mt: 4 }}>
-      <Box className="Title" sx={{ pl: 0.3, mt: 2 }}>
+    <Box sx={{ mt: 3, mb: 5 }}>
+      <Box className="Title" sx={{ pl: 0.3, mt: 0 }}>
         Ongoing Polls
       </Box>
       <Box
