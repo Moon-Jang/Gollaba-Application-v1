@@ -73,7 +73,7 @@ export default function signup() {
         "https://dev.api.gollaba.net/v1/signup",
         payload
       );
-      router.push("/");
+      router.push("/login");
     } catch (e) {
       response = e.response;
       alert(response.data.error.message);
