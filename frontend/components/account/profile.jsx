@@ -61,12 +61,13 @@ export default function Profile() {
     }
 
     // 끄아아악 아니 프로필 사진은 멀쩡하게 reader.data가 알아서 들어갔것만 왜 배경 사진은 [object File] 이렇게 들어가서 ㅇㅈㄹ인거지 후
-
+    // useState에서 setToken 함수 -> '다음 렌더링때' 변수를 바꿔주는 함수이다. 고로 해당 로직에서 setToken은 useEffect끝난 다음에
     // 일단 유저정보 받아오기
     const [cookies, setCookies, removeCookies] = useCookies([])
     const [token, setToken] = useState(null)
     const [data, setData] = useState(null)
     const showUser = async () => {
+        console.log('token : ', token)
         if (!token) return
         try {
             //await ApiGateway.updateNickName(formData, cookies.accessToken);
@@ -74,18 +75,30 @@ export default function Profile() {
                 token.id,
                 cookies.accessToken
             )
-
             setData(userInfo)
+            console.log('showUser :', userInfo)
         } catch (e) {
             console.log(e)
         }
     }
     useEffect(() => {
         setToken(jwt.decode(cookies.accessToken))
-    }, [])
-    console.log('token', token)
+    }, [cookies])
+    useEffect(() => {
+        showUser()
+    }, [token])
+    console.log('token useEffect', token)
+    // useEffect(() => {
+    //     showUser()
+    //     console.log('useEffect data :', data)
+    // }, [])
+    console.log('data :', data)
+    console.log('profile :', data?.profileImageUrl)
+    console.log('background : ', data?.backgroundImageUrl)
     // console.log('un', token.un)
-    // showUser() 자꾸 렌더링 되어서 한번만 나오는거로
+
+    // 질문: 여기서 난 showUser을 화면이 처음 마운트 될 때, 한번만 자동으로 호출하고 싶어서 useEffect를 이용해 넣었음.
+    // 근데 같이 useEffect에 들어간 setToken은 정상적으로 작동되는 반면, showUser()은 실행이 안 됨.
 
     const backgroundStyle = {
         backgroundColor: 'pink',
