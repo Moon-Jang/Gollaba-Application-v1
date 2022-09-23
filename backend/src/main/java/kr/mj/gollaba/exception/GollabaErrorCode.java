@@ -17,6 +17,7 @@ public enum GollabaErrorCode {
     INVALID_PARAMS(6, HttpStatus.BAD_REQUEST, "유효하지 않은 인자값 입니다."),
     NOT_SUPPORTED_HTTP_MEDIA_TYPE(7, HttpStatus.BAD_REQUEST, "Content-Type이 잘못되었습니다. 수정 후 다시 시도해주세요."),
     NOT_EXIST_HTTP_MEDIA_TYPE(8, HttpStatus.BAD_REQUEST, "Content-Type이 존재하지 않습니다. 수정 후 다시 시도해주세요."),
+    IO_EXCEPTION(9, HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 IO 장애입니다. 관리자에게 문의해주세요."),
     UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED,"인증 정보가 없거나 부족합니다."),
     FORBIDDEN(403, HttpStatus.FORBIDDEN,"해당 자원에 접근할 수 없습니다."),
     UNKNOWN_ERROR(9999, HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러입니다. 관리자에게 문의해주세요."),

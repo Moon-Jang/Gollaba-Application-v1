@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -75,7 +76,7 @@ class UserControllerTest extends IntegrationTest {
 	}
 
 	@DisplayName("비밀번호 변경")
-	@WithUserDetails(value = UserFactory.TEST_UNIQUE_ID)
+	@WithMockUser(username = UserFactory.TEST_UNIQUE_ID, roles = "ROLE_USER")
 	@Test
 	public void update_password() throws Exception {
 		//given
