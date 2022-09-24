@@ -7,6 +7,7 @@ import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.UpdateRequest;
 import kr.mj.gollaba.user.repository.UserRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,7 @@ class UserControllerTest extends IntegrationTest {
 				.andExpect(status().isOk());
 	}
 
+	@Disabled
 	@DisplayName("비밀번호 변경")
 	@WithMockUser(username = UserFactory.TEST_UNIQUE_ID, roles = "ROLE_USER")
 	@Test
