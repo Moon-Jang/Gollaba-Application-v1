@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.common.ErrorAPIResponse;
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.user.dto.FindUserResponse;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.SignupResponse;
@@ -61,7 +63,7 @@ public class UserController {
 	public ResponseEntity<FindUserResponse> find(@PathVariable Long userId, @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
-				.body(userService.find(userId, principalDetails));
+				.body(userService.find(userId, principalDetails.getUser()));
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
@@ -73,16 +75,24 @@ public class UserController {
 					schema = @Schema(implementation = ErrorAPIResponse.class)))})
 	@PostMapping(path = "/users/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Boolean> update(@Validated @ModelAttribute UpdateRequest request, @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
+		request.validate();
 
 		switch (request.getUpdateType()) {
-			case NICKNAME: userService.updateNickName(request, principalDetails.getUser());
+			case NICKNAME:
+				userService.updateNickName(request, principalDetails.getUser());
 				break;
 			case PASSWORD:
+				userService.updatePassword(request, principalDetails.getUser());
+				break;
+			case PROFILE_IMAGE:
+				userService.updateProfileImage(request, principalDetails.getUser());
+				break;
+			case BACKGROUND_IMAGE:
+				userService.updateBackgroundImage(request, principalDetails.getUser());
 				break;
 			default:
-				break;
+				throw new GollabaException(GollabaErrorCode.INVALID_PARAMS);
 		}
-		//userService.update(request);
 
 		return ResponseEntity
 				.status(HttpStatus.OK)

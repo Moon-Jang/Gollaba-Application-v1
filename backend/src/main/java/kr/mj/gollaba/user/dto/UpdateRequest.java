@@ -2,6 +2,7 @@ package kr.mj.gollaba.user.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;
+import kr.mj.gollaba.common.util.ImageFileUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import lombok.Getter;
@@ -41,7 +42,7 @@ public class UpdateRequest implements BaseApiRequest {
 
 	private MultipartFile backgroundImage;
 
-
+	private static final long MAX_UPLOAD_SIZE = 1024 * 1024 * 5L;
 	@Override
 	public void validate() {
 		switch (updateType) {
@@ -60,13 +61,29 @@ public class UpdateRequest implements BaseApiRequest {
 				}
 				break;
 			case PROFILE_IMAGE:
-				if (profileImage == null || profileImage.getSize() < 1) {
+				if (profileImage == null) {
 					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "프로필 사진 파일을 올려주세요.");
+				}
+
+				if (ImageFileUtils.isImageFile(profileImage) == false) {
+					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 파일이 아닙니다.");
+				}
+
+				if (profileImage.getSize() > MAX_UPLOAD_SIZE) {
+					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 용량은 5MB를 넘을 수 없습니다.");
 				}
 				break;
 			case BACKGROUND_IMAGE:
-				if (backgroundImage == null || backgroundImage.getSize() < 1) {
+				if (backgroundImage == null) {
 					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "배경 사진 파일을 올려주세요.");
+				}
+
+				if (ImageFileUtils.isImageFile(backgroundImage) == false) {
+					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 파일이 아닙니다.");
+				}
+
+				if (backgroundImage.getSize() > MAX_UPLOAD_SIZE) {
+					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 용량은 5MB를 넘을 수 없습니다.");
 				}
 				break;
 			default:

@@ -1,6 +1,7 @@
 package kr.mj.gollaba.user.service;
 
 import kr.mj.gollaba.auth.PrincipalDetails;
+import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.user.dto.FindUserResponse;
@@ -15,12 +16,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.UUID;
+
+import static kr.mj.gollaba.common.service.S3UploadService.BACKGROUND_IMAGE_PATH;
+import static kr.mj.gollaba.common.service.S3UploadService.PROFILE_IMAGE_PATH;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final S3UploadService s3UploadService;
 
 	public SignupResponse create(SignupRequest request) {
 		if (userRepository.existsByUniqueId(request.getId())) {
@@ -53,16 +60,38 @@ public class UserService {
 	}
 
 	public void updatePassword(UpdateRequest request, User user) {
+		if (passwordEncoder.matches(request.getCurrentPassword(), user.getPassword()) == false) {
+			throw new GollabaException(GollabaErrorCode.NOT_MATCHED_PASSWORD);
+		}
 
+		user.updatePassword(user.getPassword());
+		userRepository.save(user);
 	}
 
-	public FindUserResponse find(Long userId, PrincipalDetails principalDetails) {
-		User user = principalDetails.getUser();
+	public void updateProfileImage(UpdateRequest request, User user) {
+		String fileName = generateFileName(user.getId(), request.getProfileImage().getContentType());
+		String imageUrl = s3UploadService.upload(PROFILE_IMAGE_PATH, fileName, request.getProfileImage());
+		user.updateProfileImageUrl(imageUrl);
+		userRepository.save(user);
+	}
 
+	public void updateBackgroundImage(UpdateRequest request, User user) {
+		String fileName = generateFileName(user.getId(), request.getBackgroundImage().getContentType());
+		String imageUrl = s3UploadService.upload(BACKGROUND_IMAGE_PATH, fileName, request.getBackgroundImage());
+		user.updateBackgroundImageUrl(imageUrl);
+		userRepository.save(user);
+	}
+
+	private String generateFileName(long id, String contentType) {
+		return id + "_" + UUID.randomUUID() + "." + contentType.replace("image/", "");
+	}
+
+	public FindUserResponse find(Long userId, User user) {
 		if (user.getUserRole() != UserRoleType.ROLE_ADMIN && user.getId().equals(userId) == false) {
 			throw new GollabaException(GollabaErrorCode.FORBIDDEN);
 		}
 
-		return FindUserResponse.create(principalDetails.getUser());
+		return FindUserResponse.create(user);
 	}
+
 }

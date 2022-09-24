@@ -207,21 +207,28 @@ class UserServiceTest extends ServiceTest {
 	@Nested
 	class updatePassword {
 
-		@DisplayName("1. 입력 값 검증에 실패할 경우")
+		@DisplayName("1. 입력한 현재 비밀번호가 저장된 비밀번호와 일치하지 않을 경우")
 		@Nested
-		class  when_invalid_params{
+		class  when_not_matched_password{
 
-			@DisplayName("잘못된 요청 에러가 발생한다.")
+			@DisplayName("비밀번호 불일치 에러가 발생한다.")
 			@Test
-			void throw_INVALID_PARARMS() {
+			void throw_NOT_MATCHED_PASSWORD() {
 			    //given
+				String testPassword = UserFactory.TEST_PASSWORD + "123";
+				given(passwordEncoder.matches(anyString(), anyString()))
+						.willReturn(false);
+				User user = UserFactory.createWithId();
 			    UpdateRequest request = new UpdateRequest();
 				request.setUpdateType(UpdateRequest.UpdateType.PASSWORD);
+				request.setCurrentPassword(UserFactory.TEST_PASSWORD);
+				request.setNewPassword(testPassword);
 
 			    //when then
-//				assertThatThrownBy(() -> userService.updateNickName(request, user))
-//						.hasMessage(GollabaErrorCode.ALREADY_EXIST_NICKNAME.getDescription())
-//						.isInstanceOf(GollabaException.class);
+				assertThatThrownBy(() -> userService.updatePassword(request, user))
+						.hasMessage(GollabaErrorCode.NOT_MATCHED_PASSWORD.getDescription())
+						.isInstanceOf(GollabaException.class);
+				verify(passwordEncoder, times(1)).matches(eq(UserFactory.TEST_PASSWORD), anyString());
 			}
 		}
 

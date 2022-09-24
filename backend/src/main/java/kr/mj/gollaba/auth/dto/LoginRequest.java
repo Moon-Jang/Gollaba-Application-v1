@@ -15,7 +15,7 @@ public class LoginRequest implements BaseApiRequest {
 
     @NotBlank
     @Size(min = 8, max = 32)
-    @ApiModelProperty(position = 1, example = "testid1232", required = true)
+    @ApiModelProperty(position = 1, example = "test8502", required = true)
     private String id;
 
     @NotBlank
