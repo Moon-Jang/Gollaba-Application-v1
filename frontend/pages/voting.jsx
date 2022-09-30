@@ -13,7 +13,7 @@ import axios from "axios";
 import ButtonAppBar from "../components/buttonAppBar";
 import FooterNav from "../components/footerNav";
 import PollsMap from "../components/polls/mapPoll";
-import { theme } from "../src/theme";
+import theme from "../src/theme";
 import ApiGateway from "../apis/ApiGateway";
 /*
 const theme = createTheme({
@@ -31,7 +31,7 @@ const theme = createTheme({
 
 const PollTheme = createTheme(theme);
 
-export default function Polls() {
+export default function Voting() {
   const [polls, setPolls] = useState([]);
   const [ref, inView] = useInView();
   const [isLoading, setIsLoading] = useState(false);

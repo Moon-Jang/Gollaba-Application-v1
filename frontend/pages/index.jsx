@@ -13,7 +13,7 @@ import axios from "axios";
 import ButtonAppBar from "../components/buttonAppBar";
 import FooterNav from "../components/footerNav";
 import PollsMap from "../components/polls/mapPoll";
-import { theme } from "../src/theme";
+import theme from "../src/theme";
 import ApiGateway from "../apis/ApiGateway";
 
 import OngoingPolls from "../components/main/ongoingPolls";

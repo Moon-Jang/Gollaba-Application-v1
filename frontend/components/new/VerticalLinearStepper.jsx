@@ -20,6 +20,10 @@ import PollTitle from "./PollTitle";
 import ApiGateway from "../../apis/ApiGateway";
 import { useRouter } from "next/router";
 import PollCreatorName from "./PollCreatorName";
+import { formatDiagnosticsWithColorAndContext } from "typescript";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+//import { ko } from "date-fns/esm/locale";
 
 const RESPONSE_TYPE_SIGNLE = "SINGLE";
 const RESPONSE_TYPE_MULTI = "MULTI";
@@ -27,8 +31,10 @@ const RESPONSE_TYPE_MULTI = "MULTI";
 const steps = [
   "작성자 이름을 입력해주세요.",
   "투표 주제를 입력해주세요.",
+  "투표 이미지를 삽입해주세요. (선택사항 입니다.)",
   "투표 항목을 생성해주세요.",
   "투표 옵션을 선택해주세요.",
+  "투표 마감일을 선택해주세요.",
 ];
 
 export default function VerticalLinearStepper() {
@@ -38,6 +44,7 @@ export default function VerticalLinearStepper() {
   const [isSubmit, setIsSubmit] = useState(false);
   const nameRef = useRef({ value: "", isInvalid: false });
   const titleRef = useRef({ value: "", isInvalid: false });
+  const imageRef = useRef({});
   const itemsRef = useRef([
     {
       id: IdGenerator.generate(),
@@ -54,7 +61,7 @@ export default function VerticalLinearStepper() {
     isBallot: false,
     responseType: RESPONSE_TYPE_SIGNLE,
   });
-
+  const expireRef = useRef({});
   const handleNext = () => {
     if (isSubmit) return;
 
@@ -65,12 +72,20 @@ export default function VerticalLinearStepper() {
       case 1:
         if (titleRef.current.value === "" || titleRef.current.isInvalid) return;
         break;
+
       case 2:
+        //if (imageRef.current.value !== "") return;
+        break;
+
+      case 3:
         if (itemsRef.current.some((el) => el.isInvalid === true)) return;
         break;
-      case 3:
+      case 4:
+        break;
+      case 5:
+        console.log("submit 가동");
         handleSubmmit();
-        return;
+        break;
       default:
         console.error("존재하지 않는 스텝입니다.");
     }
@@ -102,7 +117,18 @@ export default function VerticalLinearStepper() {
       responseType: optionsRef.current.responseType,
     };
 
-    const response = await ApiGateway.createPoll(payload);
+    const formData = new FormData();
+    Object.keys(payload).forEach((key) => formData.append(key, payload[key]));
+    if (imageRef === null) formData.append("image", imageRef);
+
+    for (let key of formData.keys()) {
+      console.log("키", key);
+    }
+    for (let value of formData.values()) {
+      console.log("밸류", value);
+    }
+
+    const response = await ApiGateway.createPoll(formData);
 
     if (response.error) {
       alert(response.message);
@@ -110,7 +136,7 @@ export default function VerticalLinearStepper() {
       return;
     }
 
-    router.push("/voting/" + response.pollId);
+    // router.push("/voting/" + response.pollId);
   };
 
   const handleBack = () => {
@@ -124,7 +150,14 @@ export default function VerticalLinearStepper() {
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <StepContent>
-              {getStepContent(index, [nameRef, titleRef, itemsRef, optionsRef])}
+              {getStepContent(index, [
+                nameRef,
+                titleRef,
+                imageRef,
+                itemsRef,
+                optionsRef,
+                expireRef,
+              ])}
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -179,9 +212,13 @@ function getStepContent(step, refs) {
     case 1:
       return <PollTitle titleRef={refs[step]} />;
     case 2:
-      return <PollItemsWrapper itemsRef={refs[step]} />;
+      return <PollImage imageRef={refs[step]} />;
     case 3:
+      return <PollItemsWrapper itemsRef={refs[step]} />;
+    case 4:
       return <PollOptionsWrapper optionsRef={refs[step]} />;
+    case 5:
+      return <PollExpireDate expireRef={refs[step]} />;
     default:
       return "Unknown step";
   }
@@ -296,5 +333,61 @@ function PollOption({ onChange, checked, label }) {
       <Checkbox checked={checked} color="primary" onChange={onChange} />
       <Typography component={"span"}>{label}</Typography>
     </div>
+  );
+}
+
+function PollImage({ imageRef }) {
+  const classes = pollOptionStyles();
+  const [imgName, setImgName] = useState("");
+
+  const imgHandle = (e) => {
+    imageRef.current = e.target.files[0];
+    setImgName(e.target.files[0].name);
+  };
+
+  return (
+    <>
+      <div className={classes.wrapper}>
+        <Typography component={"span"}>{imgName}</Typography>
+      </div>
+      <Button variant="contained" component="label">
+        이미지 업로드
+        <input type="file" hidden accept="image/*" onChange={imgHandle} />
+      </Button>
+    </>
+  );
+}
+
+function PollExpireDate({ expireRef }) {
+  const classes = pollOptionStyles();
+  const now = new Date();
+  const minDate = new Date(now);
+  minDate.setDate(minDate.getDate() + 7);
+
+  const maxDate = new Date(now);
+  maxDate.setDate(maxDate.getDate() + 7);
+
+  const [expireDate, setExpireDate] = useState(new Date());
+
+  const handleChange = (date) => {
+    console.log("응애", now, sevenDayLater);
+    setExpireDate(date);
+    expireRef.current = date;
+    console.log("선택한 날짜>>>", date);
+  };
+
+  return (
+    <>
+      <DatePicker
+        //locale={ko}
+        selected={minDate}
+        onChange={handleChange}
+        closeOnScroll={true}
+        minDate={minDate}
+        maxDate={maxDate}
+        placeholderText="마감일을 선택하세요."
+        dateFormat="yyyy-MM-dd"
+      />
+    </>
   );
 }

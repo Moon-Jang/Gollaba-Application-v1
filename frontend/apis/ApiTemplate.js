@@ -14,12 +14,18 @@ const instance = axios.create({
 const EXPIRED_ACCESS_TOKEN = "액세스 토큰이 만료되었습니다.";
 
 const ApiTemplate = {
-  sendApi: async (method, url, body) => {
+  sendApi: async (method, url, body, token) => {
     let result = null;
     console.log(method, url, body);
+    const authorizationHeader = {
+      headers: {
+        "GA-Access-Token": `Bearer ${token}`,
+      },
+    };
+
     if (body) {
       try {
-        result = await instance[method](url, body);
+        result = await instance[method](url, body, authorizationHeader);
       } catch (e) {
         if (e.response.status === 401 && e.message === EXPIRED_ACCESS_TOKEN) {
         }
@@ -27,13 +33,36 @@ const ApiTemplate = {
         return e.response.data;
       }
 
-      return result.data;
+      return result.datas;
     }
 
     try {
-      result = await instance[method](url);
+      result = await instance[method](url, authorizationHeader);
     } catch (e) {
       if (e.response.status === 401 && e.message === EXPIRED_ACCESS_TOKEN) {
+        alert("인증에러입니다. 다시 로그인 해주세요.");
+      }
+
+      return e.response.data;
+    }
+
+    return result.data;
+  },
+  sendApiMultiPart: async (method, url, formData, token) => {
+    let result = null;
+
+    const authorizationHeader = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "GA-Access-Token": `Bearer ${token}`,
+      },
+    };
+
+    try {
+      result = await instance[method](url, formData, authorizationHeader);
+    } catch (e) {
+      if (e.response.status === 401 && e.message === EXPIRED_ACCESS_TOKEN) {
+        alert("인증에러입니다. 다시 로그인 해주세요.");
       }
 
       return e.response.data;

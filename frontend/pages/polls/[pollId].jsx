@@ -26,7 +26,7 @@ const theme = createTheme({
   },
 });
 
-export default function Voting() {
+export default function Polls() {
   const router = useRouter();
   let response;
   const { pollId } = router.query;
