@@ -31,14 +31,14 @@ export default function FooterNav() {
         <BottomNavigationAction
           label="Polls"
           onClick={() => {
-            router.push("/polls");
+            router.push("/");
           }}
           icon={<PollOutlinedIcon />}
         />
         <BottomNavigationAction
           label="Voting"
           onClick={() => {
-            router.push("/");
+            router.push("/voting");
           }}
           icon={<ThumbUpOutlinedIcon />}
         />

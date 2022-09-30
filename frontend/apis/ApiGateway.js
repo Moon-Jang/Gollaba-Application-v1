@@ -2,8 +2,8 @@ import ApiTemplate from "./ApiTemplate";
 import MethodType from "./MethodType";
 
 const ApiGateway = {
-  createPoll: async (payload) =>
-    ApiTemplate.sendApi(MethodType.POST, "/v1/polls", payload),
+  createPoll: async (payload, token) =>
+    ApiTemplate.sendApiMultiPart(MethodType.POST, "/v1/polls", payload, token),
   getPolls: async (offset, limit) =>
     ApiTemplate.sendApi(
       MethodType.GET,
