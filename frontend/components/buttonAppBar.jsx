@@ -17,8 +17,14 @@ export default function ButtonAppBar(title) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {title.titletext}
           </Typography>
-          <Button color="inherit">
-            <NotificationsIcon />
+          <Button
+            color="inherit"
+            onClick={() => {
+              alert("미구현 기능입니다.");
+            }}
+            sx={{ mr: -2 }}
+          >
+            <NotificationsIcon sx={{}} />
           </Button>
         </Toolbar>
       </AppBar>

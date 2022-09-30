@@ -4,12 +4,15 @@ import Box from "@mui/material/Box";
 import { Checkbox, TextField } from "@mui/material";
 import { CookiesProvider, useCookies } from "react-cookie";
 import jwt_decode from "jwt-decode";
+import ApiGateway from "../../apis/ApiGateway";
+import { useRouter } from "next/router";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function CreateBtn(props) {
+  const router = useRouter();
   const [nickname, setNickname] = useState("");
-  const [cookies, setCookies, removeCookies] = useCookies(null);
+  const [cookies, setCookies, removeCookies] = useCookies({});
 
   const nicknameChanged = (event) => {
     setNickname(event.target.value);
@@ -17,23 +20,47 @@ export default function CreateBtn(props) {
 
   const btnClicked = async () => {
     const userId = null;
-    if (cookies) {
+
+    if (Object.keys(cookies).length !== 0) {
       const decoded = jwt_decode(cookies.accessToken);
       userId = decoded.id;
     }
 
     const payload = {
       optionIds: props.voted,
-      pollId: props.pollId,
+      pollId: Number(props.pollId),
       userId: userId,
-      voterName: nickname,
+      voterName: nickname.length !== 0 ? nickname : null,
     };
 
-    console.log(payload, "clicked");
+    console.log("페이", payload);
+
+    const response = await ApiGateway.vote(payload);
+    console.log("대답", response);
+    if (response.error) {
+      alert(response.message);
+      if (response.code === 20004) {
+        router.push("/result/" + props.pollId);
+      }
+      return;
+    }
+    router.push("/result/" + props.pollId);
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row" }}>
+    <Box
+      sx={{
+        background: "white",
+        position: "fixed",
+        width: "92vw",
+        pr: 1,
+        mb: -1,
+        maxHeight: 1,
+        bottom: 60,
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
       <Box
         className="nickname"
         sx={{
@@ -42,12 +69,16 @@ export default function CreateBtn(props) {
           pt: 2,
         }}
       >
-        <TextField
-          label="닉네임"
-          variant="outlined"
-          size="small"
-          onChange={nicknameChanged}
-        />
+        {props.isBallot ? (
+          <></>
+        ) : (
+          <TextField
+            label="닉네임"
+            variant="outlined"
+            size="small"
+            onChange={nicknameChanged}
+          />
+        )}
       </Box>
       <Box
         className="button"

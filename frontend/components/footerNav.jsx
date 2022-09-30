@@ -38,7 +38,7 @@ export default function FooterNav() {
         <BottomNavigationAction
           label="Voting"
           onClick={() => {
-            router.push("/voting");
+            router.push("/");
           }}
           icon={<ThumbUpOutlinedIcon />}
         />

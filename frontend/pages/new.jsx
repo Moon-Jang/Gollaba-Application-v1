@@ -2,7 +2,7 @@ import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from "@mui/styles";
 import ButtonAppBar from "../components/buttonAppBar";
 import FooterNav from "../components/footerNav";
 import VerticalLinearStepper from "../components/new/VerticalLinearStepper";
@@ -33,7 +33,7 @@ const newPageStyles = makeStyles((theme) => ({
   container: {
     display: "flex",
     flexDirection: "column",
-    height: "100vh"
+    height: "100vh",
   },
   main: {
     width: "100%",
@@ -41,7 +41,7 @@ const newPageStyles = makeStyles((theme) => ({
     // display: "flex",
     marginTop: "16px",
     // flexDirection: "column",
-    // justifyContent: "center", 
+    // justifyContent: "center",
   },
   header: {
     height: "56px",
@@ -50,14 +50,14 @@ const newPageStyles = makeStyles((theme) => ({
   footer: {
     height: "68px",
     width: "100%",
-  }
-}))
+  },
+}));
 
 export default function NewPage() {
   if (typeof window !== "object") return <></>;
-  
+
   const classes = newPageStyles();
-  
+
   return (
     <ThemeProvider theme={theme}>
       <Container className={classes.container} component="div" maxWidth="sm">

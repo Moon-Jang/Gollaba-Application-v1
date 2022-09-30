@@ -14,6 +14,7 @@ import ButtonAppBar from "../components/buttonAppBar";
 import FooterNav from "../components/footerNav";
 import PollsMap from "../components/polls/mapPoll";
 import { theme } from "../src/theme";
+import ApiGateway from "../apis/ApiGateway";
 /*
 const theme = createTheme({
   typography: {
@@ -31,31 +32,22 @@ const theme = createTheme({
 const PollTheme = createTheme(theme);
 
 export default function Polls() {
-  let response;
   const [polls, setPolls] = useState([]);
   const [ref, inView] = useInView();
   const [isLoading, setIsLoading] = useState(false);
   const [offset, setOffset] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
 
+  let response;
+  const limit = 15;
+
   const getData = async () => {
     if (totalCount !== 0 && offset * 15 >= totalCount) return;
     setIsLoading(true);
-    try {
-      response = await axios.get(
-        `https://dev.api.gollaba.net/v1/polls?limit=15&offset=${offset * 15}`
-      );
-      console.log("res>", response.data);
-      let arr = [...polls, ...response.data.polls];
-      setPolls(arr);
-      setTotalCount(response.data.totalCount);
-      setIsLoading(false);
-    } catch (e) {
-      response = e.response;
-      alert(response.data.error.message);
-    } finally {
-      return response;
-    }
+    response = await ApiGateway.getPolls(offset, limit);
+    setPolls([...polls, ...response.polls]);
+    setTotalCount(response.totalCount);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -68,34 +60,59 @@ export default function Polls() {
     }
   }, [inView, isLoading]);
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 7,
-            marginBottom: 10,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "left",
-            justifyContent: "center",
-          }}
-        >
-          <div className="header">
-            <ButtonAppBar titletext={"Polls"} />
-          </div>
+  if (polls !== undefined)
+    return (
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 9,
+              marginBottom: 7,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "left",
+              justifyContent: "center",
+              height: "83vh",
+              maxHeight: "83vh",
+              overflow: "hidden",
+            }}
+          >
+            <div className="header">
+              <ButtonAppBar titletext={"Polls"} />
+            </div>
+            <Box
+              className="body"
+              flex="1"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Box display={"flex"} flexDirection={"column"} flex={"1"}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                    overflow: "auto",
+                    maxHeight: "90vh",
+                    mt: 5,
+                    pl: 1.2,
+                    pr: 1.2,
+                  }}
+                >
+                  <PollsMap data={polls} />
+                </Box>
+              </Box>
+              <Box ref={ref} />
+            </Box>
 
-          <div className="body" flex="1">
-            <PollsMap data={polls} />
-            <Box ref={ref} />
-          </div>
-
-          <div className="footer">
-            <FooterNav />
-          </div>
-        </Box>
-      </Container>
-    </ThemeProvider>
-  );
+            <div className="footer">
+              <FooterNav />
+            </div>
+          </Box>
+        </Container>
+      </ThemeProvider>
+    );
 }
