@@ -40,6 +40,6 @@ public class S3UploadService {
         objMeta.setContentLength(contentLength);
         amazonS3.putObject(bucket, filePath + "/" + fileName, inputStream, objMeta);
 
-        return amazonS3.getUrl(bucket, fileName).toString();
+        return amazonS3.getUrl(bucket, filePath + "/" + fileName).toString();
     }
 }

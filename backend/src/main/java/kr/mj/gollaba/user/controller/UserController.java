@@ -74,7 +74,7 @@ public class UserController {
 			@ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
 					schema = @Schema(implementation = ErrorAPIResponse.class)))})
 	@PostMapping(path = "/users/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Boolean> update(@Validated @ModelAttribute UpdateRequest request, @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
+	public ResponseEntity<Boolean> update(@Validated UpdateRequest request, @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
 		request.validate();
 
 		switch (request.getUpdateType()) {
