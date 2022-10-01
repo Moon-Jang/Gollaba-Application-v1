@@ -1,68 +1,20 @@
-import { Avatar, Box, IconButton } from '@mui/material'
+import {
+    Avatar,
+    Box,
+    IconButton,
+    TextField,
+    Button,
+    CssBaseline,
+} from '@mui/material'
 import { useRef, useState, useEffect } from 'react'
-
-import TokenEx from './tokenEx'
 import { useCookies } from 'react-cookie'
 import jwt from 'jsonwebtoken'
 import EditIcon from '@mui/icons-material/Edit'
-import axios from 'axios'
+import DoneOutlineIcon from '@mui/icons-material/DoneOutline'
 import ApiGateway from './../../apis/ApiGateway'
 
 export default function Profile() {
-    const BACKGROUND_IMAGE =
-        'https://cdn.pixabay.com/photo/2013/08/20/15/47/poppies-174276_960_720.jpg'
-    const PROFILE_BASIC =
-        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-
-    const photoInput = useRef(null)
-    const backgroundInput = useRef(null)
-    const [profileImage, setProfileImage] = useState(PROFILE_BASIC)
-    const [backgroundImage, setBackgroundImage] = useState(BACKGROUND_IMAGE)
-
-    const handleClick = () => {
-        photoInput.current.click()
-    }
-    const handleBackgroundClick = () => {
-        backgroundInput.current.click()
-    }
-    const handlePhoto = (e) => {
-        const photoToAdd = e.target.files
-
-        if (photoToAdd[0]) {
-            setProfileImage(photoToAdd[0])
-        } else {
-            setProfileImage(PROFILE_BASIC)
-        }
-        const reader = new FileReader()
-        reader.onload = () => {
-            if (reader.readyState === 2) {
-                setProfileImage(reader.result)
-                console.log('reader :', reader.result)
-            }
-        }
-        reader.readAsDataURL(photoToAdd[0])
-    }
-    const handleBackground = (e) => {
-        const BackgroundToAdd = e.target.files
-        console.log('bgimg :', BackgroundToAdd)
-        if (BackgroundToAdd[0]) {
-            setBackgroundImage(BackgroundToAdd[0])
-            console.log('bgimg[0]', BackgroundToAdd[0])
-        } else {
-            setBackgroundImage(BACKGROUND_IMAGE)
-        }
-        const reader = new FileReader()
-        console.log('result: ', reader.result)
-        reader.onload = () => {
-            if (reader.readyState === 2) {
-                setProfileImage(reader.result)
-            }
-        }
-    }
-
-    // 끄아아악 아니 프로필 사진은 멀쩡하게 reader.data가 알아서 들어갔것만 왜 배경 사진은 [object File] 이렇게 들어가서 ㅇㅈㄹ인거지 후
-    // useState에서 setToken 함수 -> '다음 렌더링때' 변수를 바꿔주는 함수이다. 고로 해당 로직에서 setToken은 useEffect끝난 다음에
-    // 일단 유저정보 받아오기
+    // UserInfo API통해 페이지에 가져옴
     const [cookies, setCookies, removeCookies] = useCookies([])
     const [token, setToken] = useState(null)
     const [data, setData] = useState(null)
@@ -70,7 +22,6 @@ export default function Profile() {
         console.log('token : ', token)
         if (!token) return
         try {
-            //await ApiGateway.updateNickName(formData, cookies.accessToken);
             const userInfo = await ApiGateway.showUser(
                 token.id,
                 cookies.accessToken
@@ -87,21 +38,102 @@ export default function Profile() {
     useEffect(() => {
         showUser()
     }, [token])
-    console.log('token useEffect', token)
-    // useEffect(() => {
-    //     showUser()
-    //     console.log('useEffect data :', data)
-    // }, [])
-    console.log('data :', data)
-    console.log('profile :', data?.profileImageUrl)
-    console.log('background : ', data?.backgroundImageUrl)
-    // console.log('un', token.un)
 
-    // 질문: 여기서 난 showUser을 화면이 처음 마운트 될 때, 한번만 자동으로 호출하고 싶어서 useEffect를 이용해 넣었음.
-    // 근데 같이 useEffect에 들어간 setToken은 정상적으로 작동되는 반면, showUser()은 실행이 안 됨.
+    //Profile, Background Image 변경
+    const BACKGROUND_BASIC =
+        'https://cdn.pixabay.com/photo/2013/08/20/15/47/poppies-174276_960_720.jpg'
+    const PROFILE_BASIC =
+        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+    const profileImageSrc = () => {
+        if (data?.profileImageUrl == null) return PROFILE_BASIC
+        return data?.profileImageUrl
+    }
+    const backgroundImageSrc = () => {
+        if (data?.backgroundImageUrl == null) return BACKGROUND_BASIC
+        return data?.backgroundImageUrl
+    }
+    const photoInput = useRef(null)
+    const backgroundInput = useRef(null)
+    const handleClick = () => {
+        photoInput.current.click()
+    }
+    const handleBackgroundClick = () => {
+        backgroundInput.current.click()
+    }
+
+    // formData로 이미지 파일 업데이트 하기
+    const changeProfile = async (e) => {
+        if (!token) return
+        try {
+            const photoToAdd = e.target.files[0]
+            console.log('photoToAdd : ', photoToAdd)
+            const formData = new FormData()
+            formData.append('profileImage', photoToAdd)
+            formData.append('updateType', 'PROFILE_IMAGE')
+            for (const keyValue of formData)
+                console.log('keyValue : ', keyValue)
+            const profileChange = await ApiGateway.updateForm(
+                formData,
+                cookies.accessToken
+            )
+            setData(profileChange)
+            console.log('profileChange : ', profileChange)
+            location.reload()
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    const changeBackground = async (e) => {
+        if (!token) return
+        try {
+            const photoToAdd = e.target.files[0]
+            console.log('photoToAdd : ', photoToAdd)
+            const formData = new FormData()
+            formData.append('backgroundImage', photoToAdd)
+            formData.append('updateType', 'BACKGROUND_IMAGE')
+            for (const keyValue of formData)
+                console.log('keyValue : ', keyValue)
+            const backgroundChange = await ApiGateway.updateForm(
+                formData,
+                cookies.accessToken
+            )
+            setData(backgroundChange)
+            console.log('backgroundChange : ', backgroundChange)
+            location.reload()
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    // 닉네임 변경
+    const [nickName, setNickName] = useState('')
+    const [visible, setVisible] = useState(false)
+    const onChangeNicknameHandler = (e) => {
+        setNickName(e.target.value)
+    }
+    const changeNickname = async () => {
+        if (!token) return
+        try {
+            const formData = new FormData()
+            formData.append('nickName', nickName)
+            formData.append('updateType', 'NICKNAME')
+            const nickChange = await ApiGateway.updateForm(
+                formData,
+                cookies.accessToken
+            )
+            setData(nickChange)
+            console.log('nickChange :', nickChange)
+            for (const keyValue of formData) {
+                console.log('formData keyValue :', keyValue)
+            }
+            location.reload()
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const backgroundStyle = {
-        backgroundColor: 'pink',
+        backgroundColor: '#ffffff',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -115,6 +147,8 @@ export default function Profile() {
     const imageStyle = {
         width: 390,
         height: 200,
+        // objectFit: 'none',
+        objectPosition: 'center',
         overflow: 'hidden',
         display: 'flex',
         justifyContent: 'center',
@@ -135,7 +169,7 @@ export default function Profile() {
                     <div style={backgroundStyle}>
                         <img
                             style={imageStyle}
-                            src={backgroundImage}
+                            src={backgroundImageSrc()}
                             alt='bgImg'
                             onClick={handleBackgroundClick}
                         />
@@ -145,12 +179,12 @@ export default function Profile() {
                             style={{ display: 'none' }}
                             accept='image/jpg image/jpeg image/png'
                             onChange={(e) => {
-                                handleBackground(e)
+                                changeBackground(e)
                             }}
                             ref={backgroundInput}
                         />
                         <Avatar
-                            src={profileImage}
+                            src={profileImageSrc()}
                             id='profileImage'
                             sx={{
                                 width: 215,
@@ -160,19 +194,18 @@ export default function Profile() {
                                 marginTop: 23,
                             }}
                             onClick={handleClick}
-                            // ref={photoInput}
                         />
                         <input
                             type='file'
                             id='profileImageInput'
                             style={{ display: 'none' }}
                             accept='image/jpg image/jpeg image/png'
-                            onChange={(e) => handlePhoto(e)}
+                            onChange={(e) => changeProfile(e)}
                             ref={photoInput}
                         />
                     </div>
                 </div>
-                {/* <TokenEx /> */}
+
                 <div style={{ fontSize: '24px' }}>
                     <Box
                         sx={{
@@ -186,15 +219,44 @@ export default function Profile() {
                     >
                         <span>
                             {data?.nickName}
-                            <IconButton aria-label='edit'>
+                            <IconButton
+                                aria-label='edit'
+                                onClick={() => {
+                                    setVisible(!visible)
+                                }}
+                            >
                                 <EditIcon style={{ margin: '0 0 3 10' }} />
                             </IconButton>
                         </span>
-                        {/* <button onClick={showUser}>회원정보 요청</button> */}
+
+                        {visible && (
+                            <div>
+                                <CssBaseline />
+                                <TextField
+                                    sx={{ mt: 1.5 }}
+                                    required
+                                    margin='dense'
+                                    name='nickNameChange'
+                                    variant='standard'
+                                    type='text'
+                                    id='nickNameChange'
+                                    lebel='닉네임 변경'
+                                    placeholder='변경할 닉네임은?'
+                                    onChange={onChangeNicknameHandler}
+                                />
+                                <IconButton
+                                    aria-label='done'
+                                    onClick={changeNickname}
+                                >
+                                    <DoneOutlineIcon
+                                        style={{ margin: '7 0 0 0' }}
+                                    />
+                                </IconButton>
+                            </div>
+                        )}
                     </Box>
                 </div>
             </Box>
         </>
     )
 }
-// 닉네임 span으로 처리?

@@ -56,7 +56,8 @@ const ApiTemplate = {
     },
     sendApiMultiPart: async (method, url, formData, token) => {
         let result = null
-        console.log(method, url, body)
+        // console.log(method, url, body)
+        console.log(method, url)
         const authorizationHeader = {
             headers: {
                 'Content-Type': 'multipart/form-data',
