@@ -1,13 +1,12 @@
 package kr.mj.gollaba.user.service;
 
-import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.user.dto.FindUserResponse;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.SignupResponse;
-import kr.mj.gollaba.user.dto.UpdateRequest;
+import kr.mj.gollaba.user.dto.UpdateUserRequest;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
 import kr.mj.gollaba.user.type.UserRoleType;
@@ -46,7 +45,7 @@ public class UserService {
 				.build();
 	}
 
-	public void updateNickName(UpdateRequest request, User user) {
+	public void updateNickName(UpdateUserRequest request, User user) {
 		if (StringUtils.hasText(request.getNickName()) == false) {
 			throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "닉네임을 입력해주세요.");
 		}
@@ -59,7 +58,7 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public void updatePassword(UpdateRequest request, User user) {
+	public void updatePassword(UpdateUserRequest request, User user) {
 		if (passwordEncoder.matches(request.getCurrentPassword(), user.getPassword()) == false) {
 			throw new GollabaException(GollabaErrorCode.NOT_MATCHED_PASSWORD);
 		}
@@ -68,14 +67,14 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public void updateProfileImage(UpdateRequest request, User user) {
+	public void updateProfileImage(UpdateUserRequest request, User user) {
 		String fileName = generateFileName(user.getId(), request.getProfileImage().getContentType());
 		String imageUrl = s3UploadService.upload(PROFILE_IMAGE_PATH, fileName, request.getProfileImage());
 		user.updateProfileImageUrl(imageUrl);
 		userRepository.save(user);
 	}
 
-	public void updateBackgroundImage(UpdateRequest request, User user) {
+	public void updateBackgroundImage(UpdateUserRequest request, User user) {
 		String fileName = generateFileName(user.getId(), request.getBackgroundImage().getContentType());
 		String imageUrl = s3UploadService.upload(BACKGROUND_IMAGE_PATH, fileName, request.getBackgroundImage());
 		user.updateBackgroundImageUrl(imageUrl);

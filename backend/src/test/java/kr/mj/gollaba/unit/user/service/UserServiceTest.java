@@ -3,7 +3,7 @@ package kr.mj.gollaba.unit.user.service;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.unit.common.ServiceTest;
-import kr.mj.gollaba.user.dto.UpdateRequest;
+import kr.mj.gollaba.user.dto.UpdateUserRequest;
 import kr.mj.gollaba.user.repository.UserRepository;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
@@ -13,11 +13,9 @@ import kr.mj.gollaba.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -138,8 +136,8 @@ class UserServiceTest extends ServiceTest {
 			@Test
 			void throw_invalid_params_exception() {
 				//given
-				UpdateRequest request = new UpdateRequest();
-				request.setUpdateType(UpdateRequest.UpdateType.NICKNAME);
+				UpdateUserRequest request = new UpdateUserRequest();
+				request.setUpdateType(UpdateUserRequest.UpdateType.NICKNAME);
 				request.setNickName(null);
 				User user = UserFactory.createWithId();
 
@@ -162,8 +160,8 @@ class UserServiceTest extends ServiceTest {
 				String testNickName = UserFactory.TEST_NICK_NAME + "님";
 				given(userRepository.existsByNickName(eq(testNickName)))
 						.willReturn(true);
-				UpdateRequest request = new UpdateRequest();
-				request.setUpdateType(UpdateRequest.UpdateType.NICKNAME);
+				UpdateUserRequest request = new UpdateUserRequest();
+				request.setUpdateType(UpdateUserRequest.UpdateType.NICKNAME);
 				request.setNickName(testNickName);
 				User user = UserFactory.createWithId();
 				//when then
@@ -189,8 +187,8 @@ class UserServiceTest extends ServiceTest {
 						.willReturn(false);
 				given(userRepository.save(any(User.class)))
 						.willReturn(user);
-				UpdateRequest request = new UpdateRequest();
-				request.setUpdateType(UpdateRequest.UpdateType.NICKNAME);
+				UpdateUserRequest request = new UpdateUserRequest();
+				request.setUpdateType(UpdateUserRequest.UpdateType.NICKNAME);
 				request.setNickName(testNickName);
 
 			    //when
@@ -219,8 +217,8 @@ class UserServiceTest extends ServiceTest {
 				given(passwordEncoder.matches(anyString(), anyString()))
 						.willReturn(false);
 				User user = UserFactory.createWithId();
-			    UpdateRequest request = new UpdateRequest();
-				request.setUpdateType(UpdateRequest.UpdateType.PASSWORD);
+			    UpdateUserRequest request = new UpdateUserRequest();
+				request.setUpdateType(UpdateUserRequest.UpdateType.PASSWORD);
 				request.setCurrentPassword(UserFactory.TEST_PASSWORD);
 				request.setNewPassword(testPassword);
 

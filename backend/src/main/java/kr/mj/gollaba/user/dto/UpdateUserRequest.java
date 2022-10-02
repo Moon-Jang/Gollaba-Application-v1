@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-public class UpdateRequest implements BaseApiRequest {
+public class UpdateUserRequest implements BaseApiRequest {
 
 	@ApiModelProperty(position = 1, example = "NICKNAME", required = true)
 	@NotNull
