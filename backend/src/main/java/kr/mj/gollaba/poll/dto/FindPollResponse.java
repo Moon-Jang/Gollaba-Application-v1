@@ -32,6 +32,8 @@ public class FindPollResponse implements BaseApiResponse {
 
 	private LocalDateTime endedAt;
 
+	private String pollImageUrl;
+
 	private Long totalVoteCount;
 
 	private List<OptionResponse> options = new ArrayList<>();
@@ -57,6 +59,7 @@ public class FindPollResponse implements BaseApiResponse {
 		this.responseType = poll.getResponseType();
 		this.isBallot = poll.getIsBallot();
 		this.endedAt = poll.getEndedAt();
+		this.pollImageUrl = poll.getPollImageUrl();
 		this.options = poll.getOptions()
 				.stream()
 				.map(option -> OptionResponse.builder()
