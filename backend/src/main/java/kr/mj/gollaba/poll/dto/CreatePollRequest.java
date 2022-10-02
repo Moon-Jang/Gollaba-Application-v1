@@ -26,7 +26,7 @@ import java.util.List;
 @Setter
 public class CreatePollRequest implements BaseApiRequest {
 
-    @ApiModelProperty(example = "1", required = true)
+    @ApiModelProperty(example = "1", required = false)
     private Long userId;
 
     @ApiModelProperty(example = "부먹 찍먹", required = true)
@@ -47,6 +47,7 @@ public class CreatePollRequest implements BaseApiRequest {
     @ApiModelProperty(example = "true", required = true)
     private Boolean isBallot;
 
+    @ApiModelProperty(example = "imageFile", required = false)
     private MultipartFile pollImage;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
