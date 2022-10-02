@@ -41,6 +41,7 @@ public class FindAllPollResponse implements BaseApiResponse {
 						.responseType(el.getResponseType())
 						.isBallot(el.getIsBallot())
 						.endedAt(el.getEndedAt())
+						.pollImageUrl(el.getPollImageUrl())
 						.options(el.getOptions()
 								.stream()
 								.map(option -> OptionResponse.builder()
@@ -72,6 +73,8 @@ public class FindAllPollResponse implements BaseApiResponse {
 
 		private LocalDateTime endedAt;
 
+		private String pollImageUrl;
+
 		private Long totalVoteCount;
 
 		private List<OptionResponse> options = new ArrayList<>();
@@ -83,7 +86,7 @@ public class FindAllPollResponse implements BaseApiResponse {
 		private LocalDateTime updatedAt;
 
 		@Builder
-		private PollResponse(Long pollId, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt, List<OptionResponse> options, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		private PollResponse(Long pollId, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt, List<OptionResponse> options, String pollImageUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
 			this.pollId = pollId;
 			this.title = title;
 			this.creatorName = creatorName;
@@ -91,6 +94,7 @@ public class FindAllPollResponse implements BaseApiResponse {
 			this.isBallot = isBallot;
 			this.endedAt = endedAt;
 			this.options = options;
+			this.pollImageUrl = pollImageUrl;
 			this.createdAt = createdAt;
 			this.updatedAt = updatedAt;
 			this.totalVoteCount = Long.valueOf(options
