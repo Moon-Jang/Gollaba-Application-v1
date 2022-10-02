@@ -15,14 +15,12 @@ import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.user.dto.FindUserResponse;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.SignupResponse;
-import kr.mj.gollaba.user.dto.UpdateRequest;
+import kr.mj.gollaba.user.dto.UpdateUserRequest;
 import kr.mj.gollaba.user.service.UserService;
-import kr.mj.gollaba.user.type.UserRoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -74,7 +72,7 @@ public class UserController {
 			@ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
 					schema = @Schema(implementation = ErrorAPIResponse.class)))})
 	@PostMapping(path = "/users/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Boolean> update(@Validated UpdateRequest request, @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
+	public ResponseEntity<Boolean> update(@Validated UpdateUserRequest request, @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
 		request.validate();
 
 		switch (request.getUpdateType()) {

@@ -1,7 +1,10 @@
 package kr.mj.gollaba.poll.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;
+import kr.mj.gollaba.common.util.ImageFileUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.entity.Option;
@@ -9,6 +12,8 @@ import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -42,9 +47,14 @@ public class CreatePollRequest implements BaseApiRequest {
     @ApiModelProperty(example = "true", required = true)
     private Boolean isBallot;
 
+    private MultipartFile pollImage;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endedAt = LocalDateTime.now().plusDays(7L);
 
     private List<OptionDto> options = new ArrayList<>();
+
+    private static final long MAX_UPLOAD_SIZE = 1024 * 1024 * 5L;
 
     @Override
     public void validate() {
@@ -55,9 +65,18 @@ public class CreatePollRequest implements BaseApiRequest {
         }
 
         if (now.plusMinutes(30L).isAfter(endedAt)) {
-            throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "투표 유효기간을 30분 미만으로 설정할 수 없습니다.");
+            throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "투표 유효기간을 현재 시간보다 30분 미만으로 설정할 수 없습니다.");
         }
 
+        if (pollImage != null) {
+            if (ImageFileUtils.isImageFile(pollImage) == false) {
+                throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 파일이 아닙니다.");
+            }
+
+            if (pollImage.getSize() > MAX_UPLOAD_SIZE) {
+                throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 용량은 5MB를 넘을 수 없습니다.");
+            }
+        }
     }
 
     public Poll toEntity() {

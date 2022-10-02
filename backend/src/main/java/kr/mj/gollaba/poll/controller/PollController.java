@@ -29,12 +29,12 @@ public class PollController {
 
     @ApiOperation(value = "투표 생성")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
                     schema = @Schema(implementation = Boolean.class))),
             @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = CreatePollResponse.class)))})
-    @PostMapping(path = "/polls", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreatePollResponse> create(@Validated @RequestBody CreatePollRequest request) {
+    @PostMapping(path = "/polls", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CreatePollResponse> create(@Validated CreatePollRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(pollService.create(request));

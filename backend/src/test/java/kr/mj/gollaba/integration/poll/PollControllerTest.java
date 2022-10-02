@@ -1,5 +1,6 @@
 package kr.mj.gollaba.integration.poll;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.common.util.QueryStringGenerator;
 import kr.mj.gollaba.integration.common.IntegrationTest;
@@ -15,14 +16,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,12 +35,12 @@ class PollControllerTest extends IntegrationTest {
     @Test
     public void create_poll() throws Exception {
         //given
-        CreatePollRequest request = generateCreateRequest();
+        MultiValueMap request = generateCreateRequest();
 
         //when
-        ResultActions resultActions = mvc.perform(post(Const.ROOT_URL + "/polls")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request))
+        ResultActions resultActions = mvc.perform(multipart(Const.ROOT_URL + "/polls")
+                .params(request)
+                .param("endedAt", "2023-10-02T06:24:28.884Z")
                 .accept(MediaType.APPLICATION_JSON));
 
         //then
@@ -115,12 +117,13 @@ class PollControllerTest extends IntegrationTest {
                 .andExpect(status().isCreated());
     }
 
-    private CreatePollRequest generateCreateRequest() {
+    private MultiValueMap<String, String> generateCreateRequest() {
         CreatePollRequest request = new CreatePollRequest();
+        MultiValueMap<String, String> result = new LinkedMultiValueMap<>();
 
         request.setTitle(PollFactory.TEST_TITLE);
         request.setCreatorName(PollFactory.TEST_CREATOR_NAME);
-        request.setEndedAt(LocalDateTime.now().plusDays(3L));
+        request.setEndedAt(PollFactory.TEST_ENDED_AT);
         request.setResponseType(PollingResponseType.SINGLE);
         request.setIsBallot(false);
 
@@ -130,11 +133,26 @@ class PollControllerTest extends IntegrationTest {
             CreatePollRequest.OptionDto optionDto = new CreatePollRequest.OptionDto();
             optionDto.setDescription("항목" + i);
 
+            String optionString;
+
+            try {
+                optionString = objectMapper.writeValueAsString(optionDto);
+            }catch (JsonProcessingException e) {
+                optionString = null;
+            }
+
             optionDtos.add(optionDto);
+            result.set("options[" + i + "].description", "항목" + i);
         }
 
         request.setOptions(optionDtos);
 
-        return request;
+
+        result.set("title", PollFactory.TEST_TITLE);
+        result.set("creatorName", PollFactory.TEST_CREATOR_NAME);
+        result.set("responseType", PollingResponseType.SINGLE.name());
+        result.set("isBallot", Boolean.FALSE.toString());
+
+        return result;
     }
 }

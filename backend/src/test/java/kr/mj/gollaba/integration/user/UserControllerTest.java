@@ -5,14 +5,13 @@ import kr.mj.gollaba.common.util.MultiValueMapGenerator;
 import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
-import kr.mj.gollaba.user.dto.UpdateRequest;
+import kr.mj.gollaba.user.dto.UpdateUserRequest;
 import kr.mj.gollaba.user.repository.UserRepository;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -60,8 +59,8 @@ class UserControllerTest extends IntegrationTest {
 	public void update_nickname() throws Exception {
 		//given
 		String testNickName = UserFactory.TEST_NICK_NAME + "님";
-		UpdateRequest request = new UpdateRequest();
-		request.setUpdateType(UpdateRequest.UpdateType.NICKNAME);
+		UpdateUserRequest request = new UpdateUserRequest();
+		request.setUpdateType(UpdateUserRequest.UpdateType.NICKNAME);
 		request.setNickName(testNickName);
 
 		//when
@@ -83,8 +82,8 @@ class UserControllerTest extends IntegrationTest {
 	public void update_password() throws Exception {
 		//given
 		String testPassword = "testPass123456!@";
-		UpdateRequest request = new UpdateRequest();
-		request.setUpdateType(UpdateRequest.UpdateType.PASSWORD);
+		UpdateUserRequest request = new UpdateUserRequest();
+		request.setUpdateType(UpdateUserRequest.UpdateType.PASSWORD);
 		request.setCurrentPassword(UserFactory.TEST_PASSWORD);
 		request.setNewPassword(testPassword);
 
