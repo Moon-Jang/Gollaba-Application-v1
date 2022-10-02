@@ -8,7 +8,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @Tag(IntegrationConst.INTEGRATION_TEST_TAG_NAME)
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(properties = { "spring.config.location=classpath:private/application-test.yaml"})
 @ActiveProfiles("test")
 public class S3UploadServiceTest {
 

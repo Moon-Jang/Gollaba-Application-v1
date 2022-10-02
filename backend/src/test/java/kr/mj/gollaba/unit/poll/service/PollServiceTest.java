@@ -1,5 +1,6 @@
 package kr.mj.gollaba.unit.poll.service;
 
+import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
@@ -23,13 +24,18 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.ResourceUtils;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static kr.mj.gollaba.poll.type.PollingResponseType.SINGLE;
+import static kr.mj.gollaba.unit.poll.factory.PollFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
@@ -50,6 +56,9 @@ public class PollServiceTest extends ServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private S3UploadService s3UploadService;
 
     @Mock
     private CryptUtils cryptUtils;
@@ -106,13 +115,52 @@ public class PollServiceTest extends ServiceTest {
             }
         }
 
+        @DisplayName("투표 이미지가 있을 경우 경우")
+        @Nested
+        class has_poll_image {
+
+            @DisplayName("투표 저장 후 투표 이미지를 업로드한다.")
+            @Test
+            void upload_image_after_save_poll() throws IOException {
+                //given
+                CreatePollRequest request = generateRequest();
+
+                File file = ResourceUtils.getFile("classpath:test_image.jpeg");
+                InputStream inputStream = new FileInputStream(file);
+
+                request.setPollImage(new MockMultipartFile(
+                        "image",
+                        "test.png",
+                        "image/png",
+                        inputStream));
+                Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
+
+                given(pollRepository.save(any(Poll.class)))
+                        .willReturn(poll);
+                given(s3UploadService.generateFileName(anyLong(), anyString()))
+                        .willReturn("testName");
+                given(s3UploadService.upload(anyString(), anyString(), any()))
+                        .willReturn("testUrl");
+
+                //when
+                CreatePollResponse result = pollService.create(request);
+
+                //then
+                assertThat(result.getPollId()).isPositive();
+                verify(pollRepository, times(2)).save(any(Poll.class));
+                verify(s3UploadService, times(1)).generateFileName(anyLong(), anyString());
+                verify(s3UploadService, times(1)).upload(anyString(), anyString(), any());
+            }
+        }
+
         private CreatePollRequest generateRequest() {
             CreatePollRequest request = new CreatePollRequest();
 
-            request.setTitle(PollFactory.TEST_TITLE);
-            request.setCreatorName(PollFactory.TEST_CREATOR_NAME);
+            request.setTitle(TEST_TITLE);
+            request.setCreatorName(TEST_CREATOR_NAME);
             request.setEndedAt(LocalDateTime.now().plusDays(3L));
-            request.setResponseType(PollingResponseType.SINGLE);
+            request.setResponseType(SINGLE);
+            request.setEndedAt(TEST_ENDED_AT);
             request.setIsBallot(false);
 
             List<CreatePollRequest.OptionDto> optionDtos = new ArrayList<>();
@@ -195,7 +243,7 @@ public class PollServiceTest extends ServiceTest {
                 //given
                 List<Option> options = OptionFactory.createListWithId();
                 Poll poll = PollFactory.createWithId(null, options);
-                poll.updateResponseType(PollingResponseType.SINGLE);
+                poll.updateResponseType(SINGLE);
                 VoteRequest request = new VoteRequest();
                 request.setPollId(PollFactory.TEST_ID);
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));

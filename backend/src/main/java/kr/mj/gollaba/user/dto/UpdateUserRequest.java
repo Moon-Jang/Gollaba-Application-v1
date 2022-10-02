@@ -43,6 +43,7 @@ public class UpdateUserRequest implements BaseApiRequest {
 	private MultipartFile backgroundImage;
 
 	private static final long MAX_UPLOAD_SIZE = 1024 * 1024 * 5L;
+
 	@Override
 	public void validate() {
 		switch (updateType) {

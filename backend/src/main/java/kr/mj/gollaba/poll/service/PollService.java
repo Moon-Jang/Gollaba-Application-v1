@@ -1,5 +1,6 @@
 package kr.mj.gollaba.poll.service;
 
+import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -24,9 +26,12 @@ public class PollService {
     private final PollQueryRepository pollQueryRepository;
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
+    private final S3UploadService s3UploadService;
     private final CryptUtils cryptUtils;
     private final static String ANONYMOUS_NAME = "익명";
+    public static final String POLL_IMAGE_S3_PATH = "profile_image";
 
+    @Transactional
     public CreatePollResponse create(CreatePollRequest request) {
         request.validate();
         Poll poll = request.toEntity();
@@ -38,9 +43,16 @@ public class PollService {
             poll.registerCreator(creator);
         }
 
-        Long pollId = pollRepository.save(poll).getId();
+        Poll savedPoll = pollRepository.save(poll);
 
-        return new CreatePollResponse(pollId);
+        if (request.getPollImage() != null) {
+            String fileName = s3UploadService.generateFileName(savedPoll.getId(), request.getPollImage().getContentType());
+            String imageUrl = s3UploadService.upload(POLL_IMAGE_S3_PATH, fileName, request.getPollImage());
+            savedPoll.updatePollImageUrl(imageUrl);
+            pollRepository.save(savedPoll);
+        }
+
+        return new CreatePollResponse(savedPoll.getId());
     }
 
     public FindAllPollResponse findAll(FindAllPollRequest request) {

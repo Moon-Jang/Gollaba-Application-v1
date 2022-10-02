@@ -17,9 +17,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
-import static kr.mj.gollaba.common.service.S3UploadService.BACKGROUND_IMAGE_PATH;
-import static kr.mj.gollaba.common.service.S3UploadService.PROFILE_IMAGE_PATH;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -27,6 +24,8 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final S3UploadService s3UploadService;
+	public static final String PROFILE_IMAGE_PATH = "profile_image";
+	public static final String BACKGROUND_IMAGE_PATH = "background_image";
 
 	public SignupResponse create(SignupRequest request) {
 		if (userRepository.existsByUniqueId(request.getId())) {
@@ -68,21 +67,17 @@ public class UserService {
 	}
 
 	public void updateProfileImage(UpdateUserRequest request, User user) {
-		String fileName = generateFileName(user.getId(), request.getProfileImage().getContentType());
+		String fileName = s3UploadService.generateFileName(user.getId(), request.getProfileImage().getContentType());
 		String imageUrl = s3UploadService.upload(PROFILE_IMAGE_PATH, fileName, request.getProfileImage());
 		user.updateProfileImageUrl(imageUrl);
 		userRepository.save(user);
 	}
 
 	public void updateBackgroundImage(UpdateUserRequest request, User user) {
-		String fileName = generateFileName(user.getId(), request.getBackgroundImage().getContentType());
+		String fileName = s3UploadService.generateFileName(user.getId(), request.getBackgroundImage().getContentType());
 		String imageUrl = s3UploadService.upload(BACKGROUND_IMAGE_PATH, fileName, request.getBackgroundImage());
 		user.updateBackgroundImageUrl(imageUrl);
 		userRepository.save(user);
-	}
-
-	private String generateFileName(long id, String contentType) {
-		return id + "_" + UUID.randomUUID() + "." + contentType.replace("image/", "");
 	}
 
 	public FindUserResponse find(Long userId, User user) {

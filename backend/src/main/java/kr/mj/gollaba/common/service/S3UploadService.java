@@ -17,8 +17,6 @@ public class S3UploadService {
 
     private final String bucket;
     private final AmazonS3 amazonS3;
-    public static final String PROFILE_IMAGE_PATH = "profile_image";
-    public static final String BACKGROUND_IMAGE_PATH = "background_image";
 
     public S3UploadService(@Value("${cloud.aws.s3.bucket}") String bucket, AmazonS3 amazonS3) {
         this.bucket = bucket;
@@ -41,5 +39,9 @@ public class S3UploadService {
         amazonS3.putObject(bucket, filePath + "/" + fileName, inputStream, objMeta);
 
         return amazonS3.getUrl(bucket, filePath + "/" + fileName).toString();
+    }
+
+    public String generateFileName(long id, String contentType) {
+        return id + "_" + UUID.randomUUID() + "." + contentType.replace("image/", "");
     }
 }
