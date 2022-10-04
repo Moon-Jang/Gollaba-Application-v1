@@ -62,7 +62,7 @@ public class UserService {
 			throw new GollabaException(GollabaErrorCode.NOT_MATCHED_PASSWORD);
 		}
 
-		String newPassword = passwordEncoder.encode(request.getCurrentPassword());
+		String newPassword = passwordEncoder.encode(request.getNewPassword());
 		user.updatePassword(newPassword);
 		userRepository.save(user);
 	}
