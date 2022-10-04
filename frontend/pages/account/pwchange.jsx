@@ -12,16 +12,46 @@ import theme from '../../src/theme'
 import React, { useState } from 'react'
 import CommonValidator from '../../utils/CommonValidator'
 import { useRouter } from 'next/router'
+import { useCookies } from 'react-cookie'
+import ApiGateway from '../../apis/ApiGateway'
 
 // const AccountTheme = createTheme(theme)
 export default function Pwchange() {
     const router = useRouter()
+    const [cookies, setCookies, removeCookies] = useCookies([])
+    const [data, setData] = useState(null)
+    const [currentPassword, setCurrentPassword] = useState('')
+    const [newPassword, setNewPassword] = useState('')
+    const [newPasswordCheck, setNewPasswordCheck] = useState('')
+
     const [password, setPassword] = useState('')
     const [isErrorPassword, setIsErrorPassword] = useState(false)
     const [helperTextPassword, setHelperTextPassword] = useState('')
-
     const [isErrorPasswordCheck, setIsErrorPasswordCheck] = useState(false)
     const [helperTextPasswordCheck, setHelperTextPasswordCheck] = useState('')
+
+    const changePassword = async () => {
+        try {
+            const formData = new FormData()
+            formData.append('currentPassword', currentPassword)
+            formData.append('newPassword', newPassword)
+            formData.append('updateType', 'PASSWORD')
+            for (const keyValue of formData)
+                console.log('keyValue : ', keyValue)
+            const passwordChange = await ApiGateway.updateForm(
+                formData,
+                cookies.accessToken
+            )
+            setData(passwordChange)
+            console.log(currentPassword)
+            console.log(newPassword)
+            console.log('passwordChange : ', passwordChange)
+            console.log('password change success')
+            // window.location.href = '/'
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -48,44 +78,16 @@ export default function Pwchange() {
             alert('새로운 비밀번호와 새로운 비밀번호 확인이 서로 다릅니다.')
             return
         }
-
-        const payload = {
-            password: input.get('newPassword'),
-        }
-
-        let response
-        try {
-            response = await axios.post(
-                'https://dev.api.gollaba.net/v1/pwchange',
-                payload
-            )
-            router.push('/')
-        } catch (e) {
-            response = e.response
-            alert(response.data.error.message)
-        } finally {
-            return response
-        }
     }
-
-    const handleChangePassword = (event) => {
-        setPassword(event.target.value)
-        if (
-            event.target.name === 'password' &&
-            !CommonValidator.validate('password', event.target.value)
-        ) {
-            setIsErrorPassword(true)
-            setHelperTextPassword(
-                '비밀번호는 8~24자의 숫자, 문자, 특수문자가 모두 포함되어야 합니다.'
-            )
-            return
-        }
-        setIsErrorPassword(false)
-        setHelperTextPassword('')
+    const onChangeCurrentPasswordHandler = (e) => {
+        setCurrentPassword(e.target.value)
     }
-
-    const handleChangePasswordCheck = (event) => {
-        if (event.target.value !== password) {
+    const onChangeNewPasswordHandler = (e) => {
+        setNewPassword(e.target.value)
+    }
+    const onChangeNewPasswordCheckHandler = (e) => {
+        setNewPasswordCheck(e.target.value)
+        if (e.target.value !== newPassword) {
             setIsErrorPasswordCheck(true)
             setHelperTextPasswordCheck(
                 '비밀번호와 비밀번호 확인이 서로 다릅니다.'
@@ -95,6 +97,34 @@ export default function Pwchange() {
         setIsErrorPasswordCheck(false)
         setHelperTextPasswordCheck('')
     }
+
+    // const handleChangePassword = (event) => {
+    //     setPassword(event.target.value)
+    //     if (
+    //         event.target.name === 'password' &&
+    //         !CommonValidator.validate('password', event.target.value)
+    //     ) {
+    //         setIsErrorPassword(true)
+    //         setHelperTextPassword(
+    //             '비밀번호는 8~24자의 숫자, 문자, 특수문자가 모두 포함되어야 합니다.'
+    //         )
+    //         return
+    //     }
+    //     setIsErrorPassword(false)
+    //     setHelperTextPassword('')
+    // }
+
+    // const handleChangePasswordCheck = (event) => {
+    //     if (event.target.value !== password) {
+    //         setIsErrorPasswordCheck(true)
+    //         setHelperTextPasswordCheck(
+    //             '비밀번호와 비밀번호 확인이 서로 다릅니다.'
+    //         )
+    //         return
+    //     }
+    //     setIsErrorPasswordCheck(false)
+    //     setHelperTextPasswordCheck('')
+    // }
 
     return (
         <>
@@ -117,17 +147,7 @@ export default function Pwchange() {
                         >
                             비밀번호 변경
                         </Typography>
-
-                        {/* <Avatar
-                            src='../public/camera_icon.png'
-                            sx={{ width: 85, height: 85 }}
-                        /> */}
-
-                        <Box
-                            component='form'
-                            onSubmit={handleSubmit}
-                            sx={{ mt: 6 }}
-                        >
+                        <Box>
                             <TextField
                                 required
                                 fullWidth
@@ -137,9 +157,10 @@ export default function Pwchange() {
                                 label='현재 비밀번호'
                                 type='password'
                                 id='currentPassword'
+                                value={currentPassword}
                                 helperText={helperTextPassword}
                                 error={isErrorPassword ? true : false}
-                                onChange={handleChangePassword}
+                                onChange={onChangeCurrentPasswordHandler}
                             />
                             <Divider />
                             <TextField
@@ -151,9 +172,10 @@ export default function Pwchange() {
                                 label='새로운 비밀번호'
                                 type='password'
                                 id='newPassword'
+                                value={newPassword}
                                 helperText={helperTextPassword}
                                 error={isErrorPassword ? true : false}
-                                onChange={handleChangePassword}
+                                onChange={onChangeNewPasswordHandler}
                             />
 
                             <TextField
@@ -165,14 +187,15 @@ export default function Pwchange() {
                                 label='새로운 비밀번호 확인'
                                 type='password'
                                 id='newPasswordCheck'
+                                value={newPasswordCheck}
                                 helperText={helperTextPasswordCheck}
                                 error={isErrorPasswordCheck ? true : false}
-                                onChange={handleChangePasswordCheck}
+                                onChange={onChangeNewPasswordCheckHandler}
                             />
 
                             <Button
                                 color='primary'
-                                type='submit'
+                                onClick={changePassword}
                                 variant='outlined'
                                 fullWidth
                                 style={{

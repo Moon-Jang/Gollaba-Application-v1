@@ -41,7 +41,7 @@ export default function Profile() {
 
     //Profile, Background Image 변경
     const BACKGROUND_BASIC =
-        'https://cdn.pixabay.com/photo/2013/08/20/15/47/poppies-174276_960_720.jpg'
+        'https://cdn.pixabay.com/photo/2017/07/08/11/33/white-2484120_960_720.png'
     const PROFILE_BASIC =
         'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
     const profileImageSrc = () => {
@@ -78,7 +78,7 @@ export default function Profile() {
             )
             setData(profileChange)
             console.log('profileChange : ', profileChange)
-            location.reload()
+            // location.reload()
         } catch (e) {
             console.log(e)
         }
@@ -132,6 +132,7 @@ export default function Profile() {
         }
     }
 
+    // 배경화면 스타일 CSS
     const backgroundStyle = {
         backgroundColor: '#ffffff',
         overflow: 'hidden',
@@ -240,7 +241,7 @@ export default function Profile() {
                                     variant='standard'
                                     type='text'
                                     id='nickNameChange'
-                                    lebel='닉네임 변경'
+                                    label='닉네임 변경'
                                     placeholder='변경할 닉네임은?'
                                     onChange={onChangeNicknameHandler}
                                 />
