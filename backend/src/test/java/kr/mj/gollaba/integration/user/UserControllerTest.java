@@ -36,7 +36,7 @@ class UserControllerTest extends IntegrationTest {
 	public void signup() throws Exception {
 		//given
 		SignupRequest request = new SignupRequest();
-		request.setId(UserFactory.TEST_UNIQUE_ID);
+		request.setId(UserFactory.TEST_UNIQUE_ID + "test");
 		request.setNickName(UserFactory.TEST_NICK_NAME);
 		request.setPassword(UserFactory.TEST_PASSWORD);
 
@@ -54,7 +54,7 @@ class UserControllerTest extends IntegrationTest {
 
 
 	@DisplayName("닉네임 변경")
-	@WithUserDetails(value = UserFactory.TEST_UNIQUE_ID)
+	@WithUserDetails(value = UserFactory.TEST_EXIST_UNIQUE_ID)
 	@Test
 	public void update_nickname() throws Exception {
 		//given

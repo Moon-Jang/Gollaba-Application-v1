@@ -137,7 +137,7 @@ class PollControllerTest extends IntegrationTest {
     }
 
     @DisplayName("투표 수정")
-    @WithUserDetails(value = UserFactory.TEST_UNIQUE_ID)
+    @WithUserDetails(value = UserFactory.TEST_EXIST_UNIQUE_ID)
     @Test
     void update_poll() throws Exception {
         //given

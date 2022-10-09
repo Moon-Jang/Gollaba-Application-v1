@@ -2,6 +2,7 @@ package kr.mj.gollaba.integration.common;
 
 
 import kr.mj.gollaba.common.util.CryptUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 @Tag(IntegrationConst.INTEGRATION_TEST_TAG_NAME)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CryptUtils.class)
@@ -29,6 +31,7 @@ public class CryptoUtilsTest {
 	@Autowired
 	private CryptUtils cryptUtils;
 
+	@Disabled
 	@DisplayName("문자열 암호화 테스트")
 	@Test
 	void cryptoTest() {
