@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -37,10 +38,16 @@ public class UserService {
 		}
 
 		User user = request.toEntity(passwordEncoder);
-		User saveResult = userRepository.save(user);
+		User saveUser = userRepository.save(user);
+
+		if (request.getProfileImage() != null) {
+			String imageUrl = uploadPollImage(saveUser.getId(), request.getProfileImage());
+			saveUser.updateProfileImageUrl(imageUrl);
+			userRepository.save(saveUser);
+		}
 
 		return SignupResponse.builder()
-				.userId(saveResult.getId())
+				.userId(saveUser.getId())
 				.build();
 	}
 
@@ -89,4 +96,9 @@ public class UserService {
 		return FindUserResponse.create(user);
 	}
 
+	private String uploadPollImage(long pollId, MultipartFile pollImage) {
+		String fileName = s3UploadService.generateFileName(pollId, pollImage.getContentType());
+		String imageUrl = s3UploadService.upload(PROFILE_IMAGE_PATH, fileName, pollImage);
+		return imageUrl;
+	}
 }
