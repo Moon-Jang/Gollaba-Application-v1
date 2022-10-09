@@ -14,7 +14,7 @@ import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -46,8 +46,7 @@ public class PollService {
         Poll savedPoll = pollRepository.save(poll);
 
         if (request.getPollImage() != null) {
-            String fileName = s3UploadService.generateFileName(savedPoll.getId(), request.getPollImage().getContentType());
-            String imageUrl = s3UploadService.upload(POLL_IMAGE_S3_PATH, fileName, request.getPollImage());
+            String imageUrl = uploadPollImage(savedPoll.getId(), request.getPollImage());
             savedPoll.updatePollImageUrl(imageUrl);
             pollRepository.save(savedPoll);
         }
@@ -74,6 +73,36 @@ public class PollService {
         }
 
         return new FindPollResponse(poll);
+    }
+
+    public void update(UpdatePollRequest request, User user) {
+        Poll poll = pollQueryRepository.findById(request.getPollId())
+                .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
+
+        if (poll.getUser().getId().equals(user.getId()) == false) {
+            throw new GollabaException(GollabaErrorCode.NOT_EQUAL_POLL_CREATOR);
+        }
+
+        if (request.getTitle() != null) {
+            poll.updateTitle(request.getTitle());
+        }
+
+        if (request.getPollImage() != null) {
+            String imageUrl = uploadPollImage(poll.getId(), request.getPollImage());
+            poll.updatePollImageUrl(imageUrl);
+        }
+
+        if (request.getOptions() != null) {
+            request.getOptions().stream()
+                    .map(UpdatePollRequest.OptionDto::toEntity)
+                    .forEach(option -> poll.addOption(option));
+        }
+
+        if (request.getEndedAt() != null) {
+            poll.updateEndedAt(request.getEndedAt());
+        }
+
+        pollRepository.save(poll);
     }
 
     public void vote(VoteRequest request) {
@@ -134,4 +163,9 @@ public class PollService {
         }
     }
 
+    private String uploadPollImage(long pollId, MultipartFile pollImage) {
+        String fileName = s3UploadService.generateFileName(pollId, pollImage.getContentType());
+        String imageUrl = s3UploadService.upload(POLL_IMAGE_S3_PATH, fileName, pollImage);
+        return imageUrl;
+    }
 }
