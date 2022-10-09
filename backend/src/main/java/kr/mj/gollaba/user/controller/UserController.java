@@ -37,12 +37,12 @@ public class UserController {
 
 	@ApiOperation(value = "회원 가입")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-					schema = @Schema(implementation = SignupResponse.class))),
+			@ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+					schema = @Schema(implementation = Boolean.class))),
 			@ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
 					schema = @Schema(implementation = ErrorAPIResponse.class)))})
-	@PostMapping(path = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> signup(@Validated @RequestBody SignupRequest request) {
+	@PostMapping(path = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Boolean> signup(@Validated SignupRequest request) {
 		SignupResponse response = userService.create(request);
 
 		return ResponseEntity

@@ -1,5 +1,6 @@
 package kr.mj.gollaba.unit.user.service;
 
+import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.unit.common.ServiceTest;
@@ -16,9 +17,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.ResourceUtils;
 
+import java.io.*;
+
+import static kr.mj.gollaba.user.service.UserService.PROFILE_IMAGE_PATH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
@@ -35,12 +41,15 @@ class UserServiceTest extends ServiceTest {
 	@Mock
 	private UserRepository userRepository;
 
+	@Mock
+	private S3UploadService s3UploadService;
+
 	@Spy
 	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-	@DisplayName("save 메서드는")
+	@DisplayName("create 메서드는")
 	@Nested
-	class save {
+	class create {
 
 		@DisplayName("현재 등록되지 않은 회원일 경우")
 		@Nested
@@ -51,6 +60,8 @@ class UserServiceTest extends ServiceTest {
 			public void return_response() throws Exception {
 				//given
 				given(userRepository.existsByUniqueId(anyString()))
+						.willReturn(false);
+				given(userRepository.existsByNickName(anyString()))
 						.willReturn(false);
 				given(userRepository.save(any(User.class)))
 						.willReturn(UserFactory.createWithId());
@@ -65,7 +76,8 @@ class UserServiceTest extends ServiceTest {
 
 				//then
 				assertThat(response.getUserId()).isEqualTo(UserFactory.TEST_ID);
-				verify(userRepository, times(1)).existsByUniqueId(anyString());
+				verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+				verify(userRepository, times(1)).existsByNickName(eq(UserFactory.TEST_NICK_NAME));
 				verify(userRepository, times(1)).save(any(User.class));
 			}
 		}
@@ -120,6 +132,52 @@ class UserServiceTest extends ServiceTest {
 
 				verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
 				verify(userRepository, times(1)).existsByNickName(eq(UserFactory.TEST_NICK_NAME));
+			}
+		}
+
+		@DisplayName("프로필 이미지를 등록할 경우")
+		@Nested
+		class when_register_profile_image {
+
+			@DisplayName("프로필 이미지를 등록한다.")
+			@Test
+			void success_to_register_profile_image() throws IOException {
+				//given
+				String testFileName = "testFileName";
+				File file = ResourceUtils.getFile("classpath:test_image.jpeg");
+				InputStream inputStream = new FileInputStream(file);
+				MockMultipartFile profileImage = new MockMultipartFile(
+						"profileImage",
+						"test.png",
+						"image/png",
+						inputStream);
+				SignupRequest request = new SignupRequest();
+				request.setId(UserFactory.TEST_UNIQUE_ID);
+				request.setNickName(UserFactory.TEST_NICK_NAME);
+				request.setPassword(UserFactory.TEST_PASSWORD);
+				request.setProfileImage(profileImage);
+
+				given(userRepository.existsByUniqueId(anyString()))
+						.willReturn(false);
+				given(userRepository.existsByNickName(anyString()))
+						.willReturn(false);
+				given(userRepository.save(any(User.class)))
+						.willReturn(UserFactory.createWithId());
+				given(s3UploadService.generateFileName(anyLong(), anyString()))
+						.willReturn(testFileName);
+				given(s3UploadService.upload(anyString(), anyString(), any()))
+						.willReturn("testUrl");
+
+				//when
+				SignupResponse response = userService.create(request);
+
+				//then
+				assertThat(response.getUserId()).isEqualTo(UserFactory.TEST_ID);
+				verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+				verify(userRepository, times(1)).existsByNickName(eq(UserFactory.TEST_NICK_NAME));
+				verify(userRepository, times(2)).save(any(User.class));
+				verify(s3UploadService, times(1)).generateFileName(anyLong(), anyString());
+				verify(s3UploadService, times(1)).upload(eq(PROFILE_IMAGE_PATH), eq(testFileName), eq(profileImage));
 			}
 		}
 	}
