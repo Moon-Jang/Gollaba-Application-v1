@@ -14,6 +14,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import static kr.mj.gollaba.common.Const.MAX_IMAGE_UPLOAD_SIZE;
+
 @Getter
 @Setter
 public class UpdateUserRequest implements BaseApiRequest {
@@ -42,8 +44,6 @@ public class UpdateUserRequest implements BaseApiRequest {
 
 	private MultipartFile backgroundImage;
 
-	private static final long MAX_UPLOAD_SIZE = 1024 * 1024 * 5L;
-
 	@Override
 	public void validate() {
 		switch (updateType) {
@@ -70,7 +70,7 @@ public class UpdateUserRequest implements BaseApiRequest {
 					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 파일이 아닙니다.");
 				}
 
-				if (profileImage.getSize() > MAX_UPLOAD_SIZE) {
+				if (profileImage.getSize() > MAX_IMAGE_UPLOAD_SIZE) {
 					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 용량은 5MB를 넘을 수 없습니다.");
 				}
 				break;
@@ -83,7 +83,7 @@ public class UpdateUserRequest implements BaseApiRequest {
 					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 파일이 아닙니다.");
 				}
 
-				if (backgroundImage.getSize() > MAX_UPLOAD_SIZE) {
+				if (backgroundImage.getSize() > MAX_IMAGE_UPLOAD_SIZE) {
 					throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 용량은 5MB를 넘을 수 없습니다.");
 				}
 				break;

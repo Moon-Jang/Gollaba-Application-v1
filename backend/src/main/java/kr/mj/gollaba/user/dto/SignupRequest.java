@@ -2,15 +2,21 @@ package kr.mj.gollaba.user.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;
+import kr.mj.gollaba.common.util.ImageFileUtils;
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.type.UserRoleType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import static kr.mj.gollaba.common.Const.MAX_IMAGE_UPLOAD_SIZE;
 
 @Getter
 @Setter
@@ -33,6 +39,8 @@ public class SignupRequest implements BaseApiRequest {
     @ApiModelProperty(position = 3, example = "test12345*", required = true)
     private String password;
 
+    private MultipartFile profileImage;
+
     public User toEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
                 .uniqueId(id)
@@ -44,6 +52,15 @@ public class SignupRequest implements BaseApiRequest {
 
     @Override
     public void validate() {
+        if (profileImage != null) {
+            if (ImageFileUtils.isImageFile(profileImage) == false) {
+                throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 파일이 아닙니다.");
+            }
+
+            if (profileImage.getSize() > MAX_IMAGE_UPLOAD_SIZE) {
+                throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 용량은 5MB를 넘을 수 없습니다.");
+            }
+        }
 
     }
 

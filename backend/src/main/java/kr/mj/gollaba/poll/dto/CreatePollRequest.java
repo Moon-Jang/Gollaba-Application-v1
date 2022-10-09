@@ -1,7 +1,5 @@
 package kr.mj.gollaba.poll.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;
 import kr.mj.gollaba.common.util.ImageFileUtils;
@@ -21,6 +19,8 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static kr.mj.gollaba.common.Const.MAX_IMAGE_UPLOAD_SIZE;
 
 @Getter
 @Setter
@@ -55,8 +55,6 @@ public class CreatePollRequest implements BaseApiRequest {
 
     private List<OptionDto> options = new ArrayList<>();
 
-    private static final long MAX_UPLOAD_SIZE = 1024 * 1024 * 5L;
-
     @Override
     public void validate() {
         LocalDateTime now = LocalDateTime.now();
@@ -74,7 +72,7 @@ public class CreatePollRequest implements BaseApiRequest {
                 throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 파일이 아닙니다.");
             }
 
-            if (pollImage.getSize() > MAX_UPLOAD_SIZE) {
+            if (pollImage.getSize() > MAX_IMAGE_UPLOAD_SIZE) {
                 throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "이미지 용량은 5MB를 넘을 수 없습니다.");
             }
         }

@@ -8,4 +8,6 @@ public class Const {
 
     public static final String REFRESH_TOKEN_HEADER = "GA-Refresh-Token";
 
+    public static final long MAX_IMAGE_UPLOAD_SIZE = 1024 * 1024 * 5L;
+
 }
