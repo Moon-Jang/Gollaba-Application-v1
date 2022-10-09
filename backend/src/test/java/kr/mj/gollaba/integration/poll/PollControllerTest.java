@@ -2,11 +2,17 @@ package kr.mj.gollaba.integration.poll;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.mj.gollaba.common.Const;
+import kr.mj.gollaba.common.util.MultiValueMapGenerator;
 import kr.mj.gollaba.common.util.QueryStringGenerator;
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.integration.common.IntegrationTest;
 import kr.mj.gollaba.poll.dto.CreatePollRequest;
 import kr.mj.gollaba.poll.dto.FindAllPollRequest;
+import kr.mj.gollaba.poll.dto.UpdatePollRequest;
 import kr.mj.gollaba.poll.dto.VoteRequest;
+import kr.mj.gollaba.poll.entity.Poll;
+import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
@@ -14,22 +20,33 @@ import kr.mj.gollaba.unit.poll.factory.VoterFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PollControllerTest extends IntegrationTest {
+
+    @Autowired
+    private PollRepository pollRepository;
 
     @DisplayName("투표 생성")
     @Test
@@ -115,6 +132,52 @@ class PollControllerTest extends IntegrationTest {
         resultActions
                 .andDo(print())
                 .andExpect(status().isCreated());
+
+
+    }
+
+    @DisplayName("투표 수정")
+    @WithUserDetails(value = UserFactory.TEST_UNIQUE_ID)
+    @Test
+    void update_poll() throws Exception {
+        //given
+        final Long pollId = 10L;
+        String testTitle = "테스트 타이틀입니당";
+        String url = Const.ROOT_URL + String.format("/polls/%d/update", pollId);
+        LocalDateTime testEndedAt = LocalDateTime.now().plusDays(2L);
+        UpdatePollRequest request = new UpdatePollRequest();
+        request.setTitle(testTitle);
+        request.setEndedAt(testEndedAt);
+        File file = ResourceUtils.getFile("classpath:test_image.jpeg");
+        InputStream inputStream = new FileInputStream(file);
+        MockMultipartFile multipartFile = new MockMultipartFile(
+                "pollImage",
+                "test.png",
+                "image/png",
+                inputStream);
+        MultiValueMap<String, String> params = MultiValueMapGenerator.generate(request);
+        params.set("options[" + 0 + "].description", "test 항목" + 1);
+        params.set("options[" + 1 + "].description", "test 항목" + 2);
+
+        //when
+        ResultActions resultActions = mvc.perform(multipart(url)
+                .file(multipartFile)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .params(params)
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Poll poll = pollRepository.findById(pollId)
+                .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
+
+        assertThat(poll.getTitle()).isEqualTo(testTitle);
+        assertThat(poll.getEndedAt()).isEqualTo(testEndedAt);
+        assertThat(poll.getPollImageUrl()).isNotBlank();
+        assertThat(poll.getOptions().size()).isEqualTo(6);
     }
 
     private MultiValueMap<String, String> generateCreateRequest() {
@@ -155,4 +218,6 @@ class PollControllerTest extends IntegrationTest {
 
         return result;
     }
+
+
 }

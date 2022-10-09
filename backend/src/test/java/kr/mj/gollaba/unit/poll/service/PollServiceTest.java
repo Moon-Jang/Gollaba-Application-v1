@@ -190,7 +190,7 @@ public class PollServiceTest extends ServiceTest {
             given(pollQueryRepository.findAllCount(any(PollQueryFilter.class)))
                     .willReturn(150L);
             given(pollQueryRepository.findIds(any((PollQueryFilter.class))))
-                    .willReturn(List.of(1L,2L,3L));
+                    .willReturn(List.of(1L, 2L, 3L));
             given(pollQueryRepository.findAll(any(List.class)))
                     .willReturn(polls);
             FindAllPollRequest request = new FindAllPollRequest();
@@ -335,7 +335,7 @@ public class PollServiceTest extends ServiceTest {
                 //given
                 User user = UserFactory.create();
                 List<Option> options = OptionFactory.createListWithId();
-                Poll poll =PollFactory.createWithId(user, options);
+                Poll poll = PollFactory.createWithId(user, options);
                 given(cryptUtils.encrypt(anyString()))
                         .willReturn("encryptedString");
                 given(userRepository.findById(anyLong()))
@@ -362,6 +362,37 @@ public class PollServiceTest extends ServiceTest {
                 verify(pollRepository, times(1)).save(eq(poll));
             }
 
+        }
+    }
+
+    @DisplayName("vote 메서드는")
+    @Nested
+    class update {
+
+        @DisplayName("투표 생성자 id 와 토큰으로 인증된 사용된 id가 다르면")
+        @Nested
+        class when_different_poll_creator_id_and_auth_user_id {
+
+            @DisplayName("투표 생성자 매칭 에러가 발생한다.")
+            @Test
+            void throw_exception_NOT_EQUAL_POLL_CREATOR() {
+                //given
+                UpdatePollRequest request = new UpdatePollRequest();
+                request.setPollId(1L);
+                User pollCreator = UserFactory.createWithId(10L);
+                User authedUser = UserFactory.createWithId(20L);
+                Poll poll = PollFactory.createWithId(pollCreator, OptionFactory.createList());
+
+                given(pollQueryRepository.findById(anyLong()))
+                        .willReturn(Optional.of(poll));
+
+                //when then
+                assertThatThrownBy(() -> pollService.update(request, authedUser))
+                        .hasMessage(GollabaErrorCode.NOT_EQUAL_POLL_CREATOR.getDescription())
+                        .isInstanceOf(GollabaException.class);
+
+                verify(pollQueryRepository, times(1)).findById(eq(poll.getId()));
+            }
         }
     }
 }

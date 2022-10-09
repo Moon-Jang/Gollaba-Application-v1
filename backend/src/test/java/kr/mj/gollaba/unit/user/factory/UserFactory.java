@@ -43,4 +43,14 @@ public class UserFactory {
                 .build();
     }
 
+    public static User createWithId(Long id) {
+        return User.builder()
+                .id(id)
+                .uniqueId(TEST_UNIQUE_ID)
+                .nickName(TEST_NICK_NAME)
+                .password(passwordEncoder.encode(TEST_PASSWORD))
+                .userRole(TEST_USER_ROLE_TYPE)
+                .build();
+    }
+
 }
