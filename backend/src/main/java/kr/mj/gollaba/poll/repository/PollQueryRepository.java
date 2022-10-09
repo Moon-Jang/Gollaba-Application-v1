@@ -9,43 +9,66 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static kr.mj.gollaba.poll.entity.QPoll.poll;
 import static kr.mj.gollaba.poll.entity.QOption.option;
+import static kr.mj.gollaba.poll.entity.QVoter.voter;
 import static kr.mj.gollaba.user.entity.QUser.user;
+
 @Repository
 @RequiredArgsConstructor
 public class PollQueryRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public int findAllCount(PollQueryFilter filter) {
-        return jpaQueryFactory.selectFrom(poll)
-                .join(poll.options, option).fetchJoin()
-                .leftJoin(poll.user, user).fetchJoin()
+    public long findAllCount(PollQueryFilter filter) {
+        return jpaQueryFactory.select(poll.countDistinct())
+                .from(poll)
+                .join(poll.options, option)
+                .leftJoin(poll.user, user)
+                .leftJoin(option.voters, voter)
                 .where(eqUserId(filter.getUserId()),
                         likeTitle(filter.getTitle()))
-                .fetch().size();
+                .fetchOne();
     }
 
-    public List<Poll> findAll(PollQueryFilter filter) {
-        return jpaQueryFactory.selectFrom(poll)
-                .join(poll.options, option).fetchJoin()
-                .leftJoin(poll.user, user).fetchJoin()
+
+
+    public List<Long> findIds(PollQueryFilter filter) {
+        return jpaQueryFactory.select(poll.id)
+                .from(poll)
+                .join(poll.options, option)
+                .leftJoin(poll.user, user)
+                .leftJoin(option.voters, voter)
                 .where(eqUserId(filter.getUserId()),
                         likeTitle(filter.getTitle()))
+                .groupBy(poll.id)
+                .orderBy(poll.id.desc())
                 .limit(filter.getLimit())
                 .offset(filter.getOffset())
-                .groupBy(poll.id)
                 .fetch();
     }
 
-    public Poll findById(Long id) {
-        return jpaQueryFactory.selectFrom(poll)
+    public List<Poll> findAll(List<Long> ids) {
+        return jpaQueryFactory.selectFrom(poll).distinct()
                 .join(poll.options, option).fetchJoin()
                 .leftJoin(poll.user, user).fetchJoin()
+                .leftJoin(option.voters, voter).fetchJoin()
+                .where(poll.id.in(ids))
+                .orderBy(poll.id.desc())
+                .fetch();
+    }
+
+    public Optional<Poll> findById(Long id) {
+        Poll foundPoll = jpaQueryFactory.selectFrom(poll)
+                .join(poll.options, option).fetchJoin()
+                .leftJoin(poll.user, user).fetchJoin()
+                .leftJoin(option.voters, voter).fetchJoin()
                 .where(poll.id.eq(id))
                 .fetchOne();
+
+        return Optional.ofNullable(foundPoll);
     }
 
 
@@ -62,6 +85,6 @@ public class PollQueryRepository {
             return null;
         }
 
-        return poll.title.like(title);
+        return poll.title.like("%" + title + "%");
     }
 }

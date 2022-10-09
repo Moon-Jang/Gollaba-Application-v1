@@ -7,6 +7,7 @@ import kr.mj.gollaba.user.entity.User;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class PollFactory {
     public static final String TEST_CREATOR_NAME = "강남";
     public static final PollingResponseType TEST_RESPONSE_TYPE = PollingResponseType.SINGLE;
     public static final Boolean TEST_IS_BALLOT = false;
+    public static final LocalDateTime TEST_ENDED_AT = LocalDateTime.now().plusDays(7L);
 
     public static List<Poll> createList() {
         List<Poll> polls = new ArrayList<>();
@@ -27,11 +29,12 @@ public class PollFactory {
                     .creatorName(TEST_CREATOR_NAME)
                     .responseType(TEST_RESPONSE_TYPE)
                     .isBallot(TEST_IS_BALLOT)
+                    .endedAt(TEST_ENDED_AT)
                     .build();
 
             OptionFactory.createList()
                     .stream()
-                    .forEach(el -> poll.addoption(el));
+                    .forEach(el -> poll.addOption(el));
 
             polls.add(poll);
         }
@@ -45,11 +48,12 @@ public class PollFactory {
                 .creatorName(TEST_CREATOR_NAME)
                 .responseType(TEST_RESPONSE_TYPE)
                 .isBallot(TEST_IS_BALLOT)
+                .endedAt(TEST_ENDED_AT)
                 .build();
 
         poll.registerCreator(user);
         options.stream()
-                .forEach(el -> poll.addoption(el));
+                .forEach(el -> poll.addOption(el));
 
         return poll;
     }
@@ -61,11 +65,29 @@ public class PollFactory {
                 .creatorName(TEST_CREATOR_NAME)
                 .responseType(TEST_RESPONSE_TYPE)
                 .isBallot(TEST_IS_BALLOT)
+                .endedAt(TEST_ENDED_AT)
                 .build();
 
         poll.registerCreator(user);
         options.stream()
-                .forEach(el -> poll.addoption(el));
+                .forEach(el -> poll.addOption(el));
+
+        return poll;
+    }
+
+    public static Poll createWithIdAndBallot(User user, List<Option> options) {
+        Poll poll = Poll.builder()
+                .id(TEST_ID)
+                .title(TEST_TITLE)
+                .creatorName(TEST_CREATOR_NAME)
+                .responseType(TEST_RESPONSE_TYPE)
+                .isBallot(true)
+                .endedAt(TEST_ENDED_AT)
+                .build();
+
+        poll.registerCreator(user);
+        options.stream()
+                .forEach(el -> poll.addOption(el));
 
         return poll;
     }

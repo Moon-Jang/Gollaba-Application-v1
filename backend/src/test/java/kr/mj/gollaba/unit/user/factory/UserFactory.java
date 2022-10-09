@@ -8,8 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class UserFactory {
 
     public static final Long TEST_ID = 1L;
-    public static final String TEST_UNIQUE_ID = "testUserId";
-    public static final String TEST_NICK_NAME = "홍길동";
+    public static final String TEST_EXIST_UNIQUE_ID = "testid123299";
+    public static final String TEST_UNIQUE_ID = "testid12328502";
+    public static final String TEST_NICK_NAME = "홍길동99";
     public static final String TEST_PASSWORD = "test1234*";
     public static final String TEST_REG_NO = "860824-1655068";
     public static final UserRoleType TEST_USER_ROLE_TYPE = UserRoleType.ROLE_USER;
@@ -36,6 +37,16 @@ public class UserFactory {
     public static User createWithId() {
         return User.builder()
                 .id(TEST_ID)
+                .uniqueId(TEST_UNIQUE_ID)
+                .nickName(TEST_NICK_NAME)
+                .password(passwordEncoder.encode(TEST_PASSWORD))
+                .userRole(TEST_USER_ROLE_TYPE)
+                .build();
+    }
+
+    public static User createWithId(Long id) {
+        return User.builder()
+                .id(id)
                 .uniqueId(TEST_UNIQUE_ID)
                 .nickName(TEST_NICK_NAME)
                 .password(passwordEncoder.encode(TEST_PASSWORD))

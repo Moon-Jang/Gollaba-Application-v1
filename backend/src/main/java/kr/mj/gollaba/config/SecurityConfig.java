@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -24,6 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/v1/signup",
             "/v1/login",
             "/v1/polls",
+            "/v1/polls/{pollId}",
+            "/v1/vote",
             "/health-check", // aws - target group
             "/h2-console/**", // h2-console
             "/v3/api-docs", // swagger
@@ -45,7 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(permitAllList).permitAll()
-                .anyRequest().authenticated()
                 .and()
                 .formLogin().disable().headers().frameOptions().disable(); //h2 console 관련
 

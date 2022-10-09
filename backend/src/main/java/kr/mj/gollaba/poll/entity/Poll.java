@@ -1,5 +1,7 @@
 package kr.mj.gollaba.poll.entity;
 
+import kr.mj.gollaba.exception.GollabaErrorCode;
+import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.user.entity.User;
 import lombok.Builder;
@@ -26,7 +28,7 @@ public class Poll {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "user_id" , nullable = true)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @Column(name = "title", nullable = false)
@@ -36,14 +38,17 @@ public class Poll {
     private String creatorName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="response_type", nullable = false)
+    @Column(name = "response_type", nullable = false)
     private PollingResponseType responseType;
 
-    @Column(name ="is_ballot", nullable = false)
+    @Column(name = "is_ballot", nullable = false)
     private Boolean isBallot;
 
-    @Column(name = "ended_at", nullable = true)
+    @Column(name = "ended_at", nullable = false)
     private LocalDateTime endedAt;
+
+    @Column(name = "poll_image_url", nullable = true)
+    private String pollImageUrl;
 
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL)
     @OrderColumn(name = "position")
@@ -67,9 +72,21 @@ public class Poll {
         this.endedAt = endedAt;
     }
 
-    public void addoption(Option option) {
+    public void addOption(Option option) {
         this.options.add(option);
         option.setPoll(this);
+    }
+
+    public void vote(Long optionId, Voter voter) {
+        Option option = findOptionByOptionId(optionId);
+        voter.vote(option);
+    }
+
+    public Option findOptionByOptionId(Long optionId) {
+        return this.options.stream()
+                .filter(el -> el.getId().equals(optionId))
+                .findFirst()
+                .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_OPTION));
     }
 
     public void registerCreator(User user) {
@@ -90,5 +107,9 @@ public class Poll {
 
     public void updateEndedAt(LocalDateTime endedAt) {
         this.endedAt = endedAt;
+    }
+
+    public void updatePollImageUrl(String pollImageUrl) {
+        this.pollImageUrl = pollImageUrl;
     }
 }
