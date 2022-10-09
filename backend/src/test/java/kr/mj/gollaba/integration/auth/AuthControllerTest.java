@@ -25,9 +25,8 @@ class AuthControllerTest extends IntegrationTest {
     @Test
     public void login_success() throws Exception {
         //given
-        userRepository.save(UserFactory.create());
         LoginRequest request = new LoginRequest();
-        request.setId(UserFactory.TEST_UNIQUE_ID);
+        request.setId(UserFactory.TEST_EXIST_UNIQUE_ID);
         request.setPassword(UserFactory.TEST_PASSWORD);
 
         //when
@@ -47,9 +46,10 @@ class AuthControllerTest extends IntegrationTest {
     @Test
     public void login_fail() throws Exception {
         //given
+        String failPassword = "failPassword";
         LoginRequest request = new LoginRequest();
         request.setId(UserFactory.TEST_UNIQUE_ID);
-        request.setPassword(UserFactory.TEST_PASSWORD);
+        request.setPassword(failPassword);
 
         //when
         ResultActions resultActions = mvc.perform(post(Const.ROOT_URL + "/login")
