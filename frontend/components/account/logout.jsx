@@ -1,43 +1,42 @@
-import { Button } from '@mui/material'
-import Link from 'next/link'
-import { useCookies } from 'react-cookie'
-import LogoutIcon from '@mui/icons-material/Logout'
+import { Button } from "@mui/material"
+import Link from "next/link"
+import { useCookies } from "react-cookie"
+import LogoutIcon from "@mui/icons-material/Logout"
 
 export default function Logout() {
     const [cookies, setCookies, removeCookies] = useCookies(null)
-    const handleChangeLogout = async (event) => {
-        event.prevendDefault()
-        removeCookies('accessToken', { path: '/' })
+    const logoutHandler = async () => {
+        removeCookies("accessToken")
+        removeCookies("refreshToken")
     }
     // useRouter , NextLink
 
     const leftalign = {
-        float: 'left',
+        float: "left",
         marginTop: 7,
         marginBottom: 7,
     }
     const iconStyle = {
-        fontSize: '24px',
-        margin: '0 15 0 15',
+        fontSize: "24px",
+        margin: "0 15 0 15",
     }
     return (
         <>
-            <Link href='/'>
+            <Link href="/login">
                 <div style={leftalign}>
                     <Button
-                        color='primary'
-                        type='submit'
-                        variant='text'
+                        color="primary"
+                        type="submit"
+                        variant="text"
                         fullWidth
                         style={{
-                            verticalAlign: 'middle',
-                            color: '#000000',
-                            fontSize: '24px',
-                            textAlign: 'left',
-                            padding: '0 0 0 0',
+                            verticalAlign: "middle",
+                            color: "#000000",
+                            fontSize: "24px",
+                            textAlign: "left",
+                            padding: "0 0 0 0",
                         }}
-                        // sx={{ mt: 4.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
-                        onChange={handleChangeLogout}
+                        onClick={logoutHandler}
                     >
                         <LogoutIcon style={iconStyle} />
                         로그아웃
@@ -47,4 +46,3 @@ export default function Logout() {
         </>
     )
 }
-// 현재 구현 상태 : 로그아웃 누르면 메인페이지로 이동 , 토큰 제거
