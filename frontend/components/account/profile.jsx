@@ -4,14 +4,20 @@ import { useCookies } from "react-cookie"
 import jwt from "jsonwebtoken"
 import EditIcon from "@mui/icons-material/Edit"
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline"
-import ApiGateway from "./../../apis/ApiGateway"
+import ApiGateway from "../../apis/ApiGateway"
 import ImageIcon from "@mui/icons-material/Image"
 
 export default function Profile() {
-    // UserInfo API통해 페이지에 가져옴
+    // 선언부
     const [cookies, setCookies, removeCookies] = useCookies([])
     const [token, setToken] = useState(null)
     const [data, setData] = useState(null)
+    const [nickName, setNickName] = useState("")
+    const [visible, setVisible] = useState(false)
+    const BACKGROUND_BASIC = "https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg"
+    const PROFILE_BASIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+
+    // UserInfo API통해 페이지에 가져옴
     const showUser = async () => {
         console.log("token : ", token)
         if (!token) return
@@ -31,8 +37,7 @@ export default function Profile() {
     }, [token])
 
     //Profile, Background Image 변경
-    const BACKGROUND_BASIC = "https://cdn.pixabay.com/photo/2017/07/08/11/33/white-2484120_960_720.png"
-    const PROFILE_BASIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+
     const profileImageSrc = () => {
         if (data?.profileImageUrl == null) return PROFILE_BASIC
         return data?.profileImageUrl
@@ -87,8 +92,6 @@ export default function Profile() {
     }
 
     // 닉네임 변경
-    const [nickName, setNickName] = useState("")
-    const [visible, setVisible] = useState(false)
     const onChangeNicknameHandler = e => {
         setNickName(e.target.value)
     }
@@ -156,7 +159,16 @@ export default function Profile() {
                             alt="bgImg"
                             onClick={handleBackgroundClick}
                         ></img>
-                        <ImageIcon style={{ position: "absolute", top: 55, right: 1, zIndex: 4, fontSize: 40 }} />
+                        <ImageIcon
+                            style={{
+                                position: "absolute",
+                                top: 55,
+                                right: 32,
+                                zIndex: 4,
+                                fontSize: 40,
+                                color: "white",
+                            }}
+                        />
                         <div style={{ postion: "relative" }}></div>
                         <input
                             type="file"
@@ -190,7 +202,7 @@ export default function Profile() {
                             onChange={e => changeProfile(e)}
                             ref={photoInput}
                         />
-                        <ImageIcon style={{ position: "absolute", top: 320, zIndex: 10, fontSize: 40 }} />
+                        <ImageIcon style={{ position: "absolute", top: 320, right: 150, zIndex: 10, fontSize: 40 }} />
                     </div>
                 </div>
 
