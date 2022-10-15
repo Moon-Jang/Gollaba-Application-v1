@@ -75,10 +75,11 @@ public class PollService {
         return new FindPollResponse(poll);
     }
 
-    public void update(UpdatePollRequest request, User user) {
-        Poll poll = pollQueryRepository.findById(request.getPollId())
+    public void update(Long pollId, UpdatePollRequest request, User user) {
+        Poll poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
+        // 투표 만든사람
         if (poll.getUser().getId().equals(user.getId()) == false) {
             throw new GollabaException(GollabaErrorCode.NOT_EQUAL_POLL_CREATOR);
         }
@@ -105,10 +106,10 @@ public class PollService {
         pollRepository.save(poll);
     }
 
-    public void vote(VoteRequest request) {
+    public void vote(Long pollId, VoteRequest request) {
         request.validate();
         User user = null;
-        Poll poll = pollQueryRepository.findById(request.getPollId())
+        Poll poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
         validateVote(poll, request);
