@@ -1,11 +1,11 @@
-import ApiGateway from './../../apis/ApiGateway'
-import { useCookies } from 'react-cookie'
-import jwt from 'jsonwebtoken'
-import { useRef } from 'react'
+import ApiGateway from "../../../apis/ApiGateway"
+import { useCookies } from "react-cookie"
+import jwt from "jsonwebtoken"
+import { useRef } from "react"
 
 export default function KMExample() {
     const showApi = ApiGateway.showUser()
-    console.log('showApi :', showApi)
+    console.log("showApi :", showApi)
     // const showApi = () => {
     //     console.log(ApiGateway.showUser())
     //     JSON.stringify(ApiGateway.showUser())

@@ -1,33 +1,30 @@
-import {
-    Avatar,
-    Box,
-    IconButton,
-    TextField,
-    Button,
-    CssBaseline,
-} from '@mui/material'
-import { useRef, useState, useEffect } from 'react'
-import { useCookies } from 'react-cookie'
-import jwt from 'jsonwebtoken'
-import EditIcon from '@mui/icons-material/Edit'
-import DoneOutlineIcon from '@mui/icons-material/DoneOutline'
-import ApiGateway from './../../apis/ApiGateway'
+import { Avatar, Box, IconButton, TextField, Button, CssBaseline } from "@mui/material"
+import { useRef, useState, useEffect } from "react"
+import { useCookies } from "react-cookie"
+import jwt from "jsonwebtoken"
+import EditIcon from "@mui/icons-material/Edit"
+import DoneOutlineIcon from "@mui/icons-material/DoneOutline"
+import ApiGateway from "../../apis/ApiGateway"
+import ImageIcon from "@mui/icons-material/Image"
 
 export default function Profile() {
-    // UserInfo API통해 페이지에 가져옴
+    // 선언부
     const [cookies, setCookies, removeCookies] = useCookies([])
     const [token, setToken] = useState(null)
     const [data, setData] = useState(null)
+    const [nickName, setNickName] = useState("")
+    const [visible, setVisible] = useState(false)
+    const BACKGROUND_BASIC = "https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg"
+    const PROFILE_BASIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+
+    // UserInfo API통해 페이지에 가져옴
     const showUser = async () => {
-        console.log('token : ', token)
+        console.log("token : ", token)
         if (!token) return
         try {
-            const userInfo = await ApiGateway.showUser(
-                token.id,
-                cookies.accessToken
-            )
+            const userInfo = await ApiGateway.showUser(token.id, cookies.accessToken)
             setData(userInfo)
-            console.log('showUser :', userInfo)
+            console.log("showUser :", userInfo)
         } catch (e) {
             console.log(e)
         }
@@ -40,10 +37,7 @@ export default function Profile() {
     }, [token])
 
     //Profile, Background Image 변경
-    const BACKGROUND_BASIC =
-        'https://cdn.pixabay.com/photo/2017/07/08/11/33/white-2484120_960_720.png'
-    const PROFILE_BASIC =
-        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+
     const profileImageSrc = () => {
         if (data?.profileImageUrl == null) return PROFILE_BASIC
         return data?.profileImageUrl
@@ -62,43 +56,35 @@ export default function Profile() {
     }
 
     // formData로 이미지 파일 업데이트 하기
-    const changeProfile = async (e) => {
+    const changeProfile = async e => {
         if (!token) return
         try {
             const photoToAdd = e.target.files[0]
-            console.log('photoToAdd : ', photoToAdd)
+            console.log("photoToAdd : ", photoToAdd)
             const formData = new FormData()
-            formData.append('profileImage', photoToAdd)
-            formData.append('updateType', 'PROFILE_IMAGE')
-            for (const keyValue of formData)
-                console.log('keyValue : ', keyValue)
-            const profileChange = await ApiGateway.updateForm(
-                formData,
-                cookies.accessToken
-            )
+            formData.append("profileImage", photoToAdd)
+            formData.append("updateType", "PROFILE_IMAGE")
+            for (const keyValue of formData) console.log("keyValue : ", keyValue)
+            const profileChange = await ApiGateway.updateForm(formData, cookies.accessToken)
             setData(profileChange)
-            console.log('profileChange : ', profileChange)
+            console.log("profileChange : ", profileChange)
             // location.reload()
         } catch (e) {
             console.log(e)
         }
     }
-    const changeBackground = async (e) => {
+    const changeBackground = async e => {
         if (!token) return
         try {
             const photoToAdd = e.target.files[0]
-            console.log('photoToAdd : ', photoToAdd)
+            console.log("photoToAdd : ", photoToAdd)
             const formData = new FormData()
-            formData.append('backgroundImage', photoToAdd)
-            formData.append('updateType', 'BACKGROUND_IMAGE')
-            for (const keyValue of formData)
-                console.log('keyValue : ', keyValue)
-            const backgroundChange = await ApiGateway.updateForm(
-                formData,
-                cookies.accessToken
-            )
+            formData.append("backgroundImage", photoToAdd)
+            formData.append("updateType", "BACKGROUND_IMAGE")
+            for (const keyValue of formData) console.log("keyValue : ", keyValue)
+            const backgroundChange = await ApiGateway.updateForm(formData, cookies.accessToken)
             setData(backgroundChange)
-            console.log('backgroundChange : ', backgroundChange)
+            console.log("backgroundChange : ", backgroundChange)
             location.reload()
         } catch (e) {
             console.log(e)
@@ -106,25 +92,20 @@ export default function Profile() {
     }
 
     // 닉네임 변경
-    const [nickName, setNickName] = useState('')
-    const [visible, setVisible] = useState(false)
-    const onChangeNicknameHandler = (e) => {
+    const onChangeNicknameHandler = e => {
         setNickName(e.target.value)
     }
     const changeNickname = async () => {
         if (!token) return
         try {
             const formData = new FormData()
-            formData.append('nickName', nickName)
-            formData.append('updateType', 'NICKNAME')
-            const nickChange = await ApiGateway.updateForm(
-                formData,
-                cookies.accessToken
-            )
+            formData.append("nickName", nickName)
+            formData.append("updateType", "NICKNAME")
+            const nickChange = await ApiGateway.updateForm(formData, cookies.accessToken)
             setData(nickChange)
-            console.log('nickChange :', nickChange)
+            console.log("nickChange :", nickChange)
             for (const keyValue of formData) {
-                console.log('formData keyValue :', keyValue)
+                console.log("formData keyValue :", keyValue)
             }
             location.reload()
         } catch (e) {
@@ -134,25 +115,29 @@ export default function Profile() {
 
     // 배경화면 스타일 CSS
     const backgroundStyle = {
-        backgroundColor: '#ffffff',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
+        backgroundColor: "#ffffff",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
         height: 200,
         width: 390,
         padding: 0,
         marginTop: 0,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
+        // position: "relative",
     }
     const imageStyle = {
         width: 390,
         height: 200,
         // objectFit: 'none',
-        objectPosition: 'center',
-        overflow: 'hidden',
-        display: 'flex',
-        justifyContent: 'center',
+        objectPosition: "center",
+        overflow: "hidden",
+        display: "flex",
+        justifyContent: "center",
+        // postion: "absolute",
+        position: "relative",
+        zIndex: 1,
     }
 
     return (
@@ -160,10 +145,10 @@ export default function Profile() {
             <Box
                 sx={{
                     marginTop: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}
             >
                 <div>
@@ -171,62 +156,76 @@ export default function Profile() {
                         <img
                             style={imageStyle}
                             src={backgroundImageSrc()}
-                            alt='bgImg'
+                            alt="bgImg"
                             onClick={handleBackgroundClick}
+                        ></img>
+                        <ImageIcon
+                            style={{
+                                position: "absolute",
+                                top: 55,
+                                right: 32,
+                                zIndex: 4,
+                                fontSize: 40,
+                                color: "white",
+                            }}
                         />
+                        <div style={{ postion: "relative" }}></div>
                         <input
-                            type='file'
-                            id='backgroundImageInput'
-                            style={{ display: 'none' }}
-                            accept='image/jpg image/jpeg image/png'
-                            onChange={(e) => {
+                            type="file"
+                            id="backgroundImageInput"
+                            style={{ display: "none" }}
+                            accept="image/jpg image/jpeg image/png"
+                            onChange={e => {
                                 changeBackground(e)
                             }}
                             ref={backgroundInput}
                         />
+
                         <Avatar
                             src={profileImageSrc()}
-                            id='profileImage'
+                            id="profileImage"
                             sx={{
                                 width: 215,
                                 height: 215,
-                                objectFit: 'cover',
-                                position: 'absolute',
+                                objectFit: "cover",
+                                position: "absolute",
                                 marginTop: 23,
+                                zIndex: 3,
                             }}
                             onClick={handleClick}
                         />
                         <input
-                            type='file'
-                            id='profileImageInput'
-                            style={{ display: 'none' }}
-                            accept='image/jpg image/jpeg image/png'
-                            onChange={(e) => changeProfile(e)}
+                            type="file"
+                            id="profileImageInput"
+                            style={{ display: "none" }}
+                            accept="image/jpg image/jpeg image/png"
+                            onChange={e => changeProfile(e)}
                             ref={photoInput}
                         />
+                        <ImageIcon style={{ position: "absolute", top: 320, right: 150, zIndex: 10, fontSize: 40 }} />
                     </div>
                 </div>
 
-                <div style={{ fontSize: '24px' }}>
+                <div style={{ fontSize: "24px" }}>
                     <Box
                         sx={{
                             marginTop: 16,
                             marginBottom: 5,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
                         }}
                     >
                         <span>
                             {data?.nickName}
                             <IconButton
-                                aria-label='edit'
+                                aria-label="edit"
                                 onClick={() => {
                                     setVisible(!visible)
                                 }}
                             >
-                                <EditIcon style={{ margin: '0 0 3 10' }} />
+                                <EditIcon style={{ margin: "0 0 3 10" }} />
                             </IconButton>
                         </span>
 
@@ -236,22 +235,17 @@ export default function Profile() {
                                 <TextField
                                     sx={{ mt: 1.5 }}
                                     required
-                                    margin='dense'
-                                    name='nickNameChange'
-                                    variant='standard'
-                                    type='text'
-                                    id='nickNameChange'
-                                    label='닉네임 변경'
-                                    placeholder='변경할 닉네임은?'
+                                    margin="dense"
+                                    name="nickNameChange"
+                                    variant="standard"
+                                    type="text"
+                                    id="nickNameChange"
+                                    label="닉네임 변경"
+                                    placeholder="변경할 닉네임은?"
                                     onChange={onChangeNicknameHandler}
                                 />
-                                <IconButton
-                                    aria-label='done'
-                                    onClick={changeNickname}
-                                >
-                                    <DoneOutlineIcon
-                                        style={{ margin: '7 0 0 0' }}
-                                    />
+                                <IconButton aria-label="done" onClick={changeNickname}>
+                                    <DoneOutlineIcon style={{ margin: "7 0 0 0" }} />
                                 </IconButton>
                             </div>
                         )}
