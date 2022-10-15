@@ -11,6 +11,8 @@ const ApiGateway = {
     updateForm: async (formData, token) =>
         ApiTemplate.sendApiMultiPart(MethodType.POST, `v1/users/update`, formData, token),
     signupForm: async formData => ApiTemplate.sendApiMultiPart(MethodType.POST, `v1/signup`, formData),
+    update: async (pollId, payload, token) =>
+        ApiTemplate.sendApiMultiPart(MethodType.POST, `/v1/polls/${pollId}/update`, payload, token),
 }
 
 export default ApiGateway
