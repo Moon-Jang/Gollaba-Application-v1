@@ -11,7 +11,7 @@ import {
     Typography,
 } from "@mui/material"
 import { makeStyles } from "@mui/styles"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useRef } from "react"
 import IdGenerator from "../../utils/IdGenerator"
 import DraggableList from "./DraggableList"
@@ -23,31 +23,47 @@ import PollCreatorName from "./PollCreatorName"
 import { formatDiagnosticsWithColorAndContext } from "typescript"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
+import { BeforeListItem } from "./BeforeListItem"
 import { useCookies } from "react-cookie"
-import jwt_decode from "jwt-decode"
 //import { ko } from "date-fns/esm/locale";
 
 const RESPONSE_TYPE_SIGNLE = "SINGLE"
 const RESPONSE_TYPE_MULTI = "MULTI"
 
 const steps = [
-    "작성자 이름을 입력해주세요.",
-    "투표 주제를 입력해주세요.",
-    "투표 이미지를 삽입해주세요. (선택사항 입니다.)",
-    "투표 항목을 생성해주세요.",
-    "투표 옵션을 선택해주세요.",
-    "투표 마감일을 선택해주세요.",
+    "수정할 투표 제목를 입력해주세요.",
+    "수정할 투표 이미지를 삽입해주세요. (선택사항 입니다.)",
+    "투표 항목을 추가해주세요.",
+    "변경할 투표 마감일을 선택해주세요.",
 ]
 
 export default function VerticalLinearStepper() {
     const classes = useStyles()
     const router = useRouter()
+    let response
+    const [polls, setPolls] = useState([])
+    const [cookies, setCookies] = useCookies()
+    const { pollId } = router.query
+    console.log("zt", pollId)
+
+    const getData = async () => {
+        response = await ApiGateway.getPoll(pollId)
+        setPolls(response)
+    }
+
+    useEffect(() => {
+        if (pollId) {
+            getData()
+        }
+    }, [pollId])
+
+    console.log("response>>2", polls)
+
     const [activeStep, setActiveStep] = useState(0)
     const [isSubmit, setIsSubmit] = useState(false)
-    const [cookies, setCookies] = useCookies()
-    const nameRef = useRef({ value: "", isInvalid: false })
-    const titleRef = useRef({ value: "", isInvalid: false })
+    const titleRef = useRef({ value: polls.title, isInvalid: false })
     const imageRef = useRef({})
+    /*
     const itemsRef = useRef([
         {
             id: IdGenerator.generate(),
@@ -59,33 +75,25 @@ export default function VerticalLinearStepper() {
             value: { description: "" },
             isInvalid: false,
         },
-    ])
-    const optionsRef = useRef({
-        isBallot: false,
-        responseType: RESPONSE_TYPE_SIGNLE,
-    })
+    ])*/
+    const itemsRef = useRef([])
     const expireRef = useRef({})
     const handleNext = () => {
         if (isSubmit) return
 
         switch (activeStep) {
             case 0:
-                if (nameRef.current.value === "" || nameRef.current.isInvalid) return
+                if (titleRef.current.isInvalid) return
                 break
             case 1:
-                if (titleRef.current.value === "" || titleRef.current.isInvalid) return
-                break
-
-            case 2:
                 //if (imageRef.current.value !== "") return;
                 break
 
-            case 3:
+            case 2:
                 if (itemsRef.current.some(el => el.isInvalid === true)) return
                 break
-            case 4:
-                break
-            case 5:
+
+            case 3:
                 console.log("submit 가동")
                 handleSubmmit()
                 break
@@ -107,28 +115,33 @@ export default function VerticalLinearStepper() {
         const currentTimestamp = +new Date()
         const defaultEndedAt = new Date(currentTimestamp + 1000 * 60 * 60 * 24 * 7).toISOString()
 
-        const payload = {
-            title: titleRef.current.value,
-            creatorName: nameRef.current.value,
-            ended_at: expireRef.current,
-            isBallot: optionsRef.current.isBallot,
-            responseType: optionsRef.current.responseType,
-        }
-
-        if (cookies?.accessToken) {
-            const decoded = jwt_decode(cookies.accessToken)
-            payload.userId = decoded.id
-        }
+        console.log(
+            `타이틀 :` +
+                titleRef.current.value +
+                "시간" +
+                JSON.stringify(expireRef.current).length +
+                "사진" +
+                JSON.stringify(imageRef.current.name)
+        )
 
         const formData = new FormData()
-        Object.keys(payload).forEach(key => formData.append(key, payload[key]))
-        if (imageRef.current !== null) formData.append("pollImage", imageRef.current)
+
+        if (titleRef.current.value !== undefined) formData.append("title", titleRef.current.value)
+        if (JSON.stringify(expireRef.current).length !== 2) formData.append("endedAt", expireRef.current.toISOString())
+        if (JSON.stringify(imageRef.current.name) !== undefined) formData.append("pollImage", imageRef.current)
 
         for (let i = 0; i < itemsRef.current.length; i++) {
             formData.append(`options[${i}].description`, itemsRef.current[i].value.description)
         }
 
-        const response = await ApiGateway.createPoll(formData)
+        for (let key of formData.keys()) {
+            console.log("키", key)
+        }
+        for (let value of formData.values()) {
+            console.log("밸류", value)
+        }
+
+        const response = await ApiGateway.update(polls.pollId, formData, cookies.accessToken)
 
         if (response.error) {
             alert(response.message)
@@ -150,7 +163,7 @@ export default function VerticalLinearStepper() {
                     <Step key={label}>
                         <StepLabel>{label}</StepLabel>
                         <StepContent>
-                            {getStepContent(index, [nameRef, titleRef, imageRef, itemsRef, optionsRef, expireRef])}
+                            {getStepContent(index, [titleRef, imageRef, itemsRef, expireRef], polls)}
                             <div className={classes.actionsContainer}>
                                 <div>
                                     <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
@@ -193,19 +206,16 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-function getStepContent(step, refs) {
+function getStepContent(step, refs, polls) {
+    console.log("Step", polls.title)
     switch (step) {
         case 0:
-            return <PollCreatorName nameRef={refs[step]} />
+            return <PollTitle originTitle={polls.title} titleRef={refs[step]} />
         case 1:
-            return <PollTitle titleRef={refs[step]} />
+            return <PollImage imageRef={refs[step]} originImage={polls.pollImageUrl} />
         case 2:
-            return <PollImage imageRef={refs[step]} />
+            return <PollItemsWrapper itemsRef={refs[step]} options={polls.options} />
         case 3:
-            return <PollItemsWrapper itemsRef={refs[step]} />
-        case 4:
-            return <PollOptionsWrapper optionsRef={refs[step]} />
-        case 5:
             return <PollExpireDate expireRef={refs[step]} />
         default:
             return "Unknown step"
@@ -214,8 +224,16 @@ function getStepContent(step, refs) {
 
 export const PollItemsContext = React.createContext(null)
 
-function PollItemsWrapper({ itemsRef }) {
+function PollItemsWrapper({ itemsRef, options }) {
     const itemListState = useState(itemsRef.current)
+    console.log("options>>", options)
+
+    const beforeOptions = options.map((el, index) => (
+        <text>
+            {el.description}
+            <br />
+        </text>
+    ))
 
     return (
         <PollItemsContext.Provider value={{ itemsRef, itemListState }}>
@@ -225,7 +243,7 @@ function PollItemsWrapper({ itemsRef }) {
     )
 }
 
-function PollItems({ itemsRef, itemListState }) {
+function PollItems({ itemsRef, itemListState, options }) {
     const [items, setItems] = itemListState
 
     const onDragEnd = ({ destination, source }) => {
@@ -246,7 +264,11 @@ function PollItems({ itemsRef, itemListState }) {
         return result
     }
 
-    return <DraggableList items={itemsRef.current} onDragEnd={onDragEnd} />
+    return (
+        <>
+            <DraggableList items={itemsRef.current} onDragEnd={onDragEnd} />
+        </>
+    )
 }
 
 const pollOptionStyles = makeStyles(theme => ({
@@ -314,7 +336,7 @@ function PollOption({ onChange, checked, label }) {
     )
 }
 
-function PollImage({ imageRef }) {
+function PollImage({ imageRef, originImage }) {
     const classes = pollOptionStyles()
     const [imgName, setImgName] = useState("")
 
@@ -351,13 +373,14 @@ function PollExpireDate({ expireRef }) {
         setExpireDate(date)
         expireRef.current = date
         console.log("선택한 날짜>>>", date)
+        console.log("esd", expireRef.current)
     }
 
     return (
         <>
             <DatePicker
                 //locale={ko}
-                selected={minDate}
+                selected={expireDate}
                 onChange={handleChange}
                 closeOnScroll={true}
                 minDate={minDate}
@@ -366,7 +389,5 @@ function PollExpireDate({ expireRef }) {
                 dateFormat="yyyy-MM-dd"
             />
         </>
-        //시간단위 포함할것.
-        //최소 30분
     )
 }

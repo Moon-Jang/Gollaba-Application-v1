@@ -37,7 +37,7 @@ export default function CreateBtn(props) {
 
     const response = await ApiGateway.vote(payload);
     console.log("대답", response);
-    if (response.error) {
+    if (response?.error) {
       alert(response.message);
       if (response.code === 20004) {
         router.push("/result/" + props.pollId);

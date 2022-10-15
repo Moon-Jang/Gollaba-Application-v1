@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import LinearProgress from "@mui/material/LinearProgress";
-
+//기명투표일 때는 닉네임 입력 무조건 하도록 vaildation
 export default function Poll(props) {
   const router = useRouter();
   const data = props.data;
@@ -37,7 +37,7 @@ export default function Poll(props) {
 
   const buttonClick = () => {
     const pollId = data.pollId;
-    router.push("/voting/" + pollId);
+    router.push("/polls/" + pollId);
   };
 
   const extendClick = () => {
