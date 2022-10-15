@@ -1,8 +1,10 @@
 package kr.mj.gollaba.poll.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiResponse;
+import kr.mj.gollaba.common.serializer.HashIdSerializer;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.user.type.UserRoleType;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 public class FindPollResponse implements BaseApiResponse {
 
+	@JsonSerialize(using = HashIdSerializer.class)
 	private Long pollId;
 
 	private UserResponse user;

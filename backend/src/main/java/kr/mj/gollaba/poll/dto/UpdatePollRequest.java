@@ -23,9 +23,6 @@ import static kr.mj.gollaba.exception.GollabaErrorCode.INVALID_PARAMS;
 @Setter
 public class UpdatePollRequest implements BaseApiRequest {
 
-    @ApiModelProperty(hidden = true)
-    private Long pollId;
-
     @ApiModelProperty(example = "부먹 찍먹")
     @Size(min = 4, max = 50)
     private String title;
