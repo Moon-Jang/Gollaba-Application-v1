@@ -3,6 +3,7 @@ package kr.mj.gollaba.favorites.service;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.favorites.dto.CreateFavoritesRequest;
+import kr.mj.gollaba.favorites.dto.CreateFavoritesResponse;
 import kr.mj.gollaba.favorites.entity.Favorites;
 import kr.mj.gollaba.favorites.repository.FavoritesRepository;
 import kr.mj.gollaba.poll.entity.Poll;
@@ -18,11 +19,13 @@ public class FavoritesService {
     private final FavoritesRepository favoritesRepository;
     private final PollRepository pollRepository;
 
-    public void create(CreateFavoritesRequest request, User user) {
+    public CreateFavoritesResponse create(CreateFavoritesRequest request, User user) {
         Poll poll = pollRepository.findById(request.getPollId())
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
-        favoritesRepository.save(Favorites.of(user, poll));
+        Favorites favorites = favoritesRepository.save(Favorites.of(user, poll));
+
+        return new CreateFavoritesResponse(favorites.getId());
     }
 
     public void delete(Long favoritesId, User user) {

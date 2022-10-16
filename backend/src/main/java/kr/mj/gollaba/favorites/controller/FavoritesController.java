@@ -10,6 +10,7 @@ import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.common.ErrorAPIResponse;
 import kr.mj.gollaba.favorites.dto.CreateFavoritesRequest;
+import kr.mj.gollaba.favorites.dto.CreateFavoritesResponse;
 import kr.mj.gollaba.favorites.service.FavoritesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,17 +32,15 @@ public class FavoritesController {
     @ApiOperation(value = "즐겨찾기")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = Boolean.class))),
+                    schema = @Schema(implementation = CreateFavoritesResponse.class))),
             @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @PostMapping(path = "/favorites", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> create(@Validated @RequestBody CreateFavoritesRequest request,
-                                        @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        favoritesService.create(request, principalDetails.getUser());
-
+    public ResponseEntity<CreateFavoritesResponse> create(@Validated @RequestBody CreateFavoritesRequest request,
+                                                          @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(true);
+                .body(favoritesService.create(request, principalDetails.getUser()));
     }
 
     @ApiOperation(value = "즐겨찾기 삭제")

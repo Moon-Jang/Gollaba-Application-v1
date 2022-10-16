@@ -24,6 +24,7 @@ import static kr.mj.gollaba.unit.user.factory.UserFactory.TEST_EXIST_UNIQUE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class FavoritesControllerTest extends IntegrationTest {
@@ -60,7 +61,8 @@ class FavoritesControllerTest extends IntegrationTest {
 		//then
 		resultActions
 				.andDo(print())
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andExpect(jsonPath("favoritesId").isNumber());
 	}
 
 	@DisplayName("즐겨찾기 삭제")
