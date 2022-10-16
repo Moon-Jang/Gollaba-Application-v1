@@ -11,11 +11,9 @@ import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.common.ErrorAPIResponse;
 import kr.mj.gollaba.common.aspect.ParseHashId;
-import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.common.util.HttpRequestUtils;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.service.PollService;
-import kr.mj.gollaba.user.dto.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -100,7 +98,7 @@ public class PollController {
                     schema = @Schema(implementation = Boolean.class))),
             @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
-    @PostMapping(path = "polls/{pollId}/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/polls/{pollId}/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> vote(@PathVariable Object pollId,
                                         @Validated @RequestBody VoteRequest request) {
         request.setIpAddress(HttpRequestUtils.getClientIpAddress());
