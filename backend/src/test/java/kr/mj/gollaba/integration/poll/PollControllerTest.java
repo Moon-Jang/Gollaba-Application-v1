@@ -95,6 +95,32 @@ class PollControllerTest extends IntegrationTest {
                 .andExpect(jsonPath("polls[0].pollId").isString());
     }
 
+    @DisplayName("투표 전체 조회 By 로그인 유저")
+    @WithUserDetails(value = UserFactory.TEST_EXIST_UNIQUE_ID)
+    @Test
+    public void findAll_by_login_user() throws Exception {
+        //given
+        FindAllPollRequest request = new FindAllPollRequest();
+        request.setOffset(0);
+        request.setLimit(15);
+
+        String url = Const.ROOT_URL + "/polls" + QueryStringGenerator.generate(request);
+
+        //when
+        ResultActions resultActions = mvc.perform(get(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("totalCount").value(150))
+                .andExpect(jsonPath("polls").isArray())
+                .andExpect(jsonPath("polls[0].pollId").isString());
+    }
+
     @DisplayName("투표 상세 조회")
     @Test
     public void find() throws Exception {

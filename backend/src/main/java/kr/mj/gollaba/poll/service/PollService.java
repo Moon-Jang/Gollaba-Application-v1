@@ -4,6 +4,9 @@ import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
+import kr.mj.gollaba.favorites.dto.FavoritesUniqueIndexDto;
+import kr.mj.gollaba.favorites.entity.Favorites;
+import kr.mj.gollaba.favorites.repository.FavoritesQueryRepository;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.entity.Voter;
@@ -18,12 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PollService {
 
     private final PollQueryRepository pollQueryRepository;
+    private final FavoritesQueryRepository favoritesQueryRepository;
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
     private final S3UploadService s3UploadService;
@@ -52,6 +57,22 @@ public class PollService {
         }
 
         return new CreatePollResponse(savedPoll.getId());
+    }
+
+    public FindAllPollResponse findAll(FindAllPollRequest request, User user) {
+        request.validate();
+        PollQueryFilter filter = request.toFilter();
+        final long totalCount = pollQueryRepository.findAllCount(filter);
+        List<Long> ids = pollQueryRepository.findIds(filter);
+        List<Poll> polls = pollQueryRepository.findAll(ids);
+
+        List<FavoritesUniqueIndexDto> dtos = polls.stream()
+                .map(poll -> FavoritesUniqueIndexDto.of(poll.getId(), user.getId()))
+                .collect(Collectors.toList());
+
+        List<Favorites> favoritesList = favoritesQueryRepository.findAllByUniqueIndex(dtos);
+
+        return new FindAllPollResponse(totalCount, polls, favoritesList);
     }
 
     public FindAllPollResponse findAll(FindAllPollRequest request) {
