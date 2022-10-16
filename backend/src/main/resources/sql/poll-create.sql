@@ -768,3 +768,11 @@ VALUES
 (DEFAULT, 150, '항목2', 2, '2022-07-23 18:41:05', '2022-07-23 18:41:05'),
 (DEFAULT, 150, '항목3', 3, '2022-07-23 18:41:05', '2022-07-23 18:41:05');
 
+INSERT INTO `favorites` (favorites_id, user_id, poll_id, created_at)
+VALUES
+(DEFAULT, 1, 1, NOW()),
+(DEFAULT, 2, 2, NOW()),
+(DEFAULT, 3, 3, NOW()),
+(DEFAULT, 4, 4, NOW()),
+(DEFAULT, 5, 5, NOW()),
+(DEFAULT, 12, 150, NOW());
