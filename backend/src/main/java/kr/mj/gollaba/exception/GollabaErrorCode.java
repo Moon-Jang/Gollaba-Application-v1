@@ -37,7 +37,11 @@ public enum GollabaErrorCode {
     ALREADY_VOTE(20004, HttpStatus.BAD_REQUEST, "이미 해당 항목에 투표를 완료하셨습니다."),
     NOT_AVAILABLE_MULTI_VOTE_BY_RESPONSE_TYPE(20005, HttpStatus.BAD_REQUEST, "해당 투표는 중복 투표가 불가능합니다. 한가지 항목만 선택해주세요."),
     DONT_NEED_VOTER_NAME(20006, HttpStatus.BAD_REQUEST, "해당 투표는 익명투표입니다. 무기명으로 투표바랍니다."),
-    NOT_EQUAL_POLL_CREATOR(20007, HttpStatus.BAD_REQUEST, "투표 생성자가 아님으로 해당 행위를 실행할 수 없습니다.");
+    NOT_EQUAL_POLL_CREATOR(20007, HttpStatus.BAD_REQUEST, "투표 생성자가 아님으로 해당 행위를 실행할 수 없습니다."),
+
+    /* 30000 ~ 39999 favorites */
+    NOT_EXIST_FAVORITES(20000, HttpStatus.BAD_REQUEST, "존재하지 않는 즐겨찾기입니다."),
+    NOT_MATCHED_USER_FOR_FAVORITES(20001, HttpStatus.BAD_REQUEST, "해당 투표를 즐겨찾기 하지 않으셨습니다.");
 
     private final int code;
     private final HttpStatus httpStatus;

@@ -3,7 +3,6 @@ package kr.mj.gollaba.unit.favorites.factory;
 import kr.mj.gollaba.favorites.entity.Favorites;
 import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;
-import kr.mj.gollaba.poll.entity.Voter;
 import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
@@ -24,6 +23,18 @@ public class FavoritesFactory {
 
     public static Favorites create(User user, Poll poll) {
         return Favorites.of(user, poll);
+    }
+
+    public static Favorites createWithId() {
+        User user = UserFactory.createWithId();
+        List<Option> options = OptionFactory.createListWithId();
+        Poll poll = PollFactory.createWithId(user, options);
+
+        return Favorites.builder()
+                .id(FAVORITES_TEST_ID)
+                .user(user)
+                .poll(poll)
+                .build();
     }
 
     public static Favorites createWithId(User user, Poll poll) {
