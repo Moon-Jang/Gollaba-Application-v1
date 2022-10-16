@@ -14,7 +14,6 @@ import kr.mj.gollaba.common.aspect.ParseHashId;
 import kr.mj.gollaba.common.util.HttpRequestUtils;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.service.PollService;
-import kr.mj.gollaba.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,11 +55,10 @@ public class PollController {
     @GetMapping(path = "/polls")
     public ResponseEntity<FindAllPollResponse> findAll(@Validated FindAllPollRequest request,
                                                        @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        User user = principalDetails.getUser();
         FindAllPollResponse response;
 
-        if (user != null) {
-            response = pollService.findAll(request, user);
+        if (principalDetails != null) {
+            response = pollService.findAll(request, principalDetails.getUser());
         } else {
             response = pollService.findAll(request);
         }
