@@ -25,4 +25,14 @@ public class FavoritesService {
         favoritesRepository.save(Favorites.of(user, poll));
     }
 
+    public void delete(Long favoritesId, User user) {
+        Favorites favorites = favoritesRepository.findById(favoritesId)
+                .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_FAVORITES));
+
+        if (favorites.getUser() != user) {
+            throw new GollabaException(GollabaErrorCode.NOT_MATCHED_USER_FOR_FAVORITES);
+        }
+
+        favoritesRepository.deleteById(favorites.getId());
+    }
 }

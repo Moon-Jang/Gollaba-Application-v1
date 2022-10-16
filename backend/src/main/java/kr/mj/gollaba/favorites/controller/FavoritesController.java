@@ -35,7 +35,7 @@ public class FavoritesController {
             @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @PostMapping(path = "/favorites", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> vote(@Validated @RequestBody CreateFavoritesRequest request,
+    public ResponseEntity<Boolean> create(@Validated @RequestBody CreateFavoritesRequest request,
                                         @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
         favoritesService.create(request, principalDetails.getUser());
 
@@ -44,4 +44,19 @@ public class FavoritesController {
                 .body(true);
     }
 
+    @ApiOperation(value = "즐겨찾기 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = Boolean.class))),
+            @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorAPIResponse.class)))})
+    @DeleteMapping(path = "/favorites/{favoritesId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> delete(@PathVariable Long favoritesId,
+                                          @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        favoritesService.delete(favoritesId, principalDetails.getUser());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(true);
+    }
 }

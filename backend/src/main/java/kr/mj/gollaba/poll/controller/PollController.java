@@ -81,8 +81,8 @@ public class PollController {
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @PostMapping(path = "/polls/{pollId}/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Boolean> update(@PathVariable Object pollId,
-                                                   @Validated UpdatePollRequest request,
-                                                   @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
+                                           @Validated UpdatePollRequest request,
+                                           @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
         request.validate();
         pollService.update((Long) pollId, request, principalDetails.getUser());
 
