@@ -1,21 +1,15 @@
 package kr.mj.gollaba.favorites.entity;
 
-import kr.mj.gollaba.exception.GollabaErrorCode;
-import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.entity.Poll;
-import kr.mj.gollaba.poll.entity.Voter;
 import kr.mj.gollaba.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -24,7 +18,7 @@ import java.util.Set;
 public class Favorites {
 
     @Id
-    @Column(name = "poll_option_id", nullable = false)
+    @Column(name = "favorites_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
