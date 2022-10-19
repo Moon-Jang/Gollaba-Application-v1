@@ -49,7 +49,7 @@ public class FavoritesController {
                     schema = @Schema(implementation = Boolean.class))),
             @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
-    @DeleteMapping(path = "/favorites/{favoritesId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/favorites/{favoritesId}")
     public ResponseEntity<Boolean> delete(@PathVariable Long favoritesId,
                                           @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
         favoritesService.delete(favoritesId, principalDetails.getUser());
