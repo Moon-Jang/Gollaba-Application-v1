@@ -32,7 +32,7 @@ public class FavoritesService {
         Favorites favorites = favoritesRepository.findById(favoritesId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_FAVORITES));
 
-        if (favorites.getUser() != user) {
+        if (favorites.getUser().equals(user) == false) {
             throw new GollabaException(GollabaErrorCode.NOT_MATCHED_USER_FOR_FAVORITES);
         }
 

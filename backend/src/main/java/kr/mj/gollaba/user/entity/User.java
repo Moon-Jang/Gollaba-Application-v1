@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -80,5 +81,18 @@ public class User {
 
     public void updateBackgroundImageUrl(String backgroundImageUrl) {
         this.backgroundImageUrl = backgroundImageUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(uniqueId, user.uniqueId) && Objects.equals(nickName, user.nickName) && Objects.equals(password, user.password) && Objects.equals(profileImageUrl, user.profileImageUrl) && Objects.equals(backgroundImageUrl, user.backgroundImageUrl) && userRole == user.userRole && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, uniqueId, nickName, password, profileImageUrl, backgroundImageUrl, userRole, createdAt, updatedAt);
     }
 }
