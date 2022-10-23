@@ -40,41 +40,42 @@ export default function Favorites() {
         getData()
     }, [offset])
 
-    useEffect(() => {
-        if (inView && !isLoading) {
-            setOffset(prevState => prevState + 1)
-        }
-    }, [inView, isLoading])
+    // useEffect(() => {
+    //     if (inView && !isLoading) {
+    //         setOffset(prevState => prevState + 1)
+    //     }
+    // }, [inView, isLoading])
 
-    return (
-        <>
-            <ThemeProvider theme={theme}>
-                <Container component="main" maxwidth="xs">
-                    <CssBaseline />
-                    <Box
-                        sx={{
-                            marginTop: 7,
-                            marginBottom: 10,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "left",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <div className="header">
-                            <ButtonAppBar titletext={"Favorites"} />
-                        </div>
+    if (polls !== undefined)
+        return (
+            <>
+                <ThemeProvider theme={theme}>
+                    <Container component="main" maxwidth="xs">
+                        <CssBaseline />
+                        <Box
+                            sx={{
+                                marginTop: 7,
+                                marginBottom: 10,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "left",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <div className="header">
+                                <ButtonAppBar titletext={"Favorites"} />
+                            </div>
 
-                        <div className="body" flex="1">
-                            <PollsMapFavorite data={polls} />
-                            <Box ref={ref} />
-                        </div>
-                        <div className="footer">
-                            <FooterNav />
-                        </div>
-                    </Box>
-                </Container>
-            </ThemeProvider>
-        </>
-    )
+                            <div className="body" flex="1">
+                                <PollsMapFavorite data={polls} />
+                                <Box ref={ref} />
+                            </div>
+                            <div className="footer">
+                                <FooterNav />
+                            </div>
+                        </Box>
+                    </Container>
+                </ThemeProvider>
+            </>
+        )
 }
