@@ -7,14 +7,17 @@ import LinearProgress from "@mui/material/LinearProgress"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import StarIcon from "@mui/icons-material/Star"
 import { IconButton } from "@mui/material"
+import ApiGateway from "./../../apis/ApiGateway"
+import { useCookies } from "react-cookie"
 
 export default function Poll(props) {
     const router = useRouter()
     const data = props.data
     const options = data.options
     const [isExtend, setIsExtend] = useState(false)
-    const [favorite, setFavorite] = useState(false)
-    console.log("opts>", props.data.totalVoteCount)
+    const [favoriteId, setFavoriteId] = useState(data?.favorites?.favoritesId)
+    const [cookies, setCookies, removeCookies] = useCookies([])
+    // console.log("opts>", props.data.totalVoteCount)
 
     let temp = 0
     for (let i = 0; i < options.length; i++) {
@@ -23,7 +26,7 @@ export default function Poll(props) {
 
     //const map1 = options.map((el) => console.log("map?", el.description));
     const map1 = options.map(el => {
-        console.log("props>>", el)
+        // console.log("props>>", el)
         return (
             <Box mt={0.5} mr={1} mb={0.5}>
                 {el.description}
@@ -37,15 +40,45 @@ export default function Poll(props) {
 
     const buttonClick = () => {
         const pollId = data.pollId
-        router.push("/voting/" + pollId)
+        router.push("/polls/" + pollId)
     }
 
     const extendClick = () => {
         isExtend === true ? setIsExtend(false) : setIsExtend(true)
         console.log(isExtend)
     }
-    const favoriteClick = () => {
-        setFavorite(!favorite)
+    const favoriteClick = async e => {
+        const hashId = data?.pollId
+        const payload = { pollId: hashId }
+        console.log("hashId", hashId)
+        console.log("payload", payload)
+        console.log("favoriteId", favoriteId)
+        if (!favoriteId) {
+            const favoriteSend = await ApiGateway.makeFavorite(payload, cookies.accessToken)
+
+            if (favoriteSend?.error === true) {
+                alert(favoriteSend.message)
+                return
+            }
+
+            console.log("favoriteSend", favoriteSend)
+            setFavoriteId(favoriteSend?.favoritesId)
+            console.log("favoriteId", favoriteId)
+            console.log("data", data)
+            return
+        }
+        console.log("favorite deselect")
+        console.log("favoriteId", favoriteId)
+        const favoriteDelete = await ApiGateway.deleteFavorite(favoriteId, cookies.accessToken)
+
+        if (favoriteDelete?.error === true) {
+            // fail
+            alert(favoriteDelete.message)
+            return
+        }
+
+        console.log("favoriteDelete", favoriteDelete)
+        setFavoriteId(null)
     }
 
     return (
@@ -203,7 +236,7 @@ export default function Poll(props) {
                             </Box>
                             <Box className="favorite" sx={{ display: "flex" }}>
                                 <IconButton onClick={favoriteClick}>
-                                    {favorite ? (
+                                    {favoriteId ? (
                                         <>
                                             <StarIcon />
                                         </>
