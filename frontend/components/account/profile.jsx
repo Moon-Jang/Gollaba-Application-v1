@@ -21,13 +21,10 @@ export default function Profile() {
     const showUser = async () => {
         console.log("token : ", token)
         if (!token) return
-        try {
-            const userInfo = await ApiGateway.showUser(token.id, cookies.accessToken)
-            setData(userInfo)
-            console.log("showUser :", userInfo)
-        } catch (e) {
-            console.log(e)
-        }
+
+        const userInfo = await ApiGateway.showUser(token.id, cookies.accessToken)
+        setData(userInfo)
+        console.log("showUser :", userInfo)
     }
     useEffect(() => {
         setToken(jwt.decode(cookies.accessToken))
@@ -58,37 +55,29 @@ export default function Profile() {
     // formData로 이미지 파일 업데이트 하기
     const changeProfile = async e => {
         if (!token) return
-        try {
-            const photoToAdd = e.target.files[0]
-            console.log("photoToAdd : ", photoToAdd)
-            const formData = new FormData()
-            formData.append("profileImage", photoToAdd)
-            formData.append("updateType", "PROFILE_IMAGE")
-            for (const keyValue of formData) console.log("keyValue : ", keyValue)
-            const profileChange = await ApiGateway.updateForm(formData, cookies.accessToken)
-            setData(profileChange)
-            console.log("profileChange : ", profileChange)
-            // location.reload()
-        } catch (e) {
-            console.log(e)
-        }
+
+        const photoToAdd = e.target.files[0]
+        console.log("photoToAdd : ", photoToAdd)
+        const formData = new FormData()
+        formData.append("profileImage", photoToAdd)
+        formData.append("updateType", "PROFILE_IMAGE")
+        for (const keyValue of formData) console.log("keyValue : ", keyValue)
+        const profileChange = await ApiGateway.updateForm(formData, cookies.accessToken)
+        setData(profileChange)
+        console.log("profileChange : ", profileChange)
     }
     const changeBackground = async e => {
         if (!token) return
-        try {
-            const photoToAdd = e.target.files[0]
-            console.log("photoToAdd : ", photoToAdd)
-            const formData = new FormData()
-            formData.append("backgroundImage", photoToAdd)
-            formData.append("updateType", "BACKGROUND_IMAGE")
-            for (const keyValue of formData) console.log("keyValue : ", keyValue)
-            const backgroundChange = await ApiGateway.updateForm(formData, cookies.accessToken)
-            setData(backgroundChange)
-            console.log("backgroundChange : ", backgroundChange)
-            location.reload()
-        } catch (e) {
-            console.log(e)
-        }
+        const photoToAdd = e.target.files[0]
+        console.log("photoToAdd : ", photoToAdd)
+        const formData = new FormData()
+        formData.append("backgroundImage", photoToAdd)
+        formData.append("updateType", "BACKGROUND_IMAGE")
+        for (const keyValue of formData) console.log("keyValue : ", keyValue)
+        const backgroundChange = await ApiGateway.updateForm(formData, cookies.accessToken)
+        setData(backgroundChange)
+        console.log("backgroundChange : ", backgroundChange)
+        location.reload()
     }
 
     // 닉네임 변경
@@ -97,20 +86,17 @@ export default function Profile() {
     }
     const changeNickname = async () => {
         if (!token) return
-        try {
-            const formData = new FormData()
-            formData.append("nickName", nickName)
-            formData.append("updateType", "NICKNAME")
-            const nickChange = await ApiGateway.updateForm(formData, cookies.accessToken)
-            setData(nickChange)
-            console.log("nickChange :", nickChange)
-            for (const keyValue of formData) {
-                console.log("formData keyValue :", keyValue)
-            }
-            location.reload()
-        } catch (e) {
-            console.log(e)
+
+        const formData = new FormData()
+        formData.append("nickName", nickName)
+        formData.append("updateType", "NICKNAME")
+        const nickChange = await ApiGateway.updateForm(formData, cookies.accessToken)
+        setData(nickChange)
+        console.log("nickChange :", nickChange)
+        for (const keyValue of formData) {
+            console.log("formData keyValue :", keyValue)
         }
+        location.reload()
     }
 
     // 배경화면 스타일 CSS
