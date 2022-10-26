@@ -40,12 +40,6 @@ export default function Favorites() {
         getData()
     }, [offset])
 
-    // useEffect(() => {
-    //     if (inView && !isLoading) {
-    //         setOffset(prevState => prevState + 1)
-    //     }
-    // }, [inView, isLoading])
-
     if (polls !== undefined)
         return (
             <>
