@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -29,7 +27,7 @@ public class UserService {
 	public static final String BACKGROUND_IMAGE_PATH = "background_image";
 
 	public SignupResponse create(SignupRequest request) {
-		if (userRepository.existsByUniqueId(request.getId())) {
+		if (userRepository.existsByEmail(request.getEmail())) {
 			throw new GollabaException(GollabaErrorCode.ALREADY_EXIST_USER);
 		}
 

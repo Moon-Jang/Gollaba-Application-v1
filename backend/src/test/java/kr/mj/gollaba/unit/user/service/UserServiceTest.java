@@ -59,7 +59,7 @@ class UserServiceTest extends ServiceTest {
 			@Test
 			public void return_response() throws Exception {
 				//given
-				given(userRepository.existsByUniqueId(anyString()))
+				given(userRepository.existsByEmail(anyString()))
 						.willReturn(false);
 				given(userRepository.existsByNickName(anyString()))
 						.willReturn(false);
@@ -67,7 +67,7 @@ class UserServiceTest extends ServiceTest {
 						.willReturn(UserFactory.createWithId());
 
 				SignupRequest request = new SignupRequest();
-				request.setId(UserFactory.TEST_UNIQUE_ID);
+				request.setEmail(UserFactory.TEST_EMAIL);
 				request.setNickName(UserFactory.TEST_NICK_NAME);
 				request.setPassword(UserFactory.TEST_PASSWORD);
 
@@ -76,7 +76,7 @@ class UserServiceTest extends ServiceTest {
 
 				//then
 				assertThat(response.getUserId()).isEqualTo(UserFactory.TEST_ID);
-				verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+				verify(userRepository, times(1)).existsByEmail(eq(UserFactory.TEST_EMAIL));
 				verify(userRepository, times(1)).existsByNickName(eq(UserFactory.TEST_NICK_NAME));
 				verify(userRepository, times(1)).save(any(User.class));
 			}
@@ -90,11 +90,11 @@ class UserServiceTest extends ServiceTest {
 			@Test
 			public void error_by_exist_user() throws Exception {
 				//given
-				given(userRepository.existsByUniqueId(anyString()))
+				given(userRepository.existsByEmail(anyString()))
 						.willReturn(true);
 
 				SignupRequest request = new SignupRequest();
-				request.setId(UserFactory.TEST_UNIQUE_ID);
+				request.setEmail(UserFactory.TEST_EMAIL);
 				request.setNickName(UserFactory.TEST_NICK_NAME);
 				request.setPassword(UserFactory.TEST_PASSWORD);
 
@@ -103,7 +103,7 @@ class UserServiceTest extends ServiceTest {
 						.as(GollabaErrorCode.ALREADY_EXIST_USER.getDescription())
 						.isInstanceOf(GollabaException.class);
 
-				verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+				verify(userRepository, times(1)).existsByEmail(eq(UserFactory.TEST_EMAIL));
 			}
 		}
 
@@ -115,13 +115,13 @@ class UserServiceTest extends ServiceTest {
 			@Test
 			public void throw_exist_user_exception() throws Exception {
 				//given
-				given(userRepository.existsByUniqueId(anyString()))
+				given(userRepository.existsByEmail(anyString()))
 						.willReturn(false);
 				given(userRepository.existsByNickName(anyString()))
 						.willReturn(true);
 
 				SignupRequest request = new SignupRequest();
-				request.setId(UserFactory.TEST_UNIQUE_ID);
+				request.setEmail(UserFactory.TEST_EMAIL);
 				request.setNickName(UserFactory.TEST_NICK_NAME);
 				request.setPassword(UserFactory.TEST_PASSWORD);
 
@@ -130,7 +130,7 @@ class UserServiceTest extends ServiceTest {
 						.as(GollabaErrorCode.ALREADY_EXIST_USER.getDescription())
 						.isInstanceOf(GollabaException.class);
 
-				verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+				verify(userRepository, times(1)).existsByEmail(eq(UserFactory.TEST_EMAIL));
 				verify(userRepository, times(1)).existsByNickName(eq(UserFactory.TEST_NICK_NAME));
 			}
 		}
@@ -152,12 +152,12 @@ class UserServiceTest extends ServiceTest {
 						"image/png",
 						inputStream);
 				SignupRequest request = new SignupRequest();
-				request.setId(UserFactory.TEST_UNIQUE_ID);
+				request.setEmail(UserFactory.TEST_EMAIL);
 				request.setNickName(UserFactory.TEST_NICK_NAME);
 				request.setPassword(UserFactory.TEST_PASSWORD);
 				request.setProfileImage(profileImage);
 
-				given(userRepository.existsByUniqueId(anyString()))
+				given(userRepository.existsByEmail(anyString()))
 						.willReturn(false);
 				given(userRepository.existsByNickName(anyString()))
 						.willReturn(false);
@@ -173,7 +173,7 @@ class UserServiceTest extends ServiceTest {
 
 				//then
 				assertThat(response.getUserId()).isEqualTo(UserFactory.TEST_ID);
-				verify(userRepository, times(1)).existsByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+				verify(userRepository, times(1)).existsByEmail(eq(UserFactory.TEST_EMAIL));
 				verify(userRepository, times(1)).existsByNickName(eq(UserFactory.TEST_NICK_NAME));
 				verify(userRepository, times(2)).save(any(User.class));
 				verify(s3UploadService, times(1)).generateFileName(anyLong(), anyString());

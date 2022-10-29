@@ -60,6 +60,9 @@ dependencies {
     // AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    //oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

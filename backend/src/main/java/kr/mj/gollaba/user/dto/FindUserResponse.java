@@ -7,10 +7,7 @@ import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.type.UserRoleType;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -57,7 +54,7 @@ public class FindUserResponse implements BaseApiResponse {
     public static FindUserResponse create(User user) {
         return FindUserResponse.builder()
                 .userId(user.getId())
-                .uniqueId(user.getUniqueId())
+                .uniqueId(user.getEmail())
                 .nickName(user.getNickName())
                 .profileImageUrl(user.getProfileImageUrl())
                 .backgroundImageUrl(user.getBackgroundImageUrl())

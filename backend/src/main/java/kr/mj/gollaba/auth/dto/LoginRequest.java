@@ -14,9 +14,9 @@ import javax.validation.constraints.Size;
 public class LoginRequest implements BaseApiRequest {
 
     @NotBlank
-    @Size(min = 8, max = 32)
-    @ApiModelProperty(position = 1, example = "test8502", required = true)
-    private String id;
+    @Size(min = 12, max = 100)
+    @ApiModelProperty(position = 1, example = "test@test.com", required = true)
+    private String email;
 
     @NotBlank
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",

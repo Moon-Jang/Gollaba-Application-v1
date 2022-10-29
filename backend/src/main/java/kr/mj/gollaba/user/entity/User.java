@@ -1,32 +1,27 @@
 package kr.mj.gollaba.user.entity;
 
+import kr.mj.gollaba.common.entity.BaseTimeEntity;
 import kr.mj.gollaba.user.type.UserRoleType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @Column(name = "user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "unique_id", nullable = false, unique = true)
-    private String uniqueId;
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
 
-    @Column(name = "nickname", nullable = false, unique = true)
+    @Column(name = "nickname", nullable = false)
     private String nickName;
 
     @Column(name = "password", nullable = false)
@@ -42,25 +37,14 @@ public class User {
     @Column(name = "user_role", nullable = false)
     private UserRoleType userRole;
 
-    @CreatedDate
-    @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     @Builder
-    private User(Long id, String uniqueId, String nickName, String password, UserRoleType userRole) {
-        this.id = id;
-        this.uniqueId = uniqueId;
+    private User(String email, String nickName, String password, String profileImageUrl, String backgroundImageUrl, UserRoleType userRole) {
+        this.email = email;
         this.nickName = nickName;
         this.password = password;
+        this.profileImageUrl = profileImageUrl;
+        this.backgroundImageUrl = backgroundImageUrl;
         this.userRole = userRole;
-    }
-
-    public void  updateUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
     }
 
     public void updateNickName(String nickName) {
@@ -87,12 +71,17 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(uniqueId, user.uniqueId) && Objects.equals(nickName, user.nickName) && Objects.equals(password, user.password) && Objects.equals(profileImageUrl, user.profileImageUrl) && Objects.equals(backgroundImageUrl, user.backgroundImageUrl) && userRole == user.userRole && Objects.equals(createdAt, user.createdAt) && Objects.equals(updatedAt, user.updatedAt);
+
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        return email != null ? email.equals(user.email) : user.email == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uniqueId, nickName, password, profileImageUrl, backgroundImageUrl, userRole, createdAt, updatedAt);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        return result;
     }
 }

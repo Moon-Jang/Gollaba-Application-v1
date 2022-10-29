@@ -23,9 +23,9 @@ import static kr.mj.gollaba.common.Const.MAX_IMAGE_UPLOAD_SIZE;
 public class SignupRequest implements BaseApiRequest {
 
     @NotBlank
-    @Size(min = 8, max = 32)
-    @ApiModelProperty(position = 1, example = "testid123456", required = true)
-    private String id;
+    @Size(min = 12, max = 100)
+    @ApiModelProperty(position = 1, example = "testid123456@test.com", required = true)
+    private String email;
 
     @NotBlank
     @Size(min = 2, max = 20)
@@ -43,7 +43,7 @@ public class SignupRequest implements BaseApiRequest {
 
     public User toEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
-                .uniqueId(id)
+                .email(email)
                 .nickName(nickName)
                 .password(passwordEncoder.encode(password))
                 .userRole(UserRoleType.ROLE_USER)

@@ -15,7 +15,7 @@ public class PrincipalDetails implements UserDetails {
 
     private final User user;
 
-    public String getUniqueId() { return user.getUniqueId(); }
+    public String getEmail() { return user.getEmail(); }
 
     @Override
     public String getPassword() {

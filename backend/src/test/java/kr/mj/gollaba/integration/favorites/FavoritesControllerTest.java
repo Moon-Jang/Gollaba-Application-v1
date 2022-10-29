@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Map;
 
-import static kr.mj.gollaba.unit.user.factory.UserFactory.TEST_EXIST_UNIQUE_ID;
+import static kr.mj.gollaba.unit.user.factory.UserFactory.TEST_EXIST_EMAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,7 +42,7 @@ class FavoritesControllerTest extends IntegrationTest {
 	private HashIdService hashIdService;
 
 	@DisplayName("즐겨찾기 생성")
-	@WithUserDetails(value = TEST_EXIST_UNIQUE_ID)
+	@WithUserDetails(value = TEST_EXIST_EMAIL)
 	@Test
 	public void create() throws Exception {
 		//given
@@ -66,12 +66,12 @@ class FavoritesControllerTest extends IntegrationTest {
 	}
 
 	@DisplayName("즐겨찾기 삭제")
-	@WithUserDetails(value = TEST_EXIST_UNIQUE_ID)
+	@WithUserDetails(value = TEST_EXIST_EMAIL)
 	@Test
 	public void delete() throws Exception {
 		//given
 		final long pollId = 1L;
-		User user = userRepository.findByUniqueId(TEST_EXIST_UNIQUE_ID)
+		User user = userRepository.findByEmail(TEST_EXIST_EMAIL)
 				.orElseThrow(() -> new IllegalArgumentException());
 		Poll poll = pollRepository.findById(pollId)
 				.orElseThrow(() -> new IllegalArgumentException());

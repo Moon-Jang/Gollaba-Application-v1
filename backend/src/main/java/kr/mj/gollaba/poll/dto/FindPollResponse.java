@@ -2,13 +2,11 @@ package kr.mj.gollaba.poll.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiResponse;
 import kr.mj.gollaba.common.serializer.HashIdSerializer;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.user.type.UserRoleType;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -54,7 +52,7 @@ public class FindPollResponse implements BaseApiResponse {
 				: UserResponse.builder()
 				.userId(poll.getUser().getId())
 				.nickName(poll.getUser().getNickName())
-				.uniqueId(poll.getUser().getUniqueId())
+				.email(poll.getUser().getEmail())
 				.userRole(poll.getUser().getUserRole())
 				.build();
 		this.title = poll.getTitle();
@@ -123,16 +121,16 @@ public class FindPollResponse implements BaseApiResponse {
 
 		private Long userId;
 
-		private String uniqueId;
+		private String email;
 
 		private String nickName;
 
 		private UserRoleType userRole;
 
 		@Builder
-		private UserResponse(Long userId, String uniqueId, String nickName, UserRoleType userRole) {
+		private UserResponse(Long userId, String email, String nickName, UserRoleType userRole) {
 			this.userId = userId;
-			this.uniqueId = uniqueId;
+			this.email = email;
 			this.nickName = nickName;
 			this.userRole = userRole;
 		}

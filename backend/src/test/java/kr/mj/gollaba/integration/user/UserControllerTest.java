@@ -5,7 +5,6 @@ import kr.mj.gollaba.common.util.MultiValueMapGenerator;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.integration.common.IntegrationTest;
-import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.dto.SignupRequest;
 import kr.mj.gollaba.user.dto.UpdateUserRequest;
 import kr.mj.gollaba.user.entity.User;
@@ -30,9 +29,7 @@ import java.io.InputStream;
 import static kr.mj.gollaba.unit.user.factory.UserFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserControllerTest extends IntegrationTest {
@@ -48,7 +45,7 @@ class UserControllerTest extends IntegrationTest {
 	public void signup() throws Exception {
 		//given
 		SignupRequest request = new SignupRequest();
-		request.setId(TEST_UNIQUE_ID);
+		request.setEmail(TEST_EMAIL);
 		request.setNickName(TEST_NICK_NAME);
 		request.setPassword(TEST_PASSWORD);
 		File file = ResourceUtils.getFile("classpath:test_image.jpeg");
@@ -72,7 +69,7 @@ class UserControllerTest extends IntegrationTest {
 				.andDo(print())
 				.andExpect(status().isCreated());
 
-		User user = userRepository.findByUniqueId(TEST_UNIQUE_ID)
+		User user = userRepository.findByEmail(TEST_EMAIL)
 						.orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_USER));
 		assertThat(user.getNickName()).isEqualTo(TEST_NICK_NAME);
 		assertThat(passwordEncoder.matches(TEST_PASSWORD,user.getPassword())).isTrue();
@@ -81,7 +78,7 @@ class UserControllerTest extends IntegrationTest {
 
 
 	@DisplayName("닉네임 변경")
-	@WithUserDetails(value = UserFactory.TEST_EXIST_UNIQUE_ID)
+	@WithUserDetails(value = TEST_EXIST_EMAIL)
 	@Test
 	public void update_nickname() throws Exception {
 		//given
