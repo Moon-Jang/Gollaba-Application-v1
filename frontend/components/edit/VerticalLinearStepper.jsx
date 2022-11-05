@@ -125,23 +125,15 @@ export default function VerticalLinearStepper() {
             formData.append(`options[${i}].description`, itemsRef.current[i].value.description)
         }
 
-        for (let key of formData.keys()) {
-            console.log("키", key)
-        }
-        for (let value of formData.values()) {
-            console.log("밸류", value)
-        }
+        const res = await ApiGateway.updatePoll(polls.pollId, formData, cookies.accessToken)
 
-        const response = await ApiGateway.updatePoll(polls.pollId, formData, cookies.accessToken)
-
-        if (response?.error) {
-            alert(response.message)
+        if (res?.error) {
+            alert(res.message)
             setIsSubmit(false)
             return
         }
 
-        console.log("폴아이디", response.pollId)
-        router.push("/polls/" + response.pollId)
+        router.push("/polls/" + pollId)
     }
 
     const handleBack = () => {
