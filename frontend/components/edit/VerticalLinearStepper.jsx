@@ -132,14 +132,15 @@ export default function VerticalLinearStepper() {
             console.log("밸류", value)
         }
 
-        const response = await ApiGateway.update(polls.pollId, formData, cookies.accessToken)
+        const response = await ApiGateway.updatePoll(polls.pollId, formData, cookies.accessToken)
 
-        if (response.error) {
+        if (response?.error) {
             alert(response.message)
             setIsSubmit(false)
             return
         }
 
+        console.log("폴아이디", response.pollId)
         router.push("/polls/" + response.pollId)
     }
 

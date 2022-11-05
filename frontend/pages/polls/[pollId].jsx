@@ -49,7 +49,6 @@ export default function Polls() {
 
     const [voted, setVoted] = useState([])
 
-    console.log(polls.isBallot)
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -69,7 +68,7 @@ export default function Polls() {
                     }}
                 >
                     <Box className="header">
-                        <ButtonAppBar titletext={"Voting"} />
+                        <ButtonAppBar titletext={"Polls"} />
                     </Box>
                     <Box
                         className="body"
