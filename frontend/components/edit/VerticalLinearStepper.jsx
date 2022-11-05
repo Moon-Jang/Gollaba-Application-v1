@@ -115,15 +115,6 @@ export default function VerticalLinearStepper() {
         const currentTimestamp = +new Date()
         const defaultEndedAt = new Date(currentTimestamp + 1000 * 60 * 60 * 24 * 7).toISOString()
 
-        console.log(
-            `타이틀 :` +
-                titleRef.current.value +
-                "시간" +
-                JSON.stringify(expireRef.current).length +
-                "사진" +
-                JSON.stringify(imageRef.current.name)
-        )
-
         const formData = new FormData()
 
         if (titleRef.current.value !== undefined) formData.append("title", titleRef.current.value)

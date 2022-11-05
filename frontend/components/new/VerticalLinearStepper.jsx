@@ -122,7 +122,7 @@ export default function VerticalLinearStepper() {
 
         const formData = new FormData()
         Object.keys(payload).forEach(key => formData.append(key, payload[key]))
-        if (imageRef.current !== null) formData.append("pollImage", imageRef.current)
+        if (imageRef.current.name !== undefined) formData.append("pollImage", imageRef.current)
 
         for (let i = 0; i < itemsRef.current.length; i++) {
             formData.append(`options[${i}].description`, itemsRef.current[i].value.description)
