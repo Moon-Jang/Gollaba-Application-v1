@@ -27,6 +27,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @RestController
 @RequestMapping(Const.ROOT_URL)
 @Api(tags = "User")
@@ -51,7 +53,7 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@ApiOperation(value = "회원 조회", authorizations = { @Authorization(value = Const.ACCESS_TOKEN_HEADER)})
+	@ApiOperation(value = "회원 조회", authorizations = { @Authorization(value = AUTHORIZATION)})
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
 					schema = @Schema(implementation = FindUserResponse.class))),

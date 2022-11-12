@@ -1,8 +1,6 @@
 package kr.mj.gollaba.auth;
 
-import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.auth.service.AuthService;
-import kr.mj.gollaba.common.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     // Request Header 에서 토큰 정보를 꺼내오기
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(Const.ACCESS_TOKEN_HEADER);
+        String bearerToken = request.getHeader(AUTHORIZATION);
 
         if (!StringUtils.hasText(bearerToken) || !bearerToken.startsWith(BEARER_PREFIX)) {
             return null;

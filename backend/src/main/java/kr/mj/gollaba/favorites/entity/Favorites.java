@@ -1,22 +1,20 @@
 package kr.mj.gollaba.favorites.entity;
 
+import kr.mj.gollaba.common.entity.BaseTimeEntity;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.user.entity.User;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class Favorites {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Favorites extends BaseTimeEntity {
 
     @Id
     @Column(name = "favorites_id", nullable = false)
@@ -30,10 +28,6 @@ public class Favorites {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "poll_id" , nullable = false)
     private Poll poll;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
 
     @Builder
     private Favorites(Long id, User user, Poll poll) {
