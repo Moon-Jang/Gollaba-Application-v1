@@ -87,23 +87,6 @@ class UserRepositoryTest extends RepositoryTest {
         assertThat(false_result).isFalse();
     }
 
-    @DisplayName("회원 객체 중복된 닉네임 체크")
-    @Test
-    public void existsByNickName() throws Exception {
-        //given
-        User user = userRepository.save(UserFactory.create());
-
-        flushAndClear();
-
-        //when
-        final boolean true_result = userRepository.existsByNickName(user.getNickName());
-        final boolean false_result = userRepository.existsByNickName("notExist");
-
-        //then
-        assertThat(true_result).isTrue();
-        assertThat(false_result).isFalse();
-    }
-
     @DisplayName("회원 객체 조회 By userId")
     @Test
     public void findByEmail() throws Exception {

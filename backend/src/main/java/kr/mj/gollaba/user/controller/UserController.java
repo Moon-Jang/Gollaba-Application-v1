@@ -45,7 +45,8 @@ public class UserController {
 					schema = @Schema(implementation = ErrorAPIResponse.class)))})
 	@PostMapping(path = "/signup", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Boolean> signup(@Validated SignupRequest request) {
-		SignupResponse response = userService.create(request);
+		request.validate();
+		userService.create(request);
 
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
