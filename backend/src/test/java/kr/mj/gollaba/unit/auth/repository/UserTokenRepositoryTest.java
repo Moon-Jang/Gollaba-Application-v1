@@ -3,14 +3,13 @@ package kr.mj.gollaba.unit.auth.repository;
 import kr.mj.gollaba.auth.JwtTokenProvider;
 import kr.mj.gollaba.auth.entity.UserToken;
 import kr.mj.gollaba.auth.repository.UserTokenRepository;
-import kr.mj.gollaba.unit.common.RepositoryTest;
 import kr.mj.gollaba.unit.auth.factory.UserTokenFactory;
+import kr.mj.gollaba.unit.common.RepositoryTest;
+import kr.mj.gollaba.unit.user.factory.UserFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,7 +83,7 @@ class UserTokenRepositoryTest extends RepositoryTest {
     void save_update() throws Exception {
         //given
         UserToken savedUserToken = userTokenRepository.save(UserTokenFactory.create(jwtTokenProvider));
-        String newAccessToken = jwtTokenProvider.createAccessToken(UserTokenFactory.TEST_UNIQUE_ID, UserTokenFactory.TEST_NICK_NAME);
+        String newAccessToken = jwtTokenProvider.createAccessToken(UserFactory.createWithId());
         String newRefreshToken = jwtTokenProvider.createRefreshToken();
 
         flushAndClear();

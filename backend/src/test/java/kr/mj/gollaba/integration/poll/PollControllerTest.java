@@ -96,7 +96,7 @@ class PollControllerTest extends IntegrationTest {
     }
 
     @DisplayName("투표 전체 조회 By 로그인 유저")
-    @WithUserDetails(value = UserFactory.TEST_EXIST_UNIQUE_ID)
+    @WithUserDetails(value = UserFactory.TEST_EXIST_EMAIL)
     @Test
     public void findAll_by_login_user() throws Exception {
         //given
@@ -167,7 +167,7 @@ class PollControllerTest extends IntegrationTest {
     }
 
     @DisplayName("투표 수정")
-    @WithUserDetails(value = UserFactory.TEST_EXIST_UNIQUE_ID)
+    @WithUserDetails(value = UserFactory.TEST_EXIST_EMAIL)
     @Test
     void update_poll() throws Exception {
         //given

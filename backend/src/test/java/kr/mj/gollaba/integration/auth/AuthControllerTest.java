@@ -26,7 +26,7 @@ class AuthControllerTest extends IntegrationTest {
     public void login_success() throws Exception {
         //given
         LoginRequest request = new LoginRequest();
-        request.setId(UserFactory.TEST_EXIST_UNIQUE_ID);
+        request.setEmail(UserFactory.TEST_EXIST_EMAIL);
         request.setPassword(UserFactory.TEST_PASSWORD);
 
         //when
@@ -48,7 +48,7 @@ class AuthControllerTest extends IntegrationTest {
         //given
         String failPassword = "failPassword";
         LoginRequest request = new LoginRequest();
-        request.setId(UserFactory.TEST_UNIQUE_ID);
+        request.setEmail(UserFactory.TEST_EMAIL);
         request.setPassword(failPassword);
 
         //when
