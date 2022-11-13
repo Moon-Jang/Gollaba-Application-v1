@@ -2,6 +2,7 @@ package kr.mj.gollaba.exception;
 
 import kr.mj.gollaba.common.ErrorAPIResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestControllerAdvice
 @Slf4j
@@ -45,5 +47,20 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorAPIResponse> handleAccessDeniedExceptions(HttpServletRequest request, AccessDeniedException e) {
 		e.printStackTrace();
 		return new ResponseEntity<>(new ErrorAPIResponse(GollabaErrorCode.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorAPIResponse> handleSQLIntegrityConstraintViolationExceptions(HttpServletRequest request, DataIntegrityViolationException e) {
+		e.printStackTrace();
+
+		if (e.getCause().getCause() instanceof SQLIntegrityConstraintViolationException) {
+			var ex = e.getCause().getCause();
+
+			if (ex.getMessage().startsWith("Duplicate entry")) {
+				return new ResponseEntity<>(new ErrorAPIResponse(GollabaErrorCode.DUPLICATED_KEY), HttpStatus.BAD_REQUEST);
+			}
+		}
+
+		return new ResponseEntity<>(new ErrorAPIResponse(GollabaErrorCode.CONSTRAINT_VIOLATION), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

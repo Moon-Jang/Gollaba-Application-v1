@@ -4,6 +4,9 @@ import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
+import kr.mj.gollaba.favorites.dto.FavoritesUniqueIndexDto;
+import kr.mj.gollaba.favorites.entity.Favorites;
+import kr.mj.gollaba.favorites.repository.FavoritesQueryRepository;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.entity.Voter;
@@ -18,12 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PollService {
 
     private final PollQueryRepository pollQueryRepository;
+    private final FavoritesQueryRepository favoritesQueryRepository;
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
     private final S3UploadService s3UploadService;
@@ -54,6 +59,22 @@ public class PollService {
         return new CreatePollResponse(savedPoll.getId());
     }
 
+    public FindAllPollResponse findAll(FindAllPollRequest request, User user) {
+        request.validate();
+        PollQueryFilter filter = request.toFilter();
+        final long totalCount = pollQueryRepository.findAllCount(filter);
+        List<Long> ids = pollQueryRepository.findIds(filter);
+        List<Poll> polls = pollQueryRepository.findAll(ids);
+
+        List<FavoritesUniqueIndexDto> dtos = polls.stream()
+                .map(poll -> FavoritesUniqueIndexDto.of(poll.getId(), user.getId()))
+                .collect(Collectors.toList());
+
+        List<Favorites> favoritesList = favoritesQueryRepository.findAllByUniqueIndex(dtos);
+
+        return new FindAllPollResponse(totalCount, polls, favoritesList);
+    }
+
     public FindAllPollResponse findAll(FindAllPollRequest request) {
         request.validate();
         PollQueryFilter filter = request.toFilter();
@@ -75,10 +96,11 @@ public class PollService {
         return new FindPollResponse(poll);
     }
 
-    public void update(UpdatePollRequest request, User user) {
-        Poll poll = pollQueryRepository.findById(request.getPollId())
+    public void update(Long pollId, UpdatePollRequest request, User user) {
+        Poll poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
+        // 투표 만든사람
         if (poll.getUser().getId().equals(user.getId()) == false) {
             throw new GollabaException(GollabaErrorCode.NOT_EQUAL_POLL_CREATOR);
         }
@@ -105,10 +127,10 @@ public class PollService {
         pollRepository.save(poll);
     }
 
-    public void vote(VoteRequest request) {
+    public void vote(Long pollId, VoteRequest request) {
         request.validate();
         User user = null;
-        Poll poll = pollQueryRepository.findById(request.getPollId())
+        Poll poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
         validateVote(poll, request);

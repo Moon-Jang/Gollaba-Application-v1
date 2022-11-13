@@ -2,6 +2,7 @@ package kr.mj.gollaba.integration.poll;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kr.mj.gollaba.common.Const;
+import kr.mj.gollaba.common.service.HashIdService;
 import kr.mj.gollaba.common.util.MultiValueMapGenerator;
 import kr.mj.gollaba.common.util.QueryStringGenerator;
 import kr.mj.gollaba.exception.GollabaErrorCode;
@@ -48,6 +49,9 @@ class PollControllerTest extends IntegrationTest {
     @Autowired
     private PollRepository pollRepository;
 
+    @Autowired
+    private HashIdService hashIdService;
+
     @DisplayName("투표 생성")
     @Test
     public void create_poll() throws Exception {
@@ -63,7 +67,8 @@ class PollControllerTest extends IntegrationTest {
         //then
         resultActions
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("pollId").isString());
     }
 
     @DisplayName("투표 전체 조회")
@@ -86,14 +91,20 @@ class PollControllerTest extends IntegrationTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("totalCount").value(150))
-                .andExpect(jsonPath("polls").isArray());
+                .andExpect(jsonPath("polls").isArray())
+                .andExpect(jsonPath("polls[0].pollId").isString());
     }
 
-    @DisplayName("투표 상세 조회")
+    @DisplayName("투표 전체 조회 By 로그인 유저")
+    @WithUserDetails(value = UserFactory.TEST_EXIST_EMAIL)
     @Test
-    public void find() throws Exception {
+    public void findAll_by_login_user() throws Exception {
         //given
-        String url = Const.ROOT_URL + "/polls/1";
+        FindAllPollRequest request = new FindAllPollRequest();
+        request.setOffset(0);
+        request.setLimit(15);
+
+        String url = Const.ROOT_URL + "/polls" + QueryStringGenerator.generate(request);
 
         //when
         ResultActions resultActions = mvc.perform(get(url)
@@ -105,17 +116,38 @@ class PollControllerTest extends IntegrationTest {
         resultActions
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("pollId").isNumber());
+                .andExpect(jsonPath("totalCount").value(150))
+                .andExpect(jsonPath("polls").isArray())
+                .andExpect(jsonPath("polls[0].pollId").isString());
+    }
+
+    @DisplayName("투표 상세 조회")
+    @Test
+    public void find() throws Exception {
+        //given
+        String hashId = hashIdService.encode(1L);
+        String url = Const.ROOT_URL + "/polls/" + hashId;
+
+        //when
+        ResultActions resultActions = mvc.perform(get(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .accept(MediaType.APPLICATION_JSON));
+
+        //then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("pollId").isString());
     }
 
     @DisplayName("투표하기")
     @Test
     public void vote() throws Exception {
         //given
-        String url = Const.ROOT_URL + "/vote";
-
+        String hashId = hashIdService.encode(PollFactory.TEST_ID);
+        String url = Const.ROOT_URL + "/polls/" + hashId + "/vote";
         VoteRequest request = new VoteRequest();
-        request.setPollId(PollFactory.TEST_ID);
         request.setUserId(UserFactory.TEST_ID);
         request.setOptionIds(List.of(OptionFactory.TEST_ID));
         request.setVoterName(VoterFactory.TEST_VOTER_NAME);
@@ -131,19 +163,18 @@ class PollControllerTest extends IntegrationTest {
         //then
         resultActions
                 .andDo(print())
-                .andExpect(status().isCreated());
-
-
+                .andExpect(status().isOk());
     }
 
     @DisplayName("투표 수정")
-    @WithUserDetails(value = UserFactory.TEST_EXIST_UNIQUE_ID)
+    @WithUserDetails(value = UserFactory.TEST_EXIST_EMAIL)
     @Test
     void update_poll() throws Exception {
         //given
-        final Long pollId = 10L;
+        final long pollId = 10L;
+        String hashId = hashIdService.encode(pollId);
         String testTitle = "테스트 타이틀입니당";
-        String url = Const.ROOT_URL + String.format("/polls/%d/update", pollId);
+        String url = Const.ROOT_URL + String.format("/polls/%s/update", hashId);
         LocalDateTime testEndedAt = LocalDateTime.now().plusDays(2L);
         UpdatePollRequest request = new UpdatePollRequest();
         request.setTitle(testTitle);

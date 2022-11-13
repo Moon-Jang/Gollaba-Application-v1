@@ -1,21 +1,19 @@
 package kr.mj.gollaba.auth.entity;
 
+import kr.mj.gollaba.common.entity.BaseTimeEntity;
+import kr.mj.gollaba.user.entity.User;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_token")
 @Getter
-@NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
-public class UserToken {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class UserToken extends BaseTimeEntity {
 
     @Id
     @Column(name = "user_token_id", nullable = false)
@@ -28,19 +26,15 @@ public class UserToken {
     @Column(name = "refresh_token", nullable = false)
     private String refreshToken;
 
-    @CreatedDate
-    @Column(name = "created_at", updatable = false, nullable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updateAt;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Builder
-    public UserToken(Long id, String accessToken, String refreshToken) {
-        this.id = id;
+    private UserToken(String accessToken, String refreshToken, User user) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.user = user;
     }
 
     public void updateAccessToken(String accessToken) {

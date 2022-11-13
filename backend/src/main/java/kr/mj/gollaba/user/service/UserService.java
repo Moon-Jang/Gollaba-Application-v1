@@ -1,5 +1,7 @@
 package kr.mj.gollaba.user.service;
 
+import kr.mj.gollaba.auth.entity.UserProvider;
+import kr.mj.gollaba.auth.repository.UserProviderRepository;
 import kr.mj.gollaba.common.service.S3UploadService;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
@@ -16,28 +18,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.UUID;
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final UserProviderRepository userProviderRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final S3UploadService s3UploadService;
 	public static final String PROFILE_IMAGE_PATH = "profile_image";
 	public static final String BACKGROUND_IMAGE_PATH = "background_image";
 
+	@Transactional
 	public SignupResponse create(SignupRequest request) {
-		if (userRepository.existsByUniqueId(request.getId())) {
+		if (userRepository.existsByEmail(request.getEmail())) {
 			throw new GollabaException(GollabaErrorCode.ALREADY_EXIST_USER);
 		}
 
-		if (userRepository.existsByNickName(request.getNickName())) {
-			throw new GollabaException(GollabaErrorCode.ALREADY_EXIST_USER);
-		}
-
-		User user = request.toEntity(passwordEncoder);
+		User user = request.toUserEntity();
 		User saveUser = userRepository.save(user);
 
 		if (request.getProfileImage() != null) {
@@ -45,6 +45,19 @@ public class UserService {
 			saveUser.updateProfileImageUrl(imageUrl);
 			userRepository.save(saveUser);
 		}
+
+		if (request.getProfileImageUrl() != null) {
+			saveUser.updateProfileImageUrl(request.getProfileImageUrl());
+			userRepository.save(saveUser);
+		}
+
+		if (userProviderRepository.existsByProviderId(request.getProviderId())) {
+			throw new GollabaException(GollabaErrorCode.ALREADY_EXIST_PROVIDER_ID);
+		}
+
+		UserProvider userProvider = request.toUserProviderEntity(user);
+
+		userProviderRepository.save(userProvider);
 
 		return SignupResponse.builder()
 				.userId(saveUser.getId())
@@ -54,10 +67,6 @@ public class UserService {
 	public void updateNickName(UpdateUserRequest request, User user) {
 		if (StringUtils.hasText(request.getNickName()) == false) {
 			throw new GollabaException(GollabaErrorCode.INVALID_PARAMS, "닉네임을 입력해주세요.");
-		}
-
-		if (userRepository.existsByNickName(request.getNickName())) {
-			throw new GollabaException(GollabaErrorCode.ALREADY_EXIST_NICKNAME);
 		}
 
 		user.updateNickName(request.getNickName());

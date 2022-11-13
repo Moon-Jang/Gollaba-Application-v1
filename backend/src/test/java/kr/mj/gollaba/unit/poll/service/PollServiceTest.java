@@ -245,7 +245,6 @@ public class PollServiceTest extends ServiceTest {
                 Poll poll = PollFactory.createWithId(null, options);
                 poll.updateResponseType(SINGLE);
                 VoteRequest request = new VoteRequest();
-                request.setPollId(PollFactory.TEST_ID);
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
@@ -254,7 +253,7 @@ public class PollServiceTest extends ServiceTest {
                         .willReturn(Optional.of(poll));
 
                 //when then
-                assertThatThrownBy(() -> pollService.vote(request))
+                assertThatThrownBy(() -> pollService.vote(PollFactory.TEST_ID, request))
                         .hasMessage(GollabaErrorCode.NOT_AVAILABLE_MULTI_VOTE_BY_RESPONSE_TYPE.getDescription())
                         .isInstanceOf(GollabaException.class);
 
@@ -275,7 +274,6 @@ public class PollServiceTest extends ServiceTest {
                 Poll poll = PollFactory.createWithIdAndBallot(null, options);
                 poll.updateResponseType(PollingResponseType.MULTI);
                 VoteRequest request = new VoteRequest();
-                request.setPollId(PollFactory.TEST_ID);
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
@@ -284,7 +282,7 @@ public class PollServiceTest extends ServiceTest {
                         .willReturn(Optional.of(poll));
 
                 //when then
-                assertThatThrownBy(() -> pollService.vote(request))
+                assertThatThrownBy(() -> pollService.vote(PollFactory.TEST_ID, request))
                         .hasMessage(GollabaErrorCode.DONT_NEED_VOTER_NAME.getDescription())
                         .isInstanceOf(GollabaException.class);
 
@@ -305,7 +303,6 @@ public class PollServiceTest extends ServiceTest {
                 Poll poll = PollFactory.createWithId(null, options);
                 poll.updateResponseType(PollingResponseType.MULTI);
                 VoteRequest request = new VoteRequest();
-                request.setPollId(PollFactory.TEST_ID);
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
@@ -316,7 +313,7 @@ public class PollServiceTest extends ServiceTest {
                         .willReturn(VoterFactory.TEST_IP_ADDRESS);
 
                 //when then
-                assertThatThrownBy(() -> pollService.vote(request))
+                assertThatThrownBy(() -> pollService.vote(PollFactory.TEST_ID, request))
                         .hasMessage(GollabaErrorCode.ALREADY_VOTE.getDescription())
                         .isInstanceOf(GollabaException.class);
 
@@ -346,14 +343,13 @@ public class PollServiceTest extends ServiceTest {
                         .willReturn(poll);
 
                 VoteRequest request = new VoteRequest();
-                request.setPollId(PollFactory.TEST_ID);
                 request.setUserId(UserFactory.TEST_ID);
                 request.setOptionIds(List.of(options.get(0).getId()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
 
                 //when
-                pollService.vote(request);
+                pollService.vote(PollFactory.TEST_ID, request);
 
                 //then
                 verify(cryptUtils, times(1)).encrypt(eq(VoterFactory.TEST_IP_ADDRESS));
@@ -365,7 +361,7 @@ public class PollServiceTest extends ServiceTest {
         }
     }
 
-    @DisplayName("vote 메서드는")
+    @DisplayName("update 메서드는")
     @Nested
     class update {
 
@@ -377,8 +373,8 @@ public class PollServiceTest extends ServiceTest {
             @Test
             void throw_exception_NOT_EQUAL_POLL_CREATOR() {
                 //given
+                final long pollId = 1L;
                 UpdatePollRequest request = new UpdatePollRequest();
-                request.setPollId(1L);
                 User pollCreator = UserFactory.createWithId(10L);
                 User authedUser = UserFactory.createWithId(20L);
                 Poll poll = PollFactory.createWithId(pollCreator, OptionFactory.createList());
@@ -387,7 +383,7 @@ public class PollServiceTest extends ServiceTest {
                         .willReturn(Optional.of(poll));
 
                 //when then
-                assertThatThrownBy(() -> pollService.update(request, authedUser))
+                assertThatThrownBy(() -> pollService.update(pollId, request, authedUser))
                         .hasMessage(GollabaErrorCode.NOT_EQUAL_POLL_CREATOR.getDescription())
                         .isInstanceOf(GollabaException.class);
 

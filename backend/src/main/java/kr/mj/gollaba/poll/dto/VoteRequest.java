@@ -1,7 +1,9 @@
 package kr.mj.gollaba.poll.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModelProperty;
 import kr.mj.gollaba.common.BaseApiRequest;
+import kr.mj.gollaba.common.serializer.HashIdDeSerializer;
 import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
@@ -23,10 +25,6 @@ import java.util.List;
 public class VoteRequest implements BaseApiRequest {
 
     private final static String ANONYMOUS_NAME = "익명";
-
-    @NotNull
-    @Positive
-    private Long pollId;
 
     @NotNull
     private List<Long> optionIds;

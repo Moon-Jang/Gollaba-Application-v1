@@ -62,11 +62,11 @@ class AuthServiceTest extends ServiceTest {
             @Test
             public void return_error_response() throws Exception {
                 //given
-                given(userRepository.findByUniqueId(anyString()))
+                given(userRepository.findByEmail(anyString()))
                         .willReturn(Optional.empty());
 
                 LoginRequest request = new LoginRequest();
-                request.setId(UserFactory.TEST_UNIQUE_ID);
+                request.setEmail(UserFactory.TEST_EMAIL);
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
                 //when then
@@ -74,7 +74,7 @@ class AuthServiceTest extends ServiceTest {
                         .as(GollabaErrorCode.NOT_EXIST_USER_BY_UNIQUE_ID.getDescription())
                         .isInstanceOf(GollabaException.class);
 
-                verify(userRepository, times(1)).findByUniqueId(anyString());
+                verify(userRepository, times(1)).findByEmail(anyString());
             }
         }
 
@@ -86,11 +86,11 @@ class AuthServiceTest extends ServiceTest {
             @Test
             public void occur_exception() throws Exception {
                 //given
-                given(userRepository.findByUniqueId(anyString()))
+                given(userRepository.findByEmail(anyString()))
                         .willReturn(Optional.empty());
 
                 LoginRequest request = new LoginRequest();
-                request.setId(UserFactory.TEST_UNIQUE_ID);
+                request.setEmail(UserFactory.TEST_EMAIL);
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
                 //when then
@@ -98,7 +98,7 @@ class AuthServiceTest extends ServiceTest {
                         .as(GollabaErrorCode.NOT_EXIST_USER_BY_UNIQUE_ID.getDescription())
                         .isInstanceOf(GollabaException.class);
 
-                verify(userRepository, times(1)).findByUniqueId(anyString());
+                verify(userRepository, times(1)).findByEmail(anyString());
             }
         }
 
@@ -110,7 +110,7 @@ class AuthServiceTest extends ServiceTest {
             public void return_success_response() throws Exception {
                 //given
                 User user = UserFactory.createWithId();
-                given(userRepository.findByUniqueId(anyString()))
+                given(userRepository.findByEmail(anyString()))
                         .willReturn(Optional.of(user));
                 given(jwtTokenProvider.createAccessToken(any(User.class)))
                         .willReturn(UserTokenFactory.TEST_ACCESS_TOKEN);
@@ -118,7 +118,7 @@ class AuthServiceTest extends ServiceTest {
                         .willReturn(UserTokenFactory.TEST_REFRESH_TOKEN);
 
                 LoginRequest request = new LoginRequest();
-                request.setId(UserFactory.TEST_UNIQUE_ID);
+                request.setEmail(UserFactory.TEST_EMAIL);
                 request.setPassword(UserFactory.TEST_PASSWORD);
 
                 //when
@@ -128,7 +128,7 @@ class AuthServiceTest extends ServiceTest {
                 assertThat(response.getAccessToken()).isNotBlank();
                 assertThat(response.getRefreshToken()).isNotBlank();
 
-                verify(userRepository, times(1)).findByUniqueId(eq(UserFactory.TEST_UNIQUE_ID));
+                verify(userRepository, times(1)).findByEmail(eq(UserFactory.TEST_EMAIL));
                 verify(passwordEncoder, times(1)).matches(eq(UserFactory.TEST_PASSWORD), eq(user.getPassword()));
                 verify(jwtTokenProvider, times(1)).createAccessToken(eq(user));
                 verify(jwtTokenProvider, times(1)).createRefreshToken();
@@ -197,17 +197,17 @@ class AuthServiceTest extends ServiceTest {
             @Test
             public void occur_exception() throws Exception {
                 //given
-                given(userRepository.findByUniqueId(anyString()))
+                given(userRepository.findByEmail(anyString()))
                         .willReturn(Optional.empty());
 
-                String uniqueId = UserFactory.TEST_UNIQUE_ID;
+                String uniqueId = UserFactory.TEST_EMAIL;
 
                 //when then
                 assertThatThrownBy(() -> authService.loadUserByUsername(uniqueId))
                         .as(GollabaErrorCode.NOT_EXIST_USER_BY_UNIQUE_ID.getDescription())
                         .isInstanceOf(GollabaException.class);
 
-                verify(userRepository, times(1)).findByUniqueId(eq(uniqueId));
+                verify(userRepository, times(1)).findByEmail(eq(uniqueId));
             }
         }
 
@@ -220,17 +220,17 @@ class AuthServiceTest extends ServiceTest {
             void exist() {
                 //given
                 User user = UserFactory.create();
-                given(userRepository.findByUniqueId(anyString()))
+                given(userRepository.findByEmail(anyString()))
                         .willReturn(Optional.of(user));
 
-                String uniqueId = UserFactory.TEST_UNIQUE_ID;
+                String uniqueId = UserFactory.TEST_EMAIL;
 
                 //when
                 UserDetails result = authService.loadUserByUsername(uniqueId);
 
                 //then
                 assertThat(result).isInstanceOf(PrincipalDetails.class);
-                verify(userRepository, times(1)).findByUniqueId(eq(uniqueId));
+                verify(userRepository, times(1)).findByEmail(eq(uniqueId));
             }
         }
 
