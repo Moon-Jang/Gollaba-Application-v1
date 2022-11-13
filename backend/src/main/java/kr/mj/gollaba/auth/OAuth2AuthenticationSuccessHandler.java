@@ -67,6 +67,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         var targetUrl = UriComponentsBuilder.fromUriString(redirectUrl)
             .queryParam("accessToken", accessToken)
+            .queryParam("protectHash", "v")
             .build()
             .toUriString();
         clearAuthenticationAttributes(request, response);
@@ -88,8 +89,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         queryParams.add("profileImageUrl",
             oAuth2UserInfo.getProfileImageUrl() != null
                 ? oAuth2UserInfo.getProfileImageUrl()
-                : null
+                : ""
         );
+        queryParams.add("protectHash", "v");
 
         var result = UriComponentsBuilder.fromUriString(redirectUrl)
             .queryParams(queryParams)
