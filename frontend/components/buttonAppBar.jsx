@@ -58,6 +58,6 @@ export default function ButtonAppBar(title) {
 }
 
 const IconButtonOnClick = (token, data) => {
-    if (!token) Router.push(`/login`)
-    if (token) Router.push(`/account/${data.userId}`)
+    // if (!token) Router.push(`/login`)
+    //  if (token) Router.push(`/account/${data.userId}`)
 }
