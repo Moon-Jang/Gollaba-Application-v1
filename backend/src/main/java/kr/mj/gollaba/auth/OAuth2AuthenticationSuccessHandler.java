@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.IOException;
 
 import static kr.mj.gollaba.auth.AuthorizationRequestRepositoryImpl.OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME;
@@ -38,6 +39,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private long refreshExpirationTime;
 
     @Override
+    @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         var redirectUrl = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
@@ -104,11 +106,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private String saveUserToken(User user, String accessToken) {
         var refreshToken = jwtTokenProvider.createRefreshToken();
-        var userToken = UserToken.builder()
+        var userToken = userTokenRepository.findByUserId(user.getId())
+            .orElse(UserToken.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .user(user)
-                .build();
+                .build());
 
         return userTokenRepository.save(userToken)
                 .getRefreshToken();
