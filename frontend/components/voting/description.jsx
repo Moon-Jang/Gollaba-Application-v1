@@ -2,6 +2,7 @@ import * as React from "react"
 import Box from "@mui/material/Box"
 import { Checkbox, TextField } from "@mui/material"
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"
+import SettingsIcon from "@mui/icons-material/Settings"
 import ModeEditIcon from "@mui/icons-material/ModeEdit"
 import { useCookies } from "react-cookie"
 import { useRouter } from "next/router"
@@ -10,6 +11,9 @@ import jwt_decode from "jwt-decode"
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function Description(props) {
     const data = props.data
+    const name = data.creatorName
+
+    console.log("이름", name)
 
     let token
 
@@ -81,27 +85,8 @@ export default function Description(props) {
                     }}
                 >
                     <AccountCircleIcon fontSize="12" sx={{ mr: 0.2 }} />
-                    {data.creatorName}
+                    {name !== undefined && (name.length <= 5 ? name : name.substring(0, 5) + "...")}
                 </Box>
-                {cookies.accessToken && data.user && token.id === data.user.userId ? (
-                    <Box
-                        className="edit"
-                        onClick={editClick}
-                        sx={{
-                            display: "flex",
-                            flex: 0.15,
-                            height: "100%",
-                            fontSize: 12,
-                            justifyContent: "right",
-                            pr: 1,
-                            alignItems: "center",
-                        }}
-                    >
-                        <ModeEditIcon fontSize="12" sx={{ mr: 0.2 }} />
-                    </Box>
-                ) : (
-                    ""
-                )}
             </Box>
             <Box
                 className="title"
@@ -128,10 +113,30 @@ export default function Description(props) {
                     justifyContent: "right",
                     flexDirection: "row",
                     display: "flex",
-                    color: "#808080",
                 }}
             >
-                {data.isBallot ? "익명투표" : "기명투표"} {data.responseType === "SINGLE" ? "단일투표" : "복수투표"}
+                <Box sx={{ display: "flex", flex: 1, justifyContent: "left" }}>
+                    {cookies.accessToken && data.user && token.id === data.user.userId ? (
+                        <Box
+                            className="edit"
+                            onClick={editClick}
+                            sx={{
+                                display: "flex",
+                                flex: 0.15,
+                                height: "100%",
+                                fontSize: 12,
+                                justifyContent: "right",
+                                pr: 1,
+                                alignItems: "center",
+                            }}
+                        ></Box>
+                    ) : (
+                        ""
+                    )}
+                </Box>
+                <Box sx={{ display: "flex", flex: 1, justifyContent: "right" }}>
+                    <SettingsIcon fontSize="large" sx={{ ml: 0.8, mb: 0.3 }} />
+                </Box>
             </Box>
         </Box>
     )

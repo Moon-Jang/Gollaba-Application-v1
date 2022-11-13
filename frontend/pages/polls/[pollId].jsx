@@ -48,7 +48,6 @@ export default function Polls() {
     }, [pollId])
 
     const [voted, setVoted] = useState([])
-
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -79,6 +78,9 @@ export default function Polls() {
                         }}
                     >
                         <Description data={polls} />
+                        <Box className="amountNotice" sx={{ display: "flex", mt: -1, justifyContent: "center" }}>
+                            {optionAmount(polls)}
+                        </Box>
                         <Box display={"flex"} flexDirection={"column"} flex={"1"}>
                             <Box
                                 sx={{
@@ -102,4 +104,10 @@ export default function Polls() {
             </Container>
         </ThemeProvider>
     )
+}
+
+const optionAmount = polls => {
+    console.log("폴", polls.responseType)
+    if (polls.responseType === "SINGLE") return "한 개의 문항을 선택해주세요."
+    return "한 개 이상의 문항을 선택해주세요."
 }

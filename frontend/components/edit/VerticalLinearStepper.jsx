@@ -192,6 +192,7 @@ const useStyles = makeStyles(theme => ({
 
 function getStepContent(step, refs, polls) {
     console.log("Step", polls.title)
+    console.log("만기1", polls.endedAt)
     switch (step) {
         case 0:
             return <PollTitle originTitle={polls.title} titleRef={refs[step]} />
@@ -200,7 +201,7 @@ function getStepContent(step, refs, polls) {
         case 2:
             return <PollItemsWrapper itemsRef={refs[step]} options={polls.options} />
         case 3:
-            return <PollExpireDate expireRef={refs[step]} />
+            return <PollExpireDate endedAt={polls.endedAt} expireRef={refs[step]} />
         default:
             return "Unknown step"
     }
@@ -342,7 +343,7 @@ function PollImage({ imageRef, originImage }) {
     )
 }
 
-function PollExpireDate({ expireRef }) {
+function PollExpireDate({ expireRef, endedAt }) {
     const classes = pollOptionStyles()
     const now = new Date()
     const minDate = new Date(now)
@@ -350,14 +351,11 @@ function PollExpireDate({ expireRef }) {
 
     const maxDate = new Date(now)
     maxDate.setDate(maxDate.getDate() + 30)
-
-    const [expireDate, setExpireDate] = useState(new Date())
+    const [expireDate, setExpireDate] = useState(new Date(endedAt))
 
     const handleChange = date => {
         setExpireDate(date)
         expireRef.current = date
-        console.log("선택한 날짜>>>", date)
-        console.log("esd", expireRef.current)
     }
 
     return (

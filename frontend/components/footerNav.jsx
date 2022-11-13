@@ -42,18 +42,18 @@ export default function FooterNav() {
                     icon={<PollOutlinedIcon />}
                 />
                 <BottomNavigationAction
-                    label="Voting"
-                    onClick={() => {
-                        router.push("/voting")
-                    }}
-                    icon={<ThumbUpOutlinedIcon />}
-                />
-                <BottomNavigationAction
                     label="New"
                     onClick={() => {
                         router.push("/new")
                     }}
                     icon={<AddOutlinedIcon />}
+                />
+                <BottomNavigationAction
+                    label="Voting"
+                    onClick={() => {
+                        router.push("/voting")
+                    }}
+                    icon={<ThumbUpOutlinedIcon />}
                 />
                 <BottomNavigationAction
                     label="Account"
