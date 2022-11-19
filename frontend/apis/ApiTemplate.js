@@ -54,7 +54,7 @@ const ApiTemplate = {
         const authorizationHeader = {
             headers: {
                 "Content-Type": "multipart/form-data",
-                "GA-Access-Token": `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
             },
         }
 

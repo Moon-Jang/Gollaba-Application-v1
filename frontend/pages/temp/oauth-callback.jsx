@@ -17,12 +17,12 @@ export default function OAuth2CallbackPage() {
             router.push("/")
             return
         }
-        
+
         // 회원가입이 필요한 회원일 경우
         const {name, email, providerId, providerType, profileImageUrl} = router.query
         
         // 필수 값 없을 경우 back
-        if (!name || !email || !providerId || providerType) {
+        if (!name || !email || !providerId || !providerType) {
             alert("회원가입에 필요한 필수 값이 없습니다. 관리자에게 문의하세요.")
             router.push("/login")
             return
