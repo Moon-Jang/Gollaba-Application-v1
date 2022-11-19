@@ -1,8 +1,10 @@
 package kr.mj.gollaba.config;
 
+import com.fasterxml.classmate.TypeResolver;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 import kr.mj.gollaba.common.Const;
+import kr.mj.gollaba.common.ErrorAPIResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,9 @@ import springfox.documentation.spring.web.plugins.Docket;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static kr.mj.gollaba.config.SecurityConfig.REFRESH_TOKEN_HEADER;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @Configuration
 public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 	
@@ -28,11 +33,14 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
     private String title;
 
 	@Bean
-	public Docket apiV1() {
+	public Docket apiV1(TypeResolver typeResolver) {
 		version = "v1";
 		title = "Gollaba API";
 
 		return new Docket(DocumentationType.OAS_30)
+				.additionalModels(
+						typeResolver.resolve(ErrorAPIResponse.class)
+				)
 				.consumes(getConsumeContentTypes())
 				.produces(getProduceContentTypes())
 				.useDefaultResponseMessages(false)
@@ -86,23 +94,24 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
     }
 
 	private ApiKey accessToken() {
-		return new ApiKey("accessToken", Const.ACCESS_TOKEN_HEADER, "header");
+		return new ApiKey(AUTHORIZATION, AUTHORIZATION, "header");
 	}
 
 	private ApiKey refreshToken() {
-		return new ApiKey("refreshToken", Const.REFRESH_TOKEN_HEADER, "header");
+		return new ApiKey(REFRESH_TOKEN_HEADER, REFRESH_TOKEN_HEADER,"header");
 	}
 
 	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth())
-				.forPaths(PathSelectors.any()).build();
+		return SecurityContext.builder()
+				.securityReferences(defaultAuth())
+				.build();
 	}
 
 	List<SecurityReference> defaultAuth() {
 		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
 		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
 		authorizationScopes[0] = authorizationScope;
-		return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+		return Arrays.asList(new SecurityReference(AUTHORIZATION, authorizationScopes), new SecurityReference(REFRESH_TOKEN_HEADER, authorizationScopes));
 	}
 	
 	private Set<String> getConsumeContentTypes() {

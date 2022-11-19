@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import static kr.mj.gollaba.config.SecurityConfig.REFRESH_TOKEN_HEADER;
+
 @RestController
 @RequestMapping(Const.ROOT_URL)
 @Api(tags = "User")
@@ -30,7 +32,7 @@ public class AuthController {
 
     @ApiOperation(value = "로그아웃")
     @PostMapping(path = "/logout", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity logout(@RequestHeader(value = "GA-Refresh-Token") String refreshToken) {
+    public ResponseEntity<?> logout(@RequestHeader(value = REFRESH_TOKEN_HEADER) String refreshToken) {
         authService.logout(refreshToken);
 
         return ResponseEntity.status(HttpStatus.OK)

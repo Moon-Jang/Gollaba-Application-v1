@@ -3,8 +3,9 @@ package kr.mj.gollaba.unit.auth.repository;
 import kr.mj.gollaba.auth.JwtTokenProvider;
 import kr.mj.gollaba.auth.entity.UserToken;
 import kr.mj.gollaba.auth.repository.UserTokenRepository;
-import kr.mj.gollaba.unit.common.RepositoryTest;
 import kr.mj.gollaba.unit.auth.factory.UserTokenFactory;
+import kr.mj.gollaba.unit.common.RepositoryTest;
+import kr.mj.gollaba.unit.user.factory.UserFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,41 @@ class UserTokenRepositoryTest extends RepositoryTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
+
+    @DisplayName("회원 토큰 객체 존재 여부 확인 by refreshToken")
+    @Test
+    void exists_by_refresh_token() throws Exception {
+        //given
+        UserToken savedUserToken = userTokenRepository.save(UserTokenFactory.create(jwtTokenProvider));
+
+        flushAndClear();
+
+        //when
+        final boolean result1 = userTokenRepository.existsByRefreshToken(savedUserToken.getRefreshToken());
+        final boolean result2 = userTokenRepository.existsByRefreshToken("AnyToken");
+
+        //then
+        assertThat(result1).isTrue();
+        assertThat(result2).isFalse();
+    }
+
+    @DisplayName("회원 토큰 객체 조회 by refreshToken")
+    @Test
+    void find_by_refresh_token() throws Exception {
+        //given
+        UserToken savedUserToken = userTokenRepository.save(UserTokenFactory.create(jwtTokenProvider));
+
+        flushAndClear();
+
+        //when
+        UserToken fountToken = userTokenRepository.findByRefreshToken(savedUserToken.getRefreshToken())
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        //then
+        assertThat(fountToken.getId()).isEqualTo(savedUserToken.getId());
+        assertThat(fountToken.getAccessToken()).isEqualTo(savedUserToken.getAccessToken());
+        assertThat(fountToken.getRefreshToken()).isEqualTo(savedUserToken.getRefreshToken());
+    }
 
     @DisplayName("회원 토큰 객체 추가")
     @Test
@@ -47,7 +83,7 @@ class UserTokenRepositoryTest extends RepositoryTest {
     void save_update() throws Exception {
         //given
         UserToken savedUserToken = userTokenRepository.save(UserTokenFactory.create(jwtTokenProvider));
-        String newAccessToken = jwtTokenProvider.createAccessToken(UserTokenFactory.TEST_UNIQUE_ID, UserTokenFactory.TEST_NICK_NAME);
+        String newAccessToken = jwtTokenProvider.createAccessToken(UserFactory.createWithId());
         String newRefreshToken = jwtTokenProvider.createRefreshToken();
 
         flushAndClear();

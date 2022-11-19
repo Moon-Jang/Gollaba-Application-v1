@@ -51,8 +51,21 @@ dependencies {
     // swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
+    // AWS-S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.281'
+
+    // hashIds
+    implementation 'org.hashids:hashids:1.0.3'
+
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    //oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {

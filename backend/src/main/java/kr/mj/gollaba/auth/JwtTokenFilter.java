@@ -1,8 +1,6 @@
 package kr.mj.gollaba.auth;
 
-import kr.mj.gollaba.common.Const;
 import kr.mj.gollaba.auth.service.AuthService;
-import kr.mj.gollaba.auth.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
@@ -38,15 +38,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
         if (StringUtils.hasText(jwt) && jwtTokenUtils.validateToken(jwt)) {
-            Authentication authentication = generateAuthentication(request, jwtTokenUtils.getPayloadByKey(jwt, "email"));
+            Authentication authentication = generateAuthentication(request, jwtTokenUtils.getPayloadByKey(jwt, "uid"));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private Authentication generateAuthentication(HttpServletRequest request, String email) {
-        UserDetails userDetails = authService.loadUserByUsername(email);
+    private Authentication generateAuthentication(HttpServletRequest request, String uid) {
+        UserDetails userDetails = authService.loadUserByUsername(uid);
         UsernamePasswordAuthenticationToken authentication
                 = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -56,7 +56,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     // Request Header 에서 토큰 정보를 꺼내오기
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(Const.ACCESS_TOKEN_HEADER);
+        String bearerToken = request.getHeader(AUTHORIZATION);
 
         if (!StringUtils.hasText(bearerToken) || !bearerToken.startsWith(BEARER_PREFIX)) {
             return null;

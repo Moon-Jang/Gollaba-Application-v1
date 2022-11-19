@@ -11,7 +11,7 @@ import javax.validation.ValidatorFactory;
 @Tag("UnitTest")
 public abstract class ValidationTest {
 
-    protected static ValidatorFactory factory;
+    private static ValidatorFactory factory;
 
     protected static Validator validator;
 

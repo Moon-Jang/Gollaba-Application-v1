@@ -37,7 +37,7 @@ class UserRepositoryTest extends RepositoryTest {
 
         //then
         assertThat(foundUser.getId()).isEqualTo(savedUser.getId());
-        assertThat(foundUser.getUniqueId()).isEqualTo(savedUser.getUniqueId());
+        assertThat(foundUser.getEmail()).isEqualTo(savedUser.getEmail());
         assertThat(foundUser.getNickName()).isEqualTo(savedUser.getNickName());
         assertThat(passwordEncoder.matches(UserFactory.TEST_PASSWORD, foundUser.getPassword())).isTrue();
     }
@@ -50,13 +50,11 @@ class UserRepositoryTest extends RepositoryTest {
 
         flushAndClear();
 
-        String newUniqueId = "test20220101";
         String newNickname = "김길동";
         String newPassword = "gkdnwj1234*";
         UserRoleType newRole = UserRoleType.ROLE_ADMIN;
 
         //when
-        savedUser.updateUniqueId(newUniqueId);
         savedUser.updateNickName(newNickname);
         savedUser.updatePassword(passwordEncoder.encode(newPassword));
         savedUser.updateUserRole(newRole);
@@ -67,7 +65,6 @@ class UserRepositoryTest extends RepositoryTest {
 
         //then
         assertThat(foundUser.getId()).isEqualTo(savedUser.getId());
-        assertThat(newUniqueId).isEqualTo(savedUser.getUniqueId());
         assertThat(newNickname).isEqualTo(savedUser.getNickName());
         assertThat(newRole).isEqualTo(savedUser.getUserRole());
         assertThat(passwordEncoder.matches(newPassword, foundUser.getPassword())).isTrue();
@@ -75,32 +72,15 @@ class UserRepositoryTest extends RepositoryTest {
 
     @DisplayName("회원 객체 존재 유무")
     @Test
-    public void existsByUserId() throws Exception {
+    public void existsByEmail() throws Exception {
         //given
         User user = userRepository.save(UserFactory.create());
 
         flushAndClear();
 
         //when
-        final boolean true_result = userRepository.existsByUniqueId(user.getUniqueId());
-        final boolean false_result = userRepository.existsByUniqueId("notExist");
-
-        //then
-        assertThat(true_result).isTrue();
-        assertThat(false_result).isFalse();
-    }
-
-    @DisplayName("회원 객체 중복된 닉네임 체크")
-    @Test
-    public void existsByNickName() throws Exception {
-        //given
-        User user = userRepository.save(UserFactory.create());
-
-        flushAndClear();
-
-        //when
-        final boolean true_result = userRepository.existsByNickName(user.getNickName());
-        final boolean false_result = userRepository.existsByNickName("notExist");
+        final boolean true_result = userRepository.existsByEmail(user.getEmail());
+        final boolean false_result = userRepository.existsByEmail("notExist");
 
         //then
         assertThat(true_result).isTrue();
@@ -116,12 +96,12 @@ class UserRepositoryTest extends RepositoryTest {
         flushAndClear();
 
         //when
-        User foundUser = userRepository.findByUniqueId(user.getUniqueId())
+        User foundUser = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(IllegalArgumentException::new);
 
         //then
         assertThat(foundUser.getId()).isEqualTo(user.getId());
-        assertThat(foundUser.getUniqueId()).isEqualTo(user.getUniqueId());
+        assertThat(foundUser.getEmail()).isEqualTo(user.getEmail());
         assertThat(foundUser.getNickName()).isEqualTo(user.getNickName());
         assertThat(passwordEncoder.matches(UserFactory.TEST_PASSWORD, foundUser.getPassword())).isTrue();
     }
