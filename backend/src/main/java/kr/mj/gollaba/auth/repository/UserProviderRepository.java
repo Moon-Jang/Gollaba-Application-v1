@@ -11,6 +11,8 @@ public interface UserProviderRepository extends JpaRepository<UserProvider, Long
     @Query("SELECT up FROM UserProvider up JOIN FETCH up.user WHERE up.providerId = ?1")
     Optional<UserProvider> findByProviderId(String providerId);
 
+    Long countByUserId(Long userId);
+
     boolean existsByProviderId(String providerId);
 
 }

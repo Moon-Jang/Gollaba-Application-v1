@@ -1,5 +1,6 @@
 package kr.mj.gollaba.auth.entity;
 
+import kr.mj.gollaba.auth.dto.OAuth2UserInfo;
 import kr.mj.gollaba.auth.types.ProviderType;
 import kr.mj.gollaba.common.entity.BaseTimeEntity;
 import kr.mj.gollaba.user.entity.User;
@@ -36,5 +37,13 @@ public class UserProvider extends BaseTimeEntity {
         this.providerType = providerType;
         this.providerId = providerId;
         this.user = user;
+    }
+
+    public static UserProvider of(OAuth2UserInfo oAuth2UserInfo, User user) {
+        return builder()
+            .providerType(oAuth2UserInfo.getProviderType())
+            .providerId(oAuth2UserInfo.getProviderId())
+            .user(user)
+            .build();
     }
 }
