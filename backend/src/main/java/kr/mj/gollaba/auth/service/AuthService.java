@@ -4,6 +4,7 @@ import kr.mj.gollaba.auth.JwtTokenProvider;
 import kr.mj.gollaba.auth.PrincipalDetails;
 import kr.mj.gollaba.auth.dto.LoginRequest;
 import kr.mj.gollaba.auth.dto.LoginResponse;
+import kr.mj.gollaba.auth.repository.UserProviderRepository;
 import kr.mj.gollaba.auth.repository.UserTokenRepository;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
@@ -16,6 +17,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService implements UserDetailsService {
@@ -23,6 +26,7 @@ public class AuthService implements UserDetailsService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
+    private final UserProviderRepository userProviderRepository;
     private final PasswordEncoder passwordEncoder;
 
     public LoginResponse login(LoginRequest request) {
@@ -58,5 +62,15 @@ public class AuthService implements UserDetailsService {
         return new PrincipalDetails(user);
     }
 
+    @Transactional
+    public void withdrawKaKao(String providerId) {
+        var userProvider = userProviderRepository.findByProviderId(providerId).orElseThrow();
+        var user = userProvider.getUser();
 
+        userProviderRepository.delete(userProvider);
+
+        if (userProviderRepository.countByUserId(user.getId()) < 1) {
+            userRepository.delete(user);
+        }
+    }
 }
