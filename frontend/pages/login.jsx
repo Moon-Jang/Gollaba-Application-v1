@@ -7,11 +7,14 @@ import TextField from "@mui/material/TextField"
 import Container from "@mui/material/Container"
 import Box from "@mui/material/Box"
 import Link from "../src/Link"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { createTheme, rgbToHex, ThemeProvider } from "@mui/material/styles"
 import axios from "axios"
 import { useCookies } from "react-cookie"
 import CommonValidator from "../utils/CommonValidator"
 import LogoImage from "../public/Gollaba_logo_nuki_v1.png"
+import FacebookIcon from "@mui/icons-material/Facebook"
+import socialBtn from "../components/login/btn"
+import { Typography } from "@mui/material"
 
 const theme = createTheme({
     palette: {
@@ -98,7 +101,7 @@ export default function Login() {
                         </Link>
                     </div>
 
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
+                    <Box component="form" noValidate sx={{ mt: 2 }}>
                         <TextField
                             margin="normal"
                             required
@@ -108,29 +111,72 @@ export default function Login() {
                             name="id"
                             variant="standard"
                             helperText={helperTextId}
-                            error={isErrorId ? true : false}
-                            onChange={handleChangeId}
                             autoFocus
                         />
-                        <TextField
-                            required
-                            fullWidth
-                            name="password"
-                            variant="standard"
-                            label="비밀번호"
-                            type="password"
-                            id="password"
-                            helperText={helperTextPassword}
-                            error={isErrorPassword ? true : false}
-                            onChange={handleChangePassword}
-                        />
+
+                        <Link
+                            href={
+                                "https://dev.api.gollaba.net/oauth2/authorize/facebook?redirect_uri=http://localhost:3000/temp/oauth-callback"
+                            }
+                            underline="none"
+                        >
+                            <Button
+                                color="primary"
+                                variant="outlined"
+                                fullWidth
+                                style={{ verticalAlign: "middle", color: "white" }}
+                                sx={{
+                                    mt: 8,
+                                    mb: 1,
+                                    boxShadow: 4,
+                                    backgroundColor: "#3B5998",
+                                    height: 50,
+                                    ":hover": { bgcolor: "#3B5998", opacity: 0.8 },
+                                }}
+                            >
+                                <Box sx={{ display: "flex", flex: 1 }}>
+                                    <FacebookIcon />
+                                </Box>
+                                <Box sx={{ display: "flex", flex: 8 }}>
+                                    <Typography color="white"> Login With Facebook</Typography>
+                                </Box>
+                            </Button>
+                        </Link>
+                        <Link
+                            href={
+                                "https://dev.api.gollaba.net/oauth2/authorize/kakao?redirect_uri=http://localhost:3000/temp/oauth-callback"
+                            }
+                            underline="none"
+                        >
+                            <Button
+                                color="primary"
+                                variant="outlined"
+                                fullWidth
+                                style={{ verticalAlign: "middle", color: "white" }}
+                                sx={{
+                                    mt: 1,
+                                    mb: 1,
+                                    boxShadow: 4,
+                                    backgroundColor: "#FEE500",
+                                    height: 50,
+                                    ":hover": { bgcolor: "#FEE500", opacity: 0.8 },
+                                }}
+                            >
+                                <Box sx={{ display: "flex", flex: 1 }}>
+                                    <FacebookIcon />
+                                </Box>
+                                <Box sx={{ display: "flex", flex: 8 }}>
+                                    <Typography color="black"> Login With Kakao</Typography>
+                                </Box>
+                            </Button>
+                        </Link>
                         <Button
                             color="primary"
                             type="submit"
                             variant="outlined"
                             fullWidth
                             style={{ verticalAlign: "middle", color: "#000000" }}
-                            sx={{ mt: 8, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
+                            sx={{ mt: 1, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
                         >
                             Login
                         </Button>
