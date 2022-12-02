@@ -23,7 +23,7 @@ export default function Accounts() {
                         }}
                     >
                         <div className="header">
-                            <ButtonAppBar titletext={"Accounts"} />
+                            <ButtonAppBar titletext={"내 계정"} />
                         </div>
 
                         <div className="body">

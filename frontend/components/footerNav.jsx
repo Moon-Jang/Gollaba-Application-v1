@@ -9,6 +9,7 @@ import PollOutlinedIcon from "@mui/icons-material/PollOutlined"
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined"
+import HomeIcon from "@mui/icons-material/Home"
 import { useRouter } from "next/router"
 import { useCookies } from "react-cookie"
 import jwt from "jsonwebtoken"
@@ -23,6 +24,20 @@ export default function FooterNav() {
         setToken(jwt.decode(cookies.accessToken))
     }, [cookies])
 
+    /*
+            <BottomNavigationAction
+                    label="Account"
+                    onClick={() => {
+                        if (token == null) {
+                            router.push("/login")
+                        } else {
+                            router.push("/account")
+                        }
+                    }}
+                    icon={<AccountCircleOutlinedIcon />}
+                />
+    */
+
     return (
         <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
             <BottomNavigation
@@ -35,36 +50,25 @@ export default function FooterNav() {
                 }}
             >
                 <BottomNavigationAction
-                    label="Polls"
+                    label="홈"
                     onClick={() => {
                         router.push("/")
                     }}
-                    icon={<PollOutlinedIcon />}
+                    icon={<HomeIcon />}
                 />
                 <BottomNavigationAction
-                    label="New"
+                    label="새 투표"
                     onClick={() => {
                         router.push("/new")
                     }}
                     icon={<AddOutlinedIcon />}
                 />
                 <BottomNavigationAction
-                    label="Voting"
+                    label="My 투표"
                     onClick={() => {
                         router.push("/voting")
                     }}
-                    icon={<ThumbUpOutlinedIcon />}
-                />
-                <BottomNavigationAction
-                    label="Account"
-                    onClick={() => {
-                        if (token == null) {
-                            router.push("/login")
-                        } else {
-                            router.push("/account")
-                        }
-                    }}
-                    icon={<AccountCircleOutlinedIcon />}
+                    icon={<PollOutlinedIcon />}
                 />
             </BottomNavigation>
         </Paper>
