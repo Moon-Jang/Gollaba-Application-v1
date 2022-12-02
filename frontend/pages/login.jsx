@@ -42,11 +42,12 @@ export default function Login() {
                 <CssBaseline />
                 <Box
                     sx={{
-                        marginTop: 5,
+                        marginTop: 0,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
+                        height: "100vh",
                     }}
                 >
                     <div className="Header">
@@ -58,7 +59,7 @@ export default function Login() {
                         </Link>
                     </div>
 
-                    <Box noValidate sx={{ mt: 2 }}>
+                    <Box noValidate>
                         <Link
                             href={`https://dev.api.gollaba.net/oauth2/authorize/facebook?redirect_uri=${host}/temp/oauth-callback`}
                             underline="none"
@@ -159,7 +160,13 @@ export default function Login() {
                             </Button>
                         </Link>
                     </Box>
-                    <Box sx={{ mt: 32 }}>Copyright 2022, All rights reserved.</Box>
+                    <Box
+                        sx={{ display: "flex", position: "fixed", bottom: 8, width: "100%", justifyContent: "center" }}
+                    >
+                        <Typography color="#737881" sx={{ fontWeight: "normal", fontSize: 12 }}>
+                            Copyright 2023. Gollaba All rights reserverd
+                        </Typography>
+                    </Box>
                 </Box>
             </Container>
         </ThemeProvider>
