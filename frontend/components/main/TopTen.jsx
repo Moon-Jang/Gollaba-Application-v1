@@ -4,7 +4,7 @@ import { Checkbox, TextField } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { makeStyles } from "@mui/styles"
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"
-import OngoingPollsPoll from "./ongoingPollsPoll"
+import TopTenPoll from "./TopTenPoll"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 /*
@@ -27,16 +27,16 @@ const newPageStyles = makeStyles((theme) => ({
 }));
 */
 
-export default function OngoingPolls(props) {
+export default function TopTen(props) {
     // const classes = newPageStyles();
     const PollsMap = () => {
         const data = props.data
-        return data.map(el => <OngoingPollsPoll data={el} />)
+        return data.map(el => <TopTenPoll data={el} />)
     }
     return (
-        <Box>
-            <Box className="Title" sx={{ pl: 0.3 }}>
-                실시간 최신 투표
+        <Box sx={{ mt: 0.2, mb: 3 }}>
+            <Box className="Title" sx={{ pl: 0.3, mt: 0.3 }}>
+                Top 10 투표
             </Box>
             <Box
                 className="outerContainer"

@@ -17,7 +17,7 @@ import theme from "../src/theme"
 import ApiGateway from "../apis/ApiGateway"
 
 import OngoingPolls from "../components/main/ongoingPolls"
-import NewResults from "../components/main/newResults"
+import TopTen from "../components/main/TopTen"
 
 const PollTheme = createTheme(theme)
 
@@ -67,8 +67,8 @@ export default function Main() {
                             maxHeight: "90vh",
                         }}
                     >
+                        <TopTen data={polls} menuTitle={"Ongoing Polls"} />
                         <OngoingPolls data={polls} menuTitle={"New Results!"} />
-                        <NewResults data={polls} menuTitle={"Ongoing Polls"} />
                     </Box>
 
                     <div className="footer">
