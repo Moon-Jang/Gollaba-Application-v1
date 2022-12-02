@@ -62,6 +62,8 @@ export default function Voting() {
         }
     }, [inView, isLoading])
 
+    console.log("polls", polls)
+
     if (polls !== undefined)
         return (
             <ThemeProvider theme={theme}>

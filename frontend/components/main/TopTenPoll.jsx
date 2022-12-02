@@ -16,7 +16,7 @@ export default function TopTenPoll(props) {
         const data = props.data.options
         return data.map(el => <Options data={el} />)
     }
-    console.log(props.data)
+
     const date = new Date(props.data.endedAt)
     const strDate = date
         .toISOString()
@@ -24,12 +24,6 @@ export default function TopTenPoll(props) {
         .split("-")
 
     const today = new Date()
-
-    if (today > date) {
-        console.log("today >>")
-    } else if (today < date) {
-        console.log("date >> ")
-    } else console.log("    ????")
 
     return (
         <Box
