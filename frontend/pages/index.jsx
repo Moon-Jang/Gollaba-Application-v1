@@ -55,7 +55,7 @@ export default function Main() {
                     }}
                 >
                     <div className="header">
-                        <ButtonAppBar titletext={"Voting"} />
+                        <ButtonAppBar titletext={""} />
                     </div>
                     <Box
                         className="body"

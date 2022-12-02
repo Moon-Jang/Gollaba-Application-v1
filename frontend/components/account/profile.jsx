@@ -6,11 +6,15 @@ import EditIcon from "@mui/icons-material/Edit"
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline"
 import ApiGateway from "../../apis/ApiGateway"
 import ImageIcon from "@mui/icons-material/Image"
+import jwt_decode from "jwt-decode"
 
 export default function Profile() {
     // 선언부
-    const [cookies, setCookies, removeCookies] = useCookies([])
-    const [token, setToken] = useState(null)
+    //const [cookies, setCookies, removeCookies] = useCookies([])
+    //const [token, setToken] = useState(null)
+    const token = useRef("")
+    const userId = useRef("")
+
     const [data, setData] = useState(null)
     const [nickName, setNickName] = useState("")
     const [visible, setVisible] = useState(false)
@@ -18,9 +22,10 @@ export default function Profile() {
     const PROFILE_BASIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
 
     // UserInfo API통해 페이지에 가져옴
+    /*
     const showUser = async () => {
         console.log("token : ", token)
-        if (!token) return
+        if (!token.current) return
 
         const userInfo = await ApiGateway.showUser(token.id, cookies.accessToken)
         setData(userInfo)
@@ -32,9 +37,25 @@ export default function Profile() {
     useEffect(() => {
         showUser()
     }, [token])
+    */
+
+    const showUser = async () => {
+        if (!token.current || !userId.current) return
+
+        const userInfo = await ApiGateway.showUser(userId.current, token.current)
+        setData(userInfo)
+        console.log("showUser :", userInfo)
+    }
+    useEffect(() => {
+        token.current = localStorage.getItem("accessToken")
+        console.log("asdasd", token.current)
+        userId.current = jwt_decode(token.current).id
+    }, [])
+    useEffect(() => {
+        showUser()
+    }, [token])
 
     //Profile, Background Image 변경
-
     const profileImageSrc = () => {
         if (data?.profileImageUrl == null) return PROFILE_BASIC
         return data?.profileImageUrl
@@ -54,7 +75,7 @@ export default function Profile() {
 
     // formData로 이미지 파일 업데이트 하기
     const changeProfile = async e => {
-        if (!token) return
+        if (!token.current) return
 
         const photoToAdd = e.target.files[0]
         console.log("photoToAdd : ", photoToAdd)
@@ -62,19 +83,19 @@ export default function Profile() {
         formData.append("profileImage", photoToAdd)
         formData.append("updateType", "PROFILE_IMAGE")
         for (const keyValue of formData) console.log("keyValue : ", keyValue)
-        const profileChange = await ApiGateway.updateForm(formData, cookies.accessToken)
+        const profileChange = await ApiGateway.updateForm(formData, token.current)
         setData(profileChange)
         console.log("profileChange : ", profileChange)
     }
     const changeBackground = async e => {
-        if (!token) return
+        if (!token.current) return
         const photoToAdd = e.target.files[0]
         console.log("photoToAdd : ", photoToAdd)
         const formData = new FormData()
         formData.append("backgroundImage", photoToAdd)
         formData.append("updateType", "BACKGROUND_IMAGE")
         for (const keyValue of formData) console.log("keyValue : ", keyValue)
-        const backgroundChange = await ApiGateway.updateForm(formData, cookies.accessToken)
+        const backgroundChange = await ApiGateway.updateForm(formData, token.current)
         setData(backgroundChange)
         console.log("backgroundChange : ", backgroundChange)
         location.reload()
@@ -85,12 +106,15 @@ export default function Profile() {
         setNickName(e.target.value)
     }
     const changeNickname = async () => {
-        if (!token) return
+        console.log("a")
+        console.log("토큰", token.current)
+
+        if (!token.current) return
 
         const formData = new FormData()
         formData.append("nickName", nickName)
         formData.append("updateType", "NICKNAME")
-        const nickChange = await ApiGateway.updateForm(formData, cookies.accessToken)
+        const nickChange = await ApiGateway.updateForm(formData, token.current)
         setData(nickChange)
         console.log("nickChange :", nickChange)
         for (const keyValue of formData) {
@@ -114,8 +138,8 @@ export default function Profile() {
         // position: "relative",
     }
     const imageStyle = {
-        width: 390,
         height: 200,
+        width: 390,
         // objectFit: 'none',
         objectPosition: "center",
         overflow: "hidden",
@@ -125,7 +149,7 @@ export default function Profile() {
         position: "relative",
         zIndex: 1,
     }
-
+    console.log("aa", token.current)
     return (
         <>
             <Box
@@ -171,8 +195,8 @@ export default function Profile() {
                             src={profileImageSrc()}
                             id="profileImage"
                             sx={{
-                                width: 215,
-                                height: 215,
+                                width: 150,
+                                height: 150,
                                 objectFit: "cover",
                                 position: "absolute",
                                 marginTop: 23,
@@ -188,7 +212,7 @@ export default function Profile() {
                             onChange={e => changeProfile(e)}
                             ref={photoInput}
                         />
-                        <ImageIcon style={{ position: "absolute", top: 320, right: 150, zIndex: 10, fontSize: 40 }} />
+                        <ImageIcon style={{ position: "absolute", top: 280, right: 120, zIndex: 10, fontSize: 40 }} />
                     </div>
                 </div>
 
