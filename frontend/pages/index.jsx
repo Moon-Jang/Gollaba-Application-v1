@@ -18,6 +18,7 @@ import ApiGateway from "../apis/ApiGateway"
 
 import OngoingPolls from "../components/main/ongoingPolls"
 import TopTen from "../components/main/TopTen"
+import WholeView from "../components/main/wholeView"
 
 const PollTheme = createTheme(theme)
 
@@ -69,6 +70,7 @@ export default function Main() {
                     >
                         <TopTen data={polls} menuTitle={"Ongoing Polls"} />
                         <OngoingPolls data={polls} menuTitle={"New Results!"} />
+                        <WholeView data={polls} />
                     </Box>
 
                     <div className="footer">
