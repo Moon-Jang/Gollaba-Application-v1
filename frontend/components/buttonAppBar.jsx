@@ -17,15 +17,14 @@ import { Avatar } from "@mui/material"
 import jwt_decode from "jwt-decode"
 
 export default function ButtonAppBar(title) {
+    const router = useRouter()
     const [data, setData] = useState()
     //const [cookies, setCookies] = useCookies()
     //const [token, setToken] = useState(null)
     //const token = localStorage.getItem("accessToken")
     let token
     let userId
-
     let imgUrl
-    const router = useRouter()
 
     const showUser = async () => {
         if (!token || !userId) return
@@ -50,7 +49,9 @@ export default function ButtonAppBar(title) {
     const IconButtonOnClick = () => {
         router.push("/account")
     }
-
+    const LoginButtonOnClick = () => {
+        router.push("/login")
+    }
     console.log("데이터", data)
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -65,7 +66,7 @@ export default function ButtonAppBar(title) {
                             <Avatar src={imgUrl} sx={{ width: 40, height: 40, border: "5px soild black" }} />
                         </Box>
                     ) : (
-                        "로그인"
+                        <Typography onClick={LoginButtonOnClick}>로그인</Typography>
                     )}
                 </Toolbar>
             </AppBar>
