@@ -17,40 +17,42 @@ import { Avatar } from "@mui/material"
 import jwt_decode from "jwt-decode"
 
 export default function ButtonAppBar(title) {
+    const router = useRouter()
     const [data, setData] = useState()
     //const [cookies, setCookies] = useCookies()
     //const [token, setToken] = useState(null)
     //const token = localStorage.getItem("accessToken")
-    let token
-    let userId
-
-    let imgUrl
-    const router = useRouter()
+    const token = useRef(null)
+    const userId = useRef(null)
+    const imgUrl = useRef(null)
 
     const showUser = async () => {
-        if (!token || !userId) return
+        if (!token.current || !userId.current) return
 
-        const userInfo = await ApiGateway.showUser(userId, token)
+        const userInfo = await ApiGateway.showUser(userId.current, token.current)
         setData(userInfo)
         console.log("showUser :", userInfo)
     }
 
     useEffect(() => {
-        token = localStorage.getItem("accessToken")
-        userId = jwt_decode(token).id
+        token.current = localStorage.getItem("accessToken")
+        if (token.current === null) return
+        userId.current = jwt_decode(token.current).id
     }, [])
     useEffect(() => {
         showUser()
-    }, [token])
+    }, [token.current])
 
     if (data !== undefined && data.profileImageUrl !== "") {
-        imgUrl = data.profileImageUrl
+        imgUrl.current = data.profileImageUrl
     }
 
     const IconButtonOnClick = () => {
         router.push("/account")
     }
-
+    const LoginButtonOnClick = () => {
+        router.push("/login")
+    }
     console.log("데이터", data)
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -62,10 +64,10 @@ export default function ButtonAppBar(title) {
                     </Typography>
                     {!data?.error ? (
                         <Box className="IconButton" onClick={IconButtonOnClick}>
-                            <Avatar src={imgUrl} sx={{ width: 40, height: 40, border: "5px soild black" }} />
+                            <Avatar src={imgUrl.current} sx={{ width: 40, height: 40, border: "5px soild black" }} />
                         </Box>
                     ) : (
-                        "로그인"
+                        <Typography onClick={LoginButtonOnClick}>로그인</Typography>
                     )}
                 </Toolbar>
             </AppBar>
