@@ -50,7 +50,7 @@ export default function WholeView() {
         return (
             <Box sx={{ mt: 3, mb: 3 }}>
                 <Box className="Title" sx={{ pl: 0.3, mt: 0.3 }}>
-                    전체 투표
+                    📝 전체 투표
                 </Box>
 
                 <Box display={"flex"} flexDirection={"column"} flex={"1"}>

@@ -36,7 +36,7 @@ export default function TopTen(props) {
     return (
         <Box sx={{ mt: 0.2, mb: 3 }}>
             <Box className="Title" sx={{ pl: 0.3, mt: 0.3 }}>
-                Top 10 투표
+                🏆 Top 10
             </Box>
             <Box
                 className="outerContainer"
