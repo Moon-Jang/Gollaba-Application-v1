@@ -1,6 +1,6 @@
 import * as React from "react"
 import Box from "@mui/material/Box"
-import { Checkbox, TextField } from "@mui/material"
+import { Checkbox, TextField, Typography } from "@mui/material"
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"
 import SettingsIcon from "@mui/icons-material/Settings"
 import ModeEditIcon from "@mui/icons-material/ModeEdit"
@@ -12,10 +12,17 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function Description(props) {
     const data = props.data
     const name = data.creatorName
-
-    console.log("이름", name)
-
     let token
+
+    const date = new Date(props.data.endedAt)
+    console.log("응애", props.data.endedAt)
+    /*
+    const strDate = date
+        .toISOString()
+        .substring(0, 10)
+        .split("-")
+*/
+    const today = new Date()
 
     const router = useRouter()
     const [cookies, setCookies] = useCookies()
@@ -32,18 +39,20 @@ export default function Description(props) {
             className="outerContainer"
             sx={{
                 maxWidth: "100%",
-                height: "180px",
-                // minHeight: 180,
-                mt: 1.5,
+                height: "160px",
+                mt: 1,
                 mb: 2,
                 borderRadius: "5px",
                 padding: 0.5,
                 boxShadow: 2,
                 letterSpacing: 1.2,
                 display: "flex",
-                //flex: 1,
                 borderColor: "grey.500",
                 flexDirection: "column",
+                boxShadow: "0 0 5px 1px rgba(0,0,0,0.095)",
+                borderColor: "lightgray",
+                borderRadius: 2,
+                flexShrink: 0,
             }}
         >
             <Box
@@ -84,8 +93,8 @@ export default function Description(props) {
                         alignItems: "center",
                     }}
                 >
-                    <AccountCircleIcon fontSize="12" sx={{ mr: 0.2 }} />
-                    {name !== undefined && (name.length <= 5 ? name : name.substring(0, 5) + "...")}
+                    <AccountCircleIcon sx={{ fontSize: 10, mr: 0.2 }} />
+                    {name !== undefined && (name.length <= 4 ? name : name.substring(0, 4) + "...")}
                 </Box>
             </Box>
             <Box
@@ -101,7 +110,7 @@ export default function Description(props) {
                     fontSize: 30,
                 }}
             >
-                {data.title}
+                <Typography sx={{ fontSize: 23, letterSpacing: 0, pt: 2.8 }}>{data.title}</Typography>
             </Box>
 
             <Box
@@ -135,7 +144,7 @@ export default function Description(props) {
                     )}
                 </Box>
                 <Box sx={{ display: "flex", flex: 1, justifyContent: "right" }}>
-                    <SettingsIcon fontSize="large" sx={{ ml: 0.8, mb: 0.3 }} />
+                    <SettingsIcon sx={{ fontSize: 25, ml: 0.8, mb: 0.3, color: "gray" }} />
                 </Box>
             </Box>
         </Box>

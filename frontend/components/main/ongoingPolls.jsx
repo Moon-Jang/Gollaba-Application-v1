@@ -36,7 +36,7 @@ export default function OngoingPolls(props) {
     return (
         <Box>
             <Box className="Title" sx={{ pl: 0.3 }}>
-                실시간 최신 투표
+                🔥 Trending
             </Box>
             <Box
                 className="outerContainer"
