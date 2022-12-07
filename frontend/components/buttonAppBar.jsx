@@ -18,34 +18,14 @@ import jwt_decode from "jwt-decode"
 
 export default function ButtonAppBar(title) {
     const router = useRouter()
-    const [data, setData] = useState()
-    //const [cookies, setCookies] = useCookies()
-    //const [token, setToken] = useState(null)
-    //const token = localStorage.getItem("accessToken")
-    const token = useRef(null)
-    const userId = useRef(null)
-    const imgUrl = useRef(null)
+    const [userInfo, setUserInfo] = useState()
 
-    const showUser = async () => {
-        if (!token.current || !userId.current) return
+    useEffect(async () => {
+        const token = getToken();
+        const userInfo = await fetchUser(token);
 
-        const userInfo = await ApiGateway.showUser(userId.current, token.current)
-        setData(userInfo)
-        console.log("showUser :", userInfo)
-    }
-
-    useEffect(() => {
-        token.current = localStorage.getItem("accessToken")
-        if (token.current === null) return
-        userId.current = jwt_decode(token.current).id
+        setUserInfo(userInfo);
     }, [])
-    useEffect(() => {
-        showUser()
-    }, [token.current])
-
-    if (data !== undefined && data.profileImageUrl !== "") {
-        imgUrl.current = data.profileImageUrl
-    }
 
     const IconButtonOnClick = () => {
         router.push("/account")
@@ -53,7 +33,7 @@ export default function ButtonAppBar(title) {
     const LoginButtonOnClick = () => {
         router.push("/login")
     }
-    console.log("데이터", data)
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="fixed" color="default" sx={{ boxShadow: "none" }}>
@@ -62,9 +42,9 @@ export default function ButtonAppBar(title) {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         {title.titletext}
                     </Typography>
-                    {!data?.error ? (
+                    {userInfo ? (
                         <Box className="IconButton" onClick={IconButtonOnClick}>
-                            <Avatar src={imgUrl.current} sx={{ width: 40, height: 40, border: "5px soild black" }} />
+                            <Avatar src={userInfo.profileImageUrl} sx={{ width: 40, height: 40, border: "5px soild black" }} />
                         </Box>
                     ) : (
                         <Typography onClick={LoginButtonOnClick}>로그인</Typography>
@@ -73,4 +53,27 @@ export default function ButtonAppBar(title) {
             </AppBar>
         </Box>
     )
+}
+
+async function fetchUser(token) {
+    const { id } = jwt_decode(token);
+    const response = await ApiGateway.showUser(id, token)
+
+    if (response.error) return null
+
+    return response
+}
+
+function getToken() {
+    const token = localStorage.getItem("accessToken")
+    
+    if (token === null) return null
+    
+    const {exp} = jwt_decode(token);
+    const expiredDate = new Date(exp * 1000);
+    const now = new Date();
+
+    if (expiredDate < now) return null
+
+    return token;
 }
