@@ -1,13 +1,9 @@
 package kr.mj.gollaba.auth.dto;
 
-import kr.mj.gollaba.auth.entity.UserProvider;
 import kr.mj.gollaba.auth.types.ProviderType;
-import kr.mj.gollaba.user.entity.User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
-
-import static kr.mj.gollaba.user.type.UserRoleType.ROLE_USER;
 
 public class KakaoUserInfo implements OAuth2UserInfo {
 
@@ -55,27 +51,6 @@ public class KakaoUserInfo implements OAuth2UserInfo {
     @Override
     public ProviderType getProviderType() {
         return this.providerType;
-    }
-
-    @Override
-    public User toUserEntity() {
-        return User.builder()
-                .email(email)
-                .nickName(name)
-                .password(null)
-                .profileImageUrl(null)
-                .backgroundImageUrl(null)
-                .userRole(ROLE_USER)
-                .build();
-    }
-
-    @Override
-    public UserProvider toUserProviderEntity(User user) {
-        return UserProvider.builder()
-                .providerType(providerType)
-                .providerId(providerId)
-                .user(user)
-                .build();
     }
 
     private String valueToString(Object value) {
