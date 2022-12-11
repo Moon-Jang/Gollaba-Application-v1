@@ -2,6 +2,7 @@ package kr.mj.gollaba.config;
 
 import kr.mj.gollaba.auth.JwtAuthenticationEntryPoint;
 import kr.mj.gollaba.auth.JwtTokenFilter;
+import kr.mj.gollaba.auth.OAuth2AuthenticationFailureHandler;
 import kr.mj.gollaba.auth.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public static final String REFRESH_TOKEN_HEADER = "GA-Refresh-Token";
     private final AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     private final String[] permitAllList = {
             "/v1/signup",
@@ -70,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userService(new DefaultOAuth2UserService())
             .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureHandler(null);
+                .failureHandler(oAuth2AuthenticationFailureHandler);
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
