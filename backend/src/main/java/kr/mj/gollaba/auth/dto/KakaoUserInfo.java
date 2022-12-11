@@ -52,7 +52,7 @@ public class KakaoUserInfo implements OAuth2UserInfo {
     public ProviderType getProviderType() {
         return this.providerType;
     }
-
+    
     private String valueToString(Object value) {
         if (value == null) return null;
 
