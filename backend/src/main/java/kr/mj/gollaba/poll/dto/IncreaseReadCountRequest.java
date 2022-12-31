@@ -18,7 +18,6 @@ public class IncreaseReadCountRequest implements BaseApiRequest {
 
     private Long pollId;
 
-    @ApiModelProperty(hidden = true)
     private String ipAddress;
 
     @Override
