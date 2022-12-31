@@ -24,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.awt.print.Pageable;
+
 @RestController
 @RequestMapping(Const.ROOT_URL)
 @Api(tags = "Poll")
@@ -68,6 +70,22 @@ public class PollController {
                 .body(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiOperation(value = "(My 투표) 투표 조회 by userId")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = FindAllPollResponse.class))),
+        @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = ErrorAPIResponse.class)))})
+    @GetMapping(path = "/polls/me")
+    public ResponseEntity<FindAllPollResponse> findAllByUserId(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails){
+        pollService.findAllByUserId(principalDetails.getUser().getId());
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(null);
+    }
+
     @ParseHashId
     @ApiOperation(value = "투표 상세 조회")
     @ApiResponses(value = {
@@ -77,9 +95,11 @@ public class PollController {
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @GetMapping(path = "/polls/{pollId}")
     public ResponseEntity<FindPollResponse> find(@ApiParam(type = "string") @PathVariable Object pollId) {
+        var ipAddress = HttpRequestUtils.getClientIpAddress();
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(pollService.find((Long) pollId));
+                .body(pollService.find((Long) pollId, ipAddress));
     }
 
 
@@ -120,6 +140,28 @@ public class PollController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(true);
+    }
+
+    @ParseHashId
+    @ApiOperation(value = "투표 조회수 증가")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = Boolean.class))),
+        @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = ErrorAPIResponse.class)))})
+    @PostMapping(path = "/polls/{pollId}/read-count", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> vote(@PathVariable Object pollId) {
+        var request = new IncreaseReadCountRequest();
+        request.setPollId((Long) pollId);
+        request.setIpAddress(HttpRequestUtils.getClientIpAddress());
+
+        request.validate();
+
+        pollService.increaseReadCount(request);
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(true);
     }
 
 }

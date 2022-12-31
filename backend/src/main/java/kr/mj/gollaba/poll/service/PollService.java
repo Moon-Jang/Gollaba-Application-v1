@@ -9,17 +9,19 @@ import kr.mj.gollaba.favorites.entity.Favorites;
 import kr.mj.gollaba.favorites.repository.FavoritesQueryRepository;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.entity.Poll;
+import kr.mj.gollaba.poll.entity.PollView;
 import kr.mj.gollaba.poll.entity.Voter;
-import kr.mj.gollaba.poll.repository.PollQueryRepository;
-import kr.mj.gollaba.poll.repository.PollRepository;
+import kr.mj.gollaba.poll.entity.redis.PollReadCount;
+import kr.mj.gollaba.poll.entity.redis.PollReadRecord;
+import kr.mj.gollaba.poll.repository.*;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,9 @@ public class PollService {
     private final FavoritesQueryRepository favoritesQueryRepository;
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
+    private final PollViewRepository pollViewRepository;
+    private final PollReadCountRepository pollReadCountRepository;
+    private final PollReadRecordRepository pollReadRecordRepository;
     private final S3UploadService s3UploadService;
     private final CryptUtils cryptUtils;
     private final static String ANONYMOUS_NAME = "익명";
@@ -85,13 +90,12 @@ public class PollService {
         return new FindAllPollResponse(totalCount, polls);
     }
 
-    public FindPollResponse find(Long pollId) {
-        Poll poll = pollQueryRepository.findById(pollId)
+    @Transactional
+    public FindPollResponse find(Long pollId, String ipAddress) {
+        var poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
 
-        if (poll == null) {
-            throw new GollabaException(GollabaErrorCode.NOT_EXIST_POLL);
-        }
+        pollViewRepository.save(PollView.of(poll, ipAddress));
 
         return new FindPollResponse(poll);
     }
@@ -156,6 +160,32 @@ public class PollService {
         pollRepository.save(poll);
     }
 
+    public void increaseReadCount(IncreaseReadCountRequest request) {
+        // validate
+        var record = pollReadRecordRepository.findById(request.getPollId())
+            .orElseGet(() ->
+                pollReadRecordRepository.save(PollReadRecord.of(request.getPollId()))
+            );
+
+        if (record.isAlreadyRead(request.getIpAddress())) return;
+
+        // persist
+        record.add(request.getIpAddress());
+        pollReadRecordRepository.save(record);
+
+        var pollReadCount = pollReadCountRepository.findById(request.getPollId())
+            .orElseGet(() -> {
+                var poll = pollRepository.findById(request.getPollId()).orElseThrow();
+                return pollReadCountRepository.save(
+                    PollReadCount.of(
+                        request.getPollId(),
+                        poll.getReadCount()
+                    ));
+            });
+        pollReadCount.addCount();
+        pollReadCountRepository.save(pollReadCount);
+    }
+
     private String generateAnonymousName(Poll poll) {
         final int count = (int) poll.getOptions().stream()
                 .flatMap(el -> el.getVoters().stream())
@@ -189,5 +219,8 @@ public class PollService {
         String fileName = s3UploadService.generateFileName(pollId, pollImage.getContentType());
         String imageUrl = s3UploadService.upload(POLL_IMAGE_S3_PATH, fileName, pollImage);
         return imageUrl;
+    }
+    public void findAllByUserId(Long userId) {
+        var polls = pollQueryRepository.findByUserId(userId);
     }
 }

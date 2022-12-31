@@ -27,7 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-    // database
+    // rdb
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'mysql:mysql-connector-java'
     runtimeOnly 'com.h2database:h2'
@@ -62,6 +62,9 @@ dependencies {
 
     //oauth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

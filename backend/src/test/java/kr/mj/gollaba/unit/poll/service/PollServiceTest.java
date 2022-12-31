@@ -5,16 +5,16 @@ import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.dto.*;
-import kr.mj.gollaba.poll.entity.Option;
-import kr.mj.gollaba.poll.entity.Poll;
-import kr.mj.gollaba.poll.entity.Voter;
-import kr.mj.gollaba.poll.repository.PollQueryRepository;
-import kr.mj.gollaba.poll.repository.PollRepository;
+import kr.mj.gollaba.poll.entity.*;
+import kr.mj.gollaba.poll.entity.redis.PollReadCount;
+import kr.mj.gollaba.poll.entity.redis.PollReadRecord;
+import kr.mj.gollaba.poll.repository.*;
 import kr.mj.gollaba.poll.service.PollService;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.common.ServiceTest;
 import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
+import kr.mj.gollaba.unit.poll.factory.PollViewFactory;
 import kr.mj.gollaba.unit.poll.factory.VoterFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
@@ -36,12 +36,11 @@ import java.util.stream.Collectors;
 
 import static kr.mj.gollaba.poll.type.PollingResponseType.SINGLE;
 import static kr.mj.gollaba.unit.poll.factory.PollFactory.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static kr.mj.gollaba.unit.poll.factory.PollViewFactory.TEST_IP_ADDRESS;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class PollServiceTest extends ServiceTest {
 
@@ -55,7 +54,16 @@ public class PollServiceTest extends ServiceTest {
     private PollRepository pollRepository;
 
     @Mock
+    private PollViewRepository pollViewRepository;
+
+    @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PollReadCountRepository pollReadCountRepository;
+
+    @Mock
+    private PollReadRecordRepository pollReadRecordRepository;
 
     @Mock
     private S3UploadService s3UploadService;
@@ -212,19 +220,22 @@ public class PollServiceTest extends ServiceTest {
     @Nested
     class find {
 
-        @DisplayName("투표 id를 통해 검색 후 결과를 리턴한다.")
+        @DisplayName("투표 id를 통해 검색 후 결과를 리턴한다.(조회 데이터도 추가)")
         @Test
         void return_search_result() {
             //given
             Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
             given(pollQueryRepository.findById(any(Long.class)))
-                    .willReturn(Optional.of(poll));
+                .willReturn(Optional.of(poll));
+            given(pollViewRepository.save(any(PollView.class)))
+                .willReturn(PollViewFactory.create(poll));
 
             //when
-            FindPollResponse result = pollService.find(poll.getId());
+            FindPollResponse result = pollService.find(poll.getId(), TEST_IP_ADDRESS);
 
             //then
             verify(pollQueryRepository, times(1)).findById(eq(poll.getId()));
+            verify(pollViewRepository, times(1)).save(any(PollView.class));
             assertThat(result.getPollId()).isEqualTo(poll.getId());
         }
     }
@@ -389,6 +400,58 @@ public class PollServiceTest extends ServiceTest {
 
                 verify(pollQueryRepository, times(1)).findById(eq(poll.getId()));
             }
+        }
+    }
+
+    @DisplayName("increaseReadCount 메서드는")
+    @Nested
+    class increaseReadCount {
+
+        @DisplayName("성공 케이스")
+        @Test
+        void success() {
+            //given
+            var request = new IncreaseReadCountRequest();
+            request.setPollId(TEST_ID);
+            request.setIpAddress(TEST_IP_ADDRESS);
+            var record = PollReadRecord.of(TEST_ID);
+            var pollReadCount = PollReadCount.of(TEST_ID, 0);
+            given(pollReadRecordRepository.findById(eq(TEST_ID)))
+                .willReturn(Optional.of(record));
+            given(pollReadCountRepository.findById(eq(TEST_ID)))
+                .willReturn(Optional.of(pollReadCount));
+
+            //when
+            var throwable = catchThrowable(() -> {
+                pollService.increaseReadCount(request);
+            });
+
+            //then
+            assertThat(throwable).isNull();
+        }
+
+        @DisplayName("이미 읽은 아이피면 패스")
+        @Test
+        void when_already_read_ip_then_pass() {
+            //given
+            var request = new IncreaseReadCountRequest();
+            request.setPollId(TEST_ID);
+            request.setIpAddress(TEST_IP_ADDRESS);
+            var mockRecord = mock(PollReadRecord.class);
+            given(pollReadRecordRepository.findById(eq(TEST_ID)))
+                .willReturn(Optional.of(mockRecord));
+            given(mockRecord.isAlreadyRead(eq(TEST_IP_ADDRESS)))
+                .willReturn(true);
+
+            //when
+            var throwable = catchThrowable(() -> {
+                pollService.increaseReadCount(request);
+            });
+
+            //then
+            assertThat(throwable).isNull();
+
+            verify(pollReadRecordRepository, times(0)).save(any());
         }
     }
 }

@@ -19,6 +19,8 @@ public class PollFactory {
     public static final PollingResponseType TEST_RESPONSE_TYPE = PollingResponseType.SINGLE;
     public static final Boolean TEST_IS_BALLOT = false;
     public static final LocalDateTime TEST_ENDED_AT = LocalDateTime.now().plusDays(7L);
+    public static final String TEST_IMAGE_URL = "TEST_IMAGE_URL";
+    public static final Integer TEST_READ_COUNT = 0;
 
     public static List<Poll> createList() {
         List<Poll> polls = new ArrayList<>();
@@ -30,6 +32,8 @@ public class PollFactory {
                     .responseType(TEST_RESPONSE_TYPE)
                     .isBallot(TEST_IS_BALLOT)
                     .endedAt(TEST_ENDED_AT)
+                    .pollImageUrl(TEST_IMAGE_URL)
+                    .readCount(TEST_READ_COUNT)
                     .build();
 
             OptionFactory.createList()
@@ -49,6 +53,8 @@ public class PollFactory {
                 .responseType(TEST_RESPONSE_TYPE)
                 .isBallot(TEST_IS_BALLOT)
                 .endedAt(TEST_ENDED_AT)
+                .pollImageUrl(TEST_IMAGE_URL)
+                .readCount(TEST_READ_COUNT)
                 .build();
 
         poll.registerCreator(user);
@@ -66,6 +72,8 @@ public class PollFactory {
                 .responseType(TEST_RESPONSE_TYPE)
                 .isBallot(TEST_IS_BALLOT)
                 .endedAt(TEST_ENDED_AT)
+                .pollImageUrl(TEST_IMAGE_URL)
+                .readCount(TEST_READ_COUNT)
                 .build();
 
         poll.registerCreator(user);
@@ -83,6 +91,8 @@ public class PollFactory {
                 .responseType(TEST_RESPONSE_TYPE)
                 .isBallot(true)
                 .endedAt(TEST_ENDED_AT)
+                .pollImageUrl(TEST_IMAGE_URL)
+                .readCount(TEST_READ_COUNT)
                 .build();
 
         poll.registerCreator(user);

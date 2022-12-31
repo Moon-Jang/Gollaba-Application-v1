@@ -63,7 +63,7 @@ public class UserController {
 	@GetMapping(path = "/users/{userId}")
 	public ResponseEntity<FindUserResponse> find(@PathVariable Long userId, @ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails) {
 		return ResponseEntity
-				.status(HttpStatus.CREATED)
+				.status(HttpStatus.OK)
 				.body(userService.find(userId, principalDetails.getUser()));
 	}
 

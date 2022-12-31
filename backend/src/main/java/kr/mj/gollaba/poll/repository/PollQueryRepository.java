@@ -8,6 +8,7 @@ import kr.mj.gollaba.poll.entity.Poll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,8 +33,6 @@ public class PollQueryRepository {
                         likeTitle(filter.getTitle()))
                 .fetchOne();
     }
-
-
 
     public List<Long> findIds(PollQueryFilter filter) {
         return jpaQueryFactory.select(poll.id)
@@ -60,6 +59,15 @@ public class PollQueryRepository {
                 .fetch();
     }
 
+    public List<Poll> findAllByPopularity(int size) {
+        return jpaQueryFactory.selectFrom(poll).distinct()
+            .join(poll.options, option)
+            .leftJoin(poll.user, user)
+            .leftJoin(option.voters, voter)
+            .limit(size)
+            .fetch();
+    }
+
     public Optional<Poll> findById(Long id) {
         Poll foundPoll = jpaQueryFactory.selectFrom(poll)
                 .join(poll.options, option).fetchJoin()
@@ -69,6 +77,17 @@ public class PollQueryRepository {
                 .fetchOne();
 
         return Optional.ofNullable(foundPoll);
+    }
+
+    public List<Poll> findByUserId(Long userId) {
+        if (userId == null) return new ArrayList<>();
+
+        return jpaQueryFactory.selectFrom(poll)
+            .join(poll.options, option).fetchJoin()
+            .leftJoin(poll.user, user).fetchJoin()
+            .leftJoin(option.voters, voter).fetchJoin()
+            .where(poll.user.id.eq(userId))
+            .fetch();
     }
 
 
