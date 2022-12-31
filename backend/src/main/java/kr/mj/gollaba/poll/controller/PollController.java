@@ -3,6 +3,7 @@ package kr.mj.gollaba.poll.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -149,8 +150,9 @@ public class PollController {
             schema = @Schema(implementation = Boolean.class))),
         @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
             schema = @Schema(implementation = ErrorAPIResponse.class)))})
-    @PostMapping(path = "/polls/{pollId}/read-count", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> vote(@PathVariable Object pollId) {
+    @PostMapping(path = "/polls/{pollId}/read-count")
+    public ResponseEntity<Boolean> increaseReadCount(@ApiParam(type = "string")
+                                                     @PathVariable Object pollId) {
         var request = new IncreaseReadCountRequest();
         request.setPollId((Long) pollId);
         request.setIpAddress(HttpRequestUtils.getClientIpAddress());
