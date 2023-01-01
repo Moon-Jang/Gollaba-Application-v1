@@ -1,6 +1,5 @@
 import { Avatar, Box, IconButton, TextField, Button, CssBaseline } from "@mui/material"
 import { useRef, useState, useEffect } from "react"
-import { useCookies } from "react-cookie"
 import jwt from "jsonwebtoken"
 import EditIcon from "@mui/icons-material/Edit"
 import DoneOutlineIcon from "@mui/icons-material/DoneOutline"
@@ -135,7 +134,6 @@ export default function Profile() {
         marginTop: 0,
         alignItems: "center",
         justifyContent: "center",
-        // position: "relative",
     }
     const imageStyle = {
         height: 200,
@@ -146,10 +144,9 @@ export default function Profile() {
         display: "flex",
         justifyContent: "center",
         // postion: "absolute",
-        position: "relative",
         zIndex: 1,
     }
-    console.log("aa", token.current)
+
     return (
         <>
             <Box
@@ -159,6 +156,7 @@ export default function Profile() {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
+                    position: "relative",
                 }}
             >
                 <div>
@@ -172,14 +170,13 @@ export default function Profile() {
                         <ImageIcon
                             style={{
                                 position: "absolute",
-                                top: 55,
-                                right: 32,
+                                top: 10,
+                                right: 10,
                                 zIndex: 4,
                                 fontSize: 40,
                                 color: "white",
                             }}
                         />
-                        <div style={{ postion: "relative" }}></div>
                         <input
                             type="file"
                             id="backgroundImageInput"
@@ -200,7 +197,7 @@ export default function Profile() {
                                 objectFit: "cover",
                                 position: "absolute",
                                 marginTop: 23,
-                                zIndex: 3,
+                                zIndex: 1,
                             }}
                             onClick={handleClick}
                         />
@@ -212,14 +209,16 @@ export default function Profile() {
                             onChange={e => changeProfile(e)}
                             ref={photoInput}
                         />
-                        <ImageIcon style={{ position: "absolute", top: 280, right: 120, zIndex: 10, fontSize: 40 }} />
+                        <ImageIcon
+                            style={{ position: "absolute", fontSize: 40, zIndex: 1, right: "120px", top: "230px" }}
+                        />
                     </div>
                 </div>
 
                 <div style={{ fontSize: "24px" }}>
                     <Box
                         sx={{
-                            marginTop: 16,
+                            marginTop: 10,
                             marginBottom: 5,
                             display: "flex",
                             flexDirection: "column",
@@ -227,7 +226,7 @@ export default function Profile() {
                             justifyContent: "center",
                         }}
                     >
-                        <span>
+                        <Box sx={{ pl: 4 }}>
                             {data?.nickName}
                             <IconButton
                                 aria-label="edit"
@@ -235,15 +234,15 @@ export default function Profile() {
                                     setVisible(!visible)
                                 }}
                             >
-                                <EditIcon style={{ margin: "0 0 3 10" }} />
+                                <EditIcon style={{ margin: "0 0 7 1" }} />
                             </IconButton>
-                        </span>
+                        </Box>
 
                         {visible && (
                             <div>
                                 <CssBaseline />
                                 <TextField
-                                    sx={{ mt: 1.5 }}
+                                    sx={{ mt: -2, width: 110 }}
                                     required
                                     margin="dense"
                                     name="nickNameChange"
@@ -255,7 +254,7 @@ export default function Profile() {
                                     onChange={onChangeNicknameHandler}
                                 />
                                 <IconButton aria-label="done" onClick={changeNickname}>
-                                    <DoneOutlineIcon style={{ margin: "7 0 0 0" }} />
+                                    <DoneOutlineIcon style={{ fontSize: 20 }} />
                                 </IconButton>
                             </div>
                         )}

@@ -10,7 +10,9 @@ import Router from "next/router"
 
 export default function TopTenPoll(props) {
     const handleClick = () => {
-        Router.push(`/polls/${props.data.pollId}`)
+        {
+            today < date ? Router.push(`/polls/${props.data.pollId}`) : Router.push(`/result/${props.data.pollId}`)
+        }
     }
     const OptionsMap = () => {
         const data = props.data.options

@@ -1,5 +1,4 @@
 import axios from "axios"
-import { useCookies } from "react-cookie"
 import jwt from "jsonwebtoken"
 import { useState } from "react"
 
@@ -54,7 +53,7 @@ const ApiTemplate = {
         const authorizationHeader = {
             headers: {
                 "Content-Type": "multipart/form-data",
-                "Authorization": `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
             },
         }
 

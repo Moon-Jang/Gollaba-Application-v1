@@ -20,6 +20,7 @@ const ApiGateway = {
     showUser: async (userId, token) => ApiTemplate.sendApi(MethodType.GET, `/v1/users/${userId}`, null, token),
     updateForm: async (formData, token) =>
         ApiTemplate.sendApiMultiPart(MethodType.POST, `v1/users/update`, formData, token),
+    readCount: async pollId => ApiTemplate.sendApiMultiPart(MethodType.POST, `/v1/polls/${pollId}/read-count`),
 }
 
 export default ApiGateway

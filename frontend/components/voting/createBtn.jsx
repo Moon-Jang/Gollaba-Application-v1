@@ -50,9 +50,7 @@ export default function CreateBtn(props) {
     return (
         <Box
             sx={{
-                background: "white",
-                position: "fixed",
-                width: "92vw",
+                maxWidth: "100%",
                 pr: 1,
                 mb: -1,
                 maxHeight: 1,

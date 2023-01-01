@@ -46,8 +46,9 @@ export default function Poll(props) {
     })
 
     const buttonClick = () => {
-        const pollId = data.pollId
-        router.push("/polls/" + pollId)
+        {
+            today < date ? router.push(`/polls/${props.data.pollId}`) : router.push(`/result/${props.data.pollId}`)
+        }
     }
 
     const extendClick = () => {
@@ -111,9 +112,7 @@ export default function Poll(props) {
                         display: "flex",
                         flex: 1,
                     }}
-                >
-                    {data.createdAt.substring(0, 10)}
-                </Box>
+                ></Box>
 
                 <Box
                     className="link"
@@ -128,9 +127,7 @@ export default function Poll(props) {
                         justifyContent: "right",
                         flex: 1,
                     }}
-                >
-                    Pending execution
-                </Box>
+                ></Box>
             </Box>
             <Box
                 className="outerContainer"
@@ -243,6 +240,7 @@ export default function Poll(props) {
                                 </Box>
                             </Box>
                         </Box>
+
                         <Box
                             className="Options"
                             sx={{
@@ -257,7 +255,6 @@ export default function Poll(props) {
                         >
                             {isExtend === false ? map1.slice(0, 2) : map1}
                         </Box>
-
                         <Box
                             className="Button"
                             sx={{
@@ -273,17 +270,26 @@ export default function Poll(props) {
                                 className="Extend"
                                 onClick={extendClick}
                                 sx={{
-                                    flex: 3,
+                                    flex: 2,
                                     display: "flex",
                                     ml: 2,
                                     justifyContent: "left",
                                     alignItems: "center",
-                                    fontSize: 14,
-                                    //transform: "rotate(180deg)",
+                                    fontSize: 13,
+
+                                    color: "rgb(192, 192, 192)",
+                                    display: "flex",
+                                    letterSpacing: 0,
                                 }}
                             >
-                                {map1.length >= 3 ? <ArrowDropDownCircleIcon sx={{ color: "#808080" }} /> : <></>}
+                                {map1.length >= 3 ? (
+                                    <ArrowDropDownCircleIcon sx={{ color: "#808080", mr: 0.3 }} />
+                                ) : (
+                                    <></>
+                                )}
+                                {strDate[1] + "월 " + strDate[2] + "일까지 · " + props.data.totalVoteCount + "명 참여"}
                             </Box>
+
                             <Box className="favorite" sx={{ display: "flex" }}>
                                 <IconButton onClick={favoriteClick}>
                                     {favoriteId ? (

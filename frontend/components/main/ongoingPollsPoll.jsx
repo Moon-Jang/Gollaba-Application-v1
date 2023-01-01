@@ -9,7 +9,9 @@ import Options from "./options"
 
 export default function OngoingPollsPoll(props) {
     const handleClick = () => {
-        Router.push(`/polls/${props.data.pollId}`)
+        {
+            today < date ? Router.push(`/polls/${props.data.pollId}`) : Router.push(`/result/${props.data.pollId}`)
+        }
     }
     const OptionsMap = () => {
         const data = props.data.options

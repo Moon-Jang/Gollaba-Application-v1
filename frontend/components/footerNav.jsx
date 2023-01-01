@@ -11,32 +11,30 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined"
 import HomeIcon from "@mui/icons-material/Home"
 import { useRouter } from "next/router"
-import { useCookies } from "react-cookie"
-import jwt from "jsonwebtoken"
+import jwt_decode from "jwt-decode"
+import ApiGateway from "../apis/ApiGateway"
 
 export default function FooterNav() {
     const [value, setValue] = useState(0)
+
     const router = useRouter()
-    const [cookies, setCookies, removeCookies] = useCookies(null)
-    const [token, setToken] = useState(null)
+    const [userInfo, setUserInfo] = useState()
 
-    useEffect(() => {
-        setToken(jwt.decode(cookies.accessToken))
-    }, [cookies])
+    useEffect(async () => {
+        const token = getToken()
+        if (token !== null) {
+            const userInfo = await fetchUser(token)
 
-    /*
-            <BottomNavigationAction
-                    label="Account"
-                    onClick={() => {
-                        if (token == null) {
-                            router.push("/login")
-                        } else {
-                            router.push("/account")
-                        }
-                    }}
-                    icon={<AccountCircleOutlinedIcon />}
-                />
-    */
+            setUserInfo(userInfo)
+        }
+    }, [])
+
+    const IconButtonOnClick = () => {
+        router.push("/account")
+    }
+    const LoginButtonOnClick = () => {
+        router.push("/login")
+    }
 
     return (
         <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
@@ -73,4 +71,27 @@ export default function FooterNav() {
             </BottomNavigation>
         </Paper>
     )
+}
+
+async function fetchUser(token) {
+    const { id } = jwt_decode(token)
+    const response = await ApiGateway.showUser(id, token)
+
+    if (response.error) return null
+
+    return response
+}
+
+function getToken() {
+    const token = localStorage.getItem("accessToken")
+
+    if (token === null) return null
+
+    const { exp } = jwt_decode(token)
+    const expiredDate = new Date(exp * 1000)
+    const now = new Date()
+
+    if (expiredDate < now) return null
+
+    return token
 }

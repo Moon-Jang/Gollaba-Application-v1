@@ -6,7 +6,6 @@ import Button from "@mui/material/Button"
 import IconButton from "@mui/material/IconButton"
 import MenuIcon from "@mui/icons-material/Menu"
 import React, { useRef, useState, useEffect } from "react"
-import { useCookies } from "react-cookie"
 import jwt from "jsonwebtoken"
 import ApiGateway from "../apis/ApiGateway"
 import { useRouter } from "next/router"
@@ -21,10 +20,12 @@ export default function ButtonAppBar(title) {
     const [userInfo, setUserInfo] = useState()
 
     useEffect(async () => {
-        const token = getToken();
-        const userInfo = await fetchUser(token);
+        const token = getToken()
 
-        setUserInfo(userInfo);
+        if (token !== null) {
+            const userInfo = await fetchUser(token)
+            setUserInfo(userInfo)
+        }
     }, [])
 
     const IconButtonOnClick = () => {
@@ -39,12 +40,15 @@ export default function ButtonAppBar(title) {
             <AppBar position="fixed" color="default" sx={{ boxShadow: "none" }}>
                 <Toolbar>
                     <img src={LogoImage.src} style={{ width: 50, height: "auto", marginLeft: -5, marginTop: 0 }} />
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, letterSpacing: -0.5, pl: 1 }}>
                         {title.titletext}
                     </Typography>
                     {userInfo ? (
                         <Box className="IconButton" onClick={IconButtonOnClick}>
-                            <Avatar src={userInfo.profileImageUrl} sx={{ width: 40, height: 40, border: "5px soild black" }} />
+                            <Avatar
+                                src={userInfo.profileImageUrl}
+                                sx={{ width: 40, height: 40, border: "5px soild black" }}
+                            />
                         </Box>
                     ) : (
                         <Typography onClick={LoginButtonOnClick}>로그인</Typography>
@@ -56,7 +60,7 @@ export default function ButtonAppBar(title) {
 }
 
 async function fetchUser(token) {
-    const { id } = jwt_decode(token);
+    const { id } = jwt_decode(token)
     const response = await ApiGateway.showUser(id, token)
 
     if (response.error) return null
@@ -66,14 +70,14 @@ async function fetchUser(token) {
 
 function getToken() {
     const token = localStorage.getItem("accessToken")
-    
+
     if (token === null) return null
-    
-    const {exp} = jwt_decode(token);
-    const expiredDate = new Date(exp * 1000);
-    const now = new Date();
+
+    const { exp } = jwt_decode(token)
+    const expiredDate = new Date(exp * 1000)
+    const now = new Date()
 
     if (expiredDate < now) return null
 
-    return token;
+    return token
 }
