@@ -20,18 +20,13 @@ public class PollReadCountService {
     @Transactional
     public void saveReadCount() {
         var pollReadCounts = pollReadCountRepository.findAll();
-        var pollIds = StreamSupport.stream(pollReadCounts.spliterator(), false)
-            .map(PollReadCount::getPollId)
-            .collect(Collectors.toList());
+        var pollReadCountByPollId = StreamSupport.stream(pollReadCounts.spliterator(), false)
+            .collect(Collectors.toMap(prc -> prc.getPollId(), prc -> prc));
 
-        var pollById = pollRepository.findAllById(pollIds)
-            .stream()
-            .collect(Collectors.toMap(p -> p.getId(), p -> p));
+        var polls = pollRepository.findAllById(pollReadCountByPollId.keySet());
 
-        for (var pollReadCount : pollReadCounts) {
-            var poll = pollById.get(pollReadCount.getPollId());
-            if (poll == null) continue;;
-
+        for (var poll : polls) {
+            var pollReadCount = pollReadCountByPollId.get(poll.getId());
             poll.updateReadCount(pollReadCount.getReadCount());
             pollRepository.save(poll);
         }
