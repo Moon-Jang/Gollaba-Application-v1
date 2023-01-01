@@ -96,11 +96,9 @@ public class PollController {
                     schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @GetMapping(path = "/polls/{pollId}")
     public ResponseEntity<FindPollResponse> find(@ApiParam(type = "string") @PathVariable Object pollId) {
-        var ipAddress = HttpRequestUtils.getClientIpAddress();
-
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(pollService.find((Long) pollId, ipAddress));
+                .body(pollService.find((Long) pollId));
     }
 
 
