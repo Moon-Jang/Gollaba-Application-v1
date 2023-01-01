@@ -109,7 +109,7 @@ public class Poll extends BaseTimeEntity {
         this.pollImageUrl = pollImageUrl;
     }
 
-    public void setReadCount(Integer readCount) {
+    public void updateReadCount(Integer readCount) {
         this.readCount = readCount;
     }
 }
