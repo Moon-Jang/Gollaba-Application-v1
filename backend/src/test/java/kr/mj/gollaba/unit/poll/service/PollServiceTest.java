@@ -14,7 +14,6 @@ import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.common.ServiceTest;
 import kr.mj.gollaba.unit.poll.factory.OptionFactory;
 import kr.mj.gollaba.unit.poll.factory.PollFactory;
-import kr.mj.gollaba.unit.poll.factory.PollViewFactory;
 import kr.mj.gollaba.unit.poll.factory.VoterFactory;
 import kr.mj.gollaba.unit.user.factory.UserFactory;
 import kr.mj.gollaba.user.entity.User;
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
 
 import static kr.mj.gollaba.poll.type.PollingResponseType.SINGLE;
 import static kr.mj.gollaba.unit.poll.factory.PollFactory.*;
-import static kr.mj.gollaba.unit.poll.factory.PollViewFactory.TEST_IP_ADDRESS;
+import static kr.mj.gollaba.unit.poll.factory.VoterFactory.TEST_IP_ADDRESS;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -52,9 +51,6 @@ public class PollServiceTest extends ServiceTest {
 
     @Mock
     private PollRepository pollRepository;
-
-    @Mock
-    private PollViewRepository pollViewRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -227,15 +223,12 @@ public class PollServiceTest extends ServiceTest {
             Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
             given(pollQueryRepository.findById(any(Long.class)))
                 .willReturn(Optional.of(poll));
-            given(pollViewRepository.save(any(PollView.class)))
-                .willReturn(PollViewFactory.create(poll));
 
             //when
-            FindPollResponse result = pollService.find(poll.getId(), TEST_IP_ADDRESS);
+            FindPollResponse result = pollService.find(poll.getId());
 
             //then
             verify(pollQueryRepository, times(1)).findById(eq(poll.getId()));
-            verify(pollViewRepository, times(1)).save(any(PollView.class));
             assertThat(result.getPollId()).isEqualTo(poll.getId());
         }
     }
@@ -259,7 +252,7 @@ public class PollServiceTest extends ServiceTest {
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
                 given(pollQueryRepository.findById(anyLong()))
                         .willReturn(Optional.of(poll));
 
@@ -288,7 +281,7 @@ public class PollServiceTest extends ServiceTest {
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
                 given(pollQueryRepository.findById(anyLong()))
                         .willReturn(Optional.of(poll));
 
@@ -317,11 +310,11 @@ public class PollServiceTest extends ServiceTest {
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
                 given(pollQueryRepository.findById(anyLong()))
                         .willReturn(Optional.of(poll));
                 given(cryptUtils.decrypt(anyString()))
-                        .willReturn(VoterFactory.TEST_IP_ADDRESS);
+                        .willReturn(TEST_IP_ADDRESS);
 
                 //when then
                 assertThatThrownBy(() -> pollService.vote(PollFactory.TEST_ID, request))
@@ -357,13 +350,13 @@ public class PollServiceTest extends ServiceTest {
                 request.setUserId(UserFactory.TEST_ID);
                 request.setOptionIds(List.of(options.get(0).getId()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
 
                 //when
                 pollService.vote(PollFactory.TEST_ID, request);
 
                 //then
-                verify(cryptUtils, times(1)).encrypt(eq(VoterFactory.TEST_IP_ADDRESS));
+                verify(cryptUtils, times(1)).encrypt(eq(TEST_IP_ADDRESS));
                 verify(userRepository, times(1)).findById(eq(UserFactory.TEST_ID));
                 verify(pollQueryRepository, times(1)).findById(eq(PollFactory.TEST_ID));
                 verify(pollRepository, times(1)).save(eq(poll));

@@ -33,7 +33,6 @@ public class PollService {
     private final FavoritesQueryRepository favoritesQueryRepository;
     private final PollRepository pollRepository;
     private final UserRepository userRepository;
-    private final PollViewRepository pollViewRepository;
     private final PollReadCountRepository pollReadCountRepository;
     private final PollReadRecordRepository pollReadRecordRepository;
     private final S3UploadService s3UploadService;
@@ -91,11 +90,9 @@ public class PollService {
     }
 
     @Transactional
-    public FindPollResponse find(Long pollId, String ipAddress) {
+    public FindPollResponse find(Long pollId) {
         var poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
-
-        pollViewRepository.save(PollView.of(poll, ipAddress));
 
         return new FindPollResponse(poll);
     }
