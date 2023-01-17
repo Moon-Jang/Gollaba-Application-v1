@@ -3,7 +3,6 @@ package kr.mj.gollaba.poll.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,8 +23,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.awt.print.Pageable;
 
 @RestController
 @RequestMapping(Const.ROOT_URL)
@@ -80,11 +77,11 @@ public class PollController {
             schema = @Schema(implementation = ErrorAPIResponse.class)))})
     @GetMapping(path = "/polls/me")
     public ResponseEntity<FindAllPollResponse> findAllByUserId(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails){
-        pollService.findAllByUserId(principalDetails.getUser().getId());
+        var response = pollService.findAllByUserId(principalDetails.getUser().getId());
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(null);
+            .body(response);
     }
 
     @ParseHashId

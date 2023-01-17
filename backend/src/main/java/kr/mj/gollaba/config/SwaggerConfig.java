@@ -61,7 +61,7 @@ public class SwaggerConfig implements WebMvcOpenApiTransformationFilter {
 
 		Server localServer = new Server();
 		localServer.setDescription("local");
-		localServer.setUrl("http://localhost:8080");
+		localServer.setUrl("https://localhost:8080");
 
 		Server devServer = new Server();
 		devServer.setDescription("dev");

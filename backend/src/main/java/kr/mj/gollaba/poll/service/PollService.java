@@ -9,11 +9,13 @@ import kr.mj.gollaba.favorites.entity.Favorites;
 import kr.mj.gollaba.favorites.repository.FavoritesQueryRepository;
 import kr.mj.gollaba.poll.dto.*;
 import kr.mj.gollaba.poll.entity.Poll;
-import kr.mj.gollaba.poll.entity.PollView;
 import kr.mj.gollaba.poll.entity.Voter;
 import kr.mj.gollaba.poll.entity.redis.PollReadCount;
 import kr.mj.gollaba.poll.entity.redis.PollReadRecord;
-import kr.mj.gollaba.poll.repository.*;
+import kr.mj.gollaba.poll.repository.PollQueryRepository;
+import kr.mj.gollaba.poll.repository.PollReadCountRepository;
+import kr.mj.gollaba.poll.repository.PollReadRecordRepository;
+import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.user.entity.User;
 import kr.mj.gollaba.user.repository.UserRepository;
@@ -183,6 +185,11 @@ public class PollService {
         pollReadCountRepository.save(pollReadCount);
     }
 
+    public FindAllPollResponse findAllByUserId(Long userId) {
+        var polls = pollQueryRepository.findByUserId(userId);
+        return new FindAllPollResponse(polls.size(), polls);
+    }
+
     private String generateAnonymousName(Poll poll) {
         final int count = (int) poll.getOptions().stream()
                 .flatMap(el -> el.getVoters().stream())
@@ -216,8 +223,5 @@ public class PollService {
         String fileName = s3UploadService.generateFileName(pollId, pollImage.getContentType());
         String imageUrl = s3UploadService.upload(POLL_IMAGE_S3_PATH, fileName, pollImage);
         return imageUrl;
-    }
-    public void findAllByUserId(Long userId) {
-        var polls = pollQueryRepository.findByUserId(userId);
     }
 }
