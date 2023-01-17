@@ -82,7 +82,7 @@ public class PollQueryRepository {
     public List<Poll> findByUserId(Long userId) {
         if (userId == null) return new ArrayList<>();
 
-        return jpaQueryFactory.selectFrom(poll)
+        return jpaQueryFactory.selectFrom(poll).distinct()
             .join(poll.options, option).fetchJoin()
             .leftJoin(poll.user, user).fetchJoin()
             .leftJoin(option.voters, voter).fetchJoin()
