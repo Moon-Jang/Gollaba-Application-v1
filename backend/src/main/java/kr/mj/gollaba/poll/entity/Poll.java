@@ -112,4 +112,9 @@ public class Poll extends BaseTimeEntity {
     public void updateReadCount(Integer readCount) {
         this.readCount = readCount;
     }
+
+    public void updateOptionImageUrl(long optionId, String optionImageUrl) {
+        var option = findOptionByOptionId(optionId);
+        option.updateImageUrl(optionImageUrl);
+    }
 }

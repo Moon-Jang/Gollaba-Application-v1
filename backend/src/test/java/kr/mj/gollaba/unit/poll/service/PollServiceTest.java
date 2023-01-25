@@ -119,11 +119,11 @@ public class PollServiceTest extends ServiceTest {
             }
         }
 
-        @DisplayName("투표 이미지가 있을 경우 경우")
+        @DisplayName("투표 항목 이미지가 있을 경우 경우")
         @Nested
         class has_poll_image {
 
-            @DisplayName("투표 저장 후 투표 이미지를 업로드한다.")
+            @DisplayName("투표 저장 후 투표 항목 이미지를 업로드한다.")
             @Test
             void upload_image_after_save_poll() throws IOException {
                 //given
@@ -131,13 +131,29 @@ public class PollServiceTest extends ServiceTest {
 
                 File file = ResourceUtils.getFile("classpath:test_image.jpeg");
                 InputStream inputStream = new FileInputStream(file);
-
-                request.setPollImage(new MockMultipartFile(
-                        "image",
-                        "test.png",
-                        "image/png",
-                        inputStream));
-                Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
+                var mockFile = new MockMultipartFile(
+                    "image",
+                    "test.png",
+                    "image/png",
+                    inputStream);
+                var optionDto1 = new CreatePollRequest.OptionDto();
+                optionDto1.setDescription("test1");
+                optionDto1.setOptionImage(mockFile);
+                var optionDto2 = new CreatePollRequest.OptionDto();
+                optionDto2.setDescription("test2");
+                optionDto2.setOptionImage(mockFile);
+                var option1 = Option.builder()
+                    .id(1L)
+                    .description("test1")
+                    .build();
+                option1.updateImageUrl("testImageUrl1");
+                var option2 = Option.builder()
+                    .id(2L)
+                    .description("test2")
+                    .build();
+                option1.updateImageUrl("testImageUrl2");
+                request.setOptions(List.of(optionDto1, optionDto2));
+                Poll poll = PollFactory.createWithId(null, List.of(option1, option2));
 
                 given(pollRepository.save(any(Poll.class)))
                         .willReturn(poll);
@@ -152,8 +168,8 @@ public class PollServiceTest extends ServiceTest {
                 //then
                 assertThat(result.getPollId()).isPositive();
                 verify(pollRepository, times(2)).save(any(Poll.class));
-                verify(s3UploadService, times(1)).generateFileName(anyLong(), anyString());
-                verify(s3UploadService, times(1)).upload(anyString(), anyString(), any());
+                verify(s3UploadService, times(2)).generateFileName(anyLong(), anyString());
+                verify(s3UploadService, times(2)).upload(anyString(), anyString(), any());
             }
         }
 

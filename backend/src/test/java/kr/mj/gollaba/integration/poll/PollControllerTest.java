@@ -57,9 +57,17 @@ class PollControllerTest extends IntegrationTest {
     public void create_poll() throws Exception {
         //given
         MultiValueMap request = generateCreateRequest();
+        File file = ResourceUtils.getFile("classpath:test_image.jpeg");
+        InputStream inputStream = new FileInputStream(file);
+        MockMultipartFile multipartFile = new MockMultipartFile(
+            "options[0].optionImage",
+            "test.png",
+            "image/png",
+            inputStream);
 
         //when
         ResultActions resultActions = mvc.perform(multipart(Const.ROOT_URL + "/polls")
+                .file(multipartFile)
                 .params(request)
                 .param("endedAt", "2023-10-02T06:24:28.884Z")
                 .accept(MediaType.APPLICATION_JSON));
@@ -207,7 +215,6 @@ class PollControllerTest extends IntegrationTest {
 
         assertThat(poll.getTitle()).isEqualTo(testTitle);
         assertThat(poll.getEndedAt()).isEqualTo(testEndedAt);
-        assertThat(poll.getPollImageUrl()).isNotBlank();
         assertThat(poll.getOptions().size()).isEqualTo(6);
     }
 

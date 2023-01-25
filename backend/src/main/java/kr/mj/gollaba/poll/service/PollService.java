@@ -8,6 +8,7 @@ import kr.mj.gollaba.favorites.dto.FavoritesUniqueIndexDto;
 import kr.mj.gollaba.favorites.entity.Favorites;
 import kr.mj.gollaba.favorites.repository.FavoritesQueryRepository;
 import kr.mj.gollaba.poll.dto.*;
+import kr.mj.gollaba.poll.entity.Option;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.entity.Voter;
 import kr.mj.gollaba.poll.entity.redis.PollReadCount;
@@ -27,6 +28,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
+
 @Service
 @RequiredArgsConstructor
 public class PollService {
@@ -40,27 +43,23 @@ public class PollService {
     private final S3UploadService s3UploadService;
     private final CryptUtils cryptUtils;
     private final static String ANONYMOUS_NAME = "익명";
-    public static final String POLL_IMAGE_S3_PATH = "profile_image";
+    public static final String OPTION_IMAGE_S3_PATH = "option_image";
 
     @Transactional
     public CreatePollResponse create(CreatePollRequest request) {
         request.validate();
-        Poll poll = request.toEntity();
+        var poll = request.toEntity();
 
         if (request.getUserId() != null) {
-            User creator = userRepository.findById(request.getUserId())
+            var creator = userRepository.findById(request.getUserId())
                     .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_USER));
 
             poll.registerCreator(creator);
         }
 
-        Poll savedPoll = pollRepository.save(poll);
+        var savedPoll = pollRepository.save(poll);
 
-        if (request.getPollImage() != null) {
-            String imageUrl = uploadPollImage(savedPoll.getId(), request.getPollImage());
-            savedPoll.updatePollImageUrl(imageUrl);
-            pollRepository.save(savedPoll);
-        }
+        saveOptionImages(request, savedPoll);
 
         return new CreatePollResponse(savedPoll.getId());
     }
@@ -110,11 +109,6 @@ public class PollService {
 
         if (request.getTitle() != null) {
             poll.updateTitle(request.getTitle());
-        }
-
-        if (request.getPollImage() != null) {
-            String imageUrl = uploadPollImage(poll.getId(), request.getPollImage());
-            poll.updatePollImageUrl(imageUrl);
         }
 
         if (request.getOptions() != null) {
@@ -219,9 +213,35 @@ public class PollService {
         }
     }
 
-    private String uploadPollImage(long pollId, MultipartFile pollImage) {
-        String fileName = s3UploadService.generateFileName(pollId, pollImage.getContentType());
-        String imageUrl = s3UploadService.upload(POLL_IMAGE_S3_PATH, fileName, pollImage);
+    private String uploadOptionImage(long optionId, MultipartFile pollImage) {
+        String fileName = s3UploadService.generateFileName(optionId, pollImage.getContentType());
+        String imageUrl = s3UploadService.upload(OPTION_IMAGE_S3_PATH, fileName, pollImage);
         return imageUrl;
+    }
+
+    private void saveOptionImages(CreatePollRequest request, Poll savedPoll) {
+        var hasOptionImage = request.getOptions()
+            .stream()
+            .anyMatch(optionDto -> optionDto.getOptionImage() != null);
+
+        if (hasOptionImage == false) return;
+
+        var optionIdByDescription = savedPoll.getOptions()
+            .stream()
+            .collect(toMap(
+                Option::getDescription,
+                Option::getId
+            ));
+
+        request.getOptions()
+            .stream()
+            .filter(optionDto -> optionDto.getOptionImage() != null)
+            .forEach(optionDto -> {
+                var optionId = optionIdByDescription.get(optionDto.getDescription());
+                var imageUrl = uploadOptionImage(optionId, optionDto.getOptionImage());
+                savedPoll.updateOptionImageUrl(optionId, imageUrl);
+            });
+
+        pollRepository.save(savedPoll);
     }
 }
