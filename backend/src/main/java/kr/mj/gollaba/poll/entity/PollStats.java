@@ -18,20 +18,46 @@ public class PollStats extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "poll_id" , nullable = false)
     private Poll poll;
 
-    @Column(name = "daily_vote_count", nullable = false)
-    private String dailyVoteCount;
+    @Column(name = "total_vote_count", nullable = false)
+    private Integer totalVoteCount;
 
-    @Column(name = "daily_view_count", nullable = false)
-    private String dailyViewCount;
+    @Column(name = "total_read_count", nullable = false)
+    private Integer totalReadCount;
+
+    @Column(name = "total_favorites_count", nullable = false)
+    private Integer totalFavoritesCount;
 
     @Builder
-    private PollStats(Poll poll, String dailyVoteCount, String dailyViewCount) {
+    private PollStats(Long id, Poll poll, Integer totalVoteCount, Integer totalReadCount, Integer totalFavoritesCount) {
+        this.id = id;
         this.poll = poll;
-        this.dailyVoteCount = dailyVoteCount;
-        this.dailyViewCount = dailyViewCount;
+        this.totalVoteCount = totalVoteCount;
+        this.totalReadCount = totalReadCount;
+        this.totalFavoritesCount = totalFavoritesCount;
+    }
+
+    public static PollStats create(Poll poll) {
+        return PollStats.builder()
+            .poll(poll)
+            .totalVoteCount(0)
+            .totalReadCount(0)
+            .totalFavoritesCount(0)
+            .build();
+    }
+
+    public void updateTotalVoteCount(Integer totalVoteCount) {
+        this.totalVoteCount = totalVoteCount;
+    }
+
+    public void updateTotalReadCount(Integer totalReadCount) {
+        this.totalReadCount = totalReadCount;
+    }
+
+    public void updateTotalFavoritesCount(Integer totalFavoritesCount) {
+        this.totalFavoritesCount = totalFavoritesCount;
     }
 }

@@ -85,6 +85,12 @@ public class Poll extends BaseTimeEntity {
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_OPTION));
     }
 
+    public int getVoteCnt() {
+        return options.stream()
+            .mapToInt(option -> option.getVoters().size())
+            .sum();
+    }
+
     public void registerCreator(User user) {
         this.user = user;
     }

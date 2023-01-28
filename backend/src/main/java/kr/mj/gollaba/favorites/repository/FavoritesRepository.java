@@ -15,4 +15,6 @@ public interface FavoritesRepository extends JpaRepository<Favorites, Long> {
 
     List<Favorites> findAllByUserId(Long userId);
 
+    Integer countByPollId(Long pollId);
+
 }
