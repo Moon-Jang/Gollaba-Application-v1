@@ -66,6 +66,7 @@ public class FindPollResponse implements BaseApiResponse {
 				.map(option -> OptionResponse.builder()
 						.optionId(option.getId())
 						.description(option.getDescription())
+						.imageUrl(option.getImageUrl())
 						.voters(option.getVoters() == null
 								? null
 								: option.getVoters()
@@ -98,6 +99,8 @@ public class FindPollResponse implements BaseApiResponse {
 
 		private String description;
 
+		private String imageUrl;
+
 		private List<VoterResponse> voters = new ArrayList<>();
 
 		@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -107,9 +110,10 @@ public class FindPollResponse implements BaseApiResponse {
 		private LocalDateTime updatedAt;
 
 		@Builder
-		public OptionResponse(Long optionId, String description, List<VoterResponse> voters, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		public OptionResponse(Long optionId, String description, String imageUrl, List<VoterResponse> voters, LocalDateTime createdAt, LocalDateTime updatedAt) {
 			this.optionId = optionId;
 			this.description = description;
+			this.imageUrl = imageUrl;
 			this.voters = voters;
 			this.createdAt = createdAt;
 			this.updatedAt = updatedAt;
