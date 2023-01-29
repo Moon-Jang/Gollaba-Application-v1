@@ -210,8 +210,8 @@ public class PollService {
         final boolean isAlreadyVote = poll.getOptions()
                 .stream()
                 .flatMap(option -> option.getVoters().stream())
-                .filter(voter -> request.getOptionIds().contains(voter.getOption().getId()))
                 .map(voter -> cryptUtils.decrypt(voter.getIpAddress()))
+                .distinct()
                 .anyMatch(address -> address.equals(request.getIpAddress()));
 
         if (isAlreadyVote) {
