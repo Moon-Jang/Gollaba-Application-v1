@@ -5,6 +5,7 @@ import kr.mj.gollaba.poll.entity.redis.PollReadCount;
 import kr.mj.gollaba.poll.repository.PollReadCountRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PollReadCountService {
     private final PollRepository pollRepository;
@@ -29,6 +31,7 @@ public class PollReadCountService {
             var pollReadCount = pollReadCountByPollId.get(poll.getId());
             poll.updateReadCount(pollReadCount.getReadCount());
             pollRepository.save(poll);
+            log.info("pollId: {}, readCount: {}", poll.getId(), poll.getReadCount());
         }
     }
 }
