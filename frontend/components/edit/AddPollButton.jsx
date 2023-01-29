@@ -9,7 +9,7 @@ export default function AddPollButtion({ itemsRef, itemListState }) {
     const [items, setItems] = itemListState
 
     const addItem = event => {
-        const newItem = { id: IdGenerator.generate(), value: { description: "" }, isInvalid: false }
+        const newItem = { id: IdGenerator.generate(), value: { description: "", imgUrl: "" }, isInvalid: false }
         items.push(newItem)
         const newItems = [...items]
 

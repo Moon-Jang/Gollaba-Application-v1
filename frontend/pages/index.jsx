@@ -24,13 +24,21 @@ const PollTheme = createTheme(theme)
 
 export default function Main() {
     const [polls, setPolls] = useState([])
-    let response
+    const [topTenPolls, setTopTenPolls] = useState([])
+    const [trendingPolls, setTrendingPolls] = useState([])
+
+    let response, topTenResponse, trendingResponse
     const offset = 0
     const limit = 10
 
     const getData = async () => {
-        response = await ApiGateway.getPolls(offset, limit)
+        topTenResponse = await ApiGateway.topPolls(offset, limit)
+        setTopTenPolls([...topTenPolls, ...topTenResponse.polls])
 
+        trendingResponse = await ApiGateway.topPolls(offset, limit)
+        setTrendingPolls([...trendingPolls, ...trendingResponse.polls])
+
+        response = await ApiGateway.getPolls(offset, limit)
         setPolls([...polls, ...response.polls])
     }
 
@@ -68,8 +76,8 @@ export default function Main() {
                             maxHeight: "90vh",
                         }}
                     >
-                        <TopTen data={polls} menuTitle={"Ongoing Polls"} />
-                        <OngoingPolls data={polls} menuTitle={"New Results!"} />
+                        <TopTen data={topTenPolls} menuTitle={"Ongoing Polls"} />
+                        <OngoingPolls data={trendingPolls} menuTitle={"New Results!"} />
                         <WholeView data={polls} />
                     </Box>
 

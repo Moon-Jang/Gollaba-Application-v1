@@ -58,13 +58,22 @@ export default function Option(props) {
                 display: "flex",
                 borderColor: "grey.500",
                 flexDirection: "row",
-                justifyContent: "center",
+                //justifyContent: "center",
                 alignItems: "center",
                 fontSize: 22,
-                flex: 0.1,
+                flex: 0.2,
             }}
         >
-            {data.description}
+            <Box
+                sx={{
+                    backgroundImage: `url(${props.data.imageUrl})`,
+                    width: 90,
+                    height: "100%",
+                    mr: 1.5,
+                    backgroundSize: "cover",
+                }}
+            ></Box>
+            <Box>{data.description}</Box>
         </Box>
     )
 }

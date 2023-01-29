@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Box from "@mui/material/Box"
 import { Checkbox, TextField } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
@@ -29,6 +29,25 @@ const newPageStyles = makeStyles((theme) => ({
 
 export default function OngoingPolls(props) {
     // const classes = newPageStyles();
+
+    const scrollRef = useRef(null)
+    const [isDrag, setIsDrag] = useState(false)
+    const [startX, setStartX] = useState()
+
+    const onDragStart = e => {
+        e.preventDefault()
+        setIsDrag(true)
+        setStartX(e.pageX + scrollRef.current.scrollLeft)
+    }
+    const onDragEnd = () => {
+        setIsDrag(false)
+    }
+
+    const onDragMove = e => {
+        if (isDrag) {
+            scrollRef.current.scrollLeft = startX - e.pageX
+        }
+    }
     const PollsMap = () => {
         const data = props.data
         return data.map(el => <OngoingPollsPoll data={el} />)
@@ -40,6 +59,11 @@ export default function OngoingPolls(props) {
             </Box>
             <Box
                 className="outerContainer"
+                onMouseDown={onDragStart}
+                onMouseMove={onDragMove}
+                onMouseUp={onDragEnd}
+                onMouseLeave={onDragEnd}
+                ref={scrollRef}
                 sx={{
                     display: "flex",
                     height: "150px",
