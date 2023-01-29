@@ -82,9 +82,12 @@ public class PollStatsService {
 
     @Transactional(readOnly = true)
     public FindAllPollResponse findAllForTrending() {
-        var pollIds = pollDailyStatsRepository.findTrendingPolls(PageRequest.of(0, 10))
+        var pollIds = pollDailyStatsRepository.findTrendingPolls(
+                LocalDate.now().minusDays(1),
+                PageRequest.of(0, 10)
+            )
             .stream()
-            .map(pollStats -> pollStats.getPoll().getId())
+            .map(pollDailyStats -> pollDailyStats.getPoll().getId())
             .collect(Collectors.toList());
 
         var polls = pollQueryRepository.findAll(pollIds);
