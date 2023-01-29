@@ -80,6 +80,7 @@ public class PollService {
 
         return new FindAllPollResponse(totalCount, polls, favoritesList);
     }
+
     @Transactional(readOnly = true)
     public FindAllPollResponse findAll(FindAllPollRequest request) {
         request.validate();

@@ -1,6 +1,7 @@
 package kr.mj.gollaba.poll.service;
 
 import kr.mj.gollaba.favorites.repository.FavoritesRepository;
+import kr.mj.gollaba.poll.dto.FindAllPollResponse;
 import kr.mj.gollaba.poll.dto.PollQueryFilter;
 import kr.mj.gollaba.poll.entity.Poll;
 import kr.mj.gollaba.poll.entity.PollDailyStats;
@@ -10,6 +11,7 @@ import kr.mj.gollaba.poll.repository.PollQueryRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import kr.mj.gollaba.poll.repository.PollStatsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +66,30 @@ public class PollStatsService {
                 pollStatsRepository.save(pollStat);
             }
         }
+    }
+
+    @Transactional(readOnly = true)
+    public FindAllPollResponse findAllForTop() {
+        var pollIds = pollStatsRepository.findTopPolls(PageRequest.of(0, 10))
+            .stream()
+            .map(pollStats -> pollStats.getPoll().getId())
+            .collect(Collectors.toList());
+
+        var polls = pollQueryRepository.findAll(pollIds);
+
+        return new FindAllPollResponse(10, polls);
+    }
+
+    @Transactional(readOnly = true)
+    public FindAllPollResponse findAllForTrending() {
+        var pollIds = pollDailyStatsRepository.findTrendingPolls(PageRequest.of(0, 10))
+            .stream()
+            .map(pollStats -> pollStats.getPoll().getId())
+            .collect(Collectors.toList());
+
+        var polls = pollQueryRepository.findAll(pollIds);
+
+        return new FindAllPollResponse(10, polls);
     }
 
     private PollStats findOrCreatePollStats(Poll poll) {
