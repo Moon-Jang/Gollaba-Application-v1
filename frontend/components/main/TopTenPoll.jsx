@@ -66,7 +66,6 @@ export default function TopTenPoll(props) {
                         alignItems: "center",
                         justifyContent: "center",
                         ml: 0.5,
-
                         borderRadius: 0.5,
                     }}
                 >
@@ -101,7 +100,6 @@ export default function TopTenPoll(props) {
                     borderRadius: 3,
                     borderTopRightRadius: 0,
                     borderTopLeftRadius: 0,
-
                     flex: 3,
                     // backgroundColor: "tan",
                 }}

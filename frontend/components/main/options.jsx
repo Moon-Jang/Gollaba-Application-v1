@@ -6,6 +6,7 @@ import Box from "@mui/material/Box"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 
 export default function Options(props) {
+    console.log("ㅠㅠ", props)
     return (
         <Box
             sx={{
@@ -17,6 +18,8 @@ export default function Options(props) {
                 marginTop: 1,
                 marginBottom: 0,
                 alignItems: "flex-end",
+                backgroundImage: `url(${props.data.imageUrl})`,
+                backgroundSize: "cover",
             }}
         ></Box>
     )

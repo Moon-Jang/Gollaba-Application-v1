@@ -41,9 +41,14 @@ export default function Polls() {
         setPolls(response)
     }
 
+    const readCount = async () => {
+        response = await ApiGateway.readCount(pollId)
+    }
+
     useEffect(() => {
         if (pollId) {
             getData()
+            readCount()
         }
     }, [pollId])
 

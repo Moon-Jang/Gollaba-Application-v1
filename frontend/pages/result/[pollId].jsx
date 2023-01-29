@@ -34,6 +34,7 @@ export default function Voting() {
     console.log(pollId)
     const [selected, setSelected] = useState([])
     const [polls, setPolls] = useState([])
+    const [isFetch, setIsFetch] = useState(false)
 
     const getData = async () => {
         response = await ApiGateway.getPoll(pollId)
@@ -44,13 +45,14 @@ export default function Voting() {
         response = await ApiGateway.readCount(pollId)
     }
 
-    useEffect(() => {
+    useEffect(async () => {
         if (pollId) {
-            getData()
+            await getData()
             readCount()
+            setIsFetch(true)
         }
     }, [pollId])
-
+    console.log("isFetch>>", isFetch)
     console.log("response", response)
     const [voted, setVoted] = useState([])
 
@@ -80,21 +82,25 @@ export default function Voting() {
                             flexDirection: "column",
                         }}
                     >
-                        <Description data={polls} />
-                        <InfoBox data={polls.totalVoteCount} />
-                        <Box display={"flex"} flexDirection={"column"} flex={"1"}>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    flex: 1,
-                                    //justifyContent: "center",
-                                }}
-                            >
-                                <MapOption data={polls} voted={voted} />
-                                <ShareBar />
-                            </Box>
-                        </Box>
+                        {isFetch && (
+                            <>
+                                <Description data={polls} />
+                                <InfoBox data={polls.totalVoteCount} />
+                                <Box display={"flex"} flexDirection={"column"} flex={"1"}>
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            flex: 1,
+                                            //justifyContent: "center",
+                                        }}
+                                    >
+                                        <MapOption data={polls} voted={voted} />
+                                        <ShareBar />
+                                    </Box>
+                                </Box>
+                            </>
+                        )}
                     </Box>
 
                     <Box className="footer">

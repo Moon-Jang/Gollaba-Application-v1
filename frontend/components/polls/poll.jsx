@@ -6,7 +6,7 @@ import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle"
 import LinearProgress from "@mui/material/LinearProgress"
 import StarBorderIcon from "@mui/icons-material/StarBorder"
 import StarIcon from "@mui/icons-material/Star"
-import { IconButton } from "@mui/material"
+import { IconButton, Typography } from "@mui/material"
 import ApiGateway from "./../../apis/ApiGateway"
 import { useCookies } from "react-cookie"
 
@@ -17,7 +17,14 @@ export default function Poll(props) {
     const [isExtend, setIsExtend] = useState(false)
     const [favoriteId, setFavoriteId] = useState(data?.favorites?.favoritesId)
     const [cookies, setCookies, removeCookies] = useCookies([])
-    // console.log("opts>", props.data.totalVoteCount)
+
+    const date = new Date(props.data.endedAt)
+    const strDate = date
+        .toISOString()
+        .substring(0, 10)
+        .split("-")
+
+    const today = new Date()
 
     let temp = 0
     for (let i = 0; i < options.length; i++) {
@@ -28,7 +35,7 @@ export default function Poll(props) {
     const map1 = options.map(el => {
         // console.log("props>>", el)
         return (
-            <Box mt={0.5} mr={1} mb={0.5}>
+            <Box mt={0.5} mr={1} mb={0.5} ml={-0.5}>
                 {el.description}
                 <LinearProgress
                     variant="determinate"
@@ -39,8 +46,9 @@ export default function Poll(props) {
     })
 
     const buttonClick = () => {
-        const pollId = data.pollId
-        router.push("/polls/" + pollId)
+        {
+            today < date ? router.push(`/polls/${props.data.pollId}`) : router.push(`/result/${props.data.pollId}`)
+        }
     }
 
     const extendClick = () => {
@@ -79,6 +87,14 @@ export default function Poll(props) {
 
         console.log("favoriteDelete", favoriteDelete)
         setFavoriteId(null)
+
+        const date = new Date(props.data.endedAt)
+        const strDate = date
+            .toISOString()
+            .substring(0, 10)
+            .split("-")
+
+        const today = new Date()
     }
 
     return (
@@ -96,9 +112,7 @@ export default function Poll(props) {
                         display: "flex",
                         flex: 1,
                     }}
-                >
-                    {data.createdAt.substring(0, 10)}
-                </Box>
+                ></Box>
 
                 <Box
                     className="link"
@@ -113,9 +127,7 @@ export default function Poll(props) {
                         justifyContent: "right",
                         flex: 1,
                     }}
-                >
-                    Pending execution
-                </Box>
+                ></Box>
             </Box>
             <Box
                 className="outerContainer"
@@ -130,6 +142,17 @@ export default function Poll(props) {
                     letterSpacing: 1.2,
                     //border: 1,
                     borderColor: "grey.500",
+
+                    //display: "flex",
+                    //height: "140px",
+                    //width: "300px",
+
+                    boxShadow: "0 0 5px 1px rgba(0,0,0,0.095)",
+                    //border: 1,
+                    borderColor: "lightgray",
+                    borderRadius: 2,
+
+                    //alignItems: "flex-end"
                 }}
             >
                 <Box
@@ -170,12 +193,13 @@ export default function Poll(props) {
                                     display: "flex",
                                     flex: 3,
                                     pt: 2,
-                                    pl: 2.5,
+                                    pl: 2,
+                                    pb: 1,
                                     fontWeight: "medium",
                                     fontSize: 18,
                                 }}
                             >
-                                {data.title}
+                                <Typography sx={{ letterSpacing: 0 }}> {data.title}</Typography>
                             </Box>
 
                             <Box
@@ -191,9 +215,32 @@ export default function Poll(props) {
                                     color: "#808080",
                                 }}
                             >
-                                <AccountCircleIcon fontSize="small" sx={{ mr: 0.2 }} /> {data.creatorName}
+                                <Box
+                                    backgroundColor={today < date ? "#E8F4E7" : "rgb(251,239,236)"}
+                                    sx={{
+                                        display: "flex",
+                                        width: "50px",
+                                        height: "23px",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        ml: 0.5,
+
+                                        borderRadius: 0.5,
+                                    }}
+                                >
+                                    {today < date ? (
+                                        <Typography sx={{ fontSize: 12, letterSpacing: 0, color: "rgb(74,142,78)" }}>
+                                            진행 중
+                                        </Typography>
+                                    ) : (
+                                        <Typography sx={{ fontSize: 12, letterSpacing: 0, color: "rgb(213,82,49)" }}>
+                                            종료
+                                        </Typography>
+                                    )}
+                                </Box>
                             </Box>
                         </Box>
+
                         <Box
                             className="Options"
                             sx={{
@@ -202,13 +249,12 @@ export default function Poll(props) {
                                 flex: 4,
                                 ml: 2.5,
                                 mr: 1,
-                                mb: 3,
+                                mb: 1.5,
                                 fontSize: 13,
                             }}
                         >
                             {isExtend === false ? map1.slice(0, 2) : map1}
                         </Box>
-
                         <Box
                             className="Button"
                             sx={{
@@ -224,16 +270,26 @@ export default function Poll(props) {
                                 className="Extend"
                                 onClick={extendClick}
                                 sx={{
-                                    flex: 3,
+                                    flex: 2,
                                     display: "flex",
                                     ml: 2,
                                     justifyContent: "left",
                                     alignItems: "center",
-                                    fontSize: 14,
+                                    fontSize: 13,
+
+                                    color: "rgb(192, 192, 192)",
+                                    display: "flex",
+                                    letterSpacing: 0,
                                 }}
                             >
-                                {map1.length >= 3 ? <ArrowDropDownCircleIcon sx={{ color: "#808080" }} /> : <></>}
+                                {map1.length >= 3 ? (
+                                    <ArrowDropDownCircleIcon sx={{ color: "#808080", mr: 0.3 }} />
+                                ) : (
+                                    <></>
+                                )}
+                                {strDate[1] + "월 " + strDate[2] + "일까지 · " + props.data.totalVoteCount + "명 참여"}
                             </Box>
+
                             <Box className="favorite" sx={{ display: "flex" }}>
                                 <IconButton onClick={favoriteClick}>
                                     {favoriteId ? (
@@ -255,16 +311,18 @@ export default function Poll(props) {
                                 sx={{
                                     flex: 1,
                                     display: "flex",
+                                    mt: 0.4,
                                     mr: 2,
                                     justifyContent: "center",
                                     alignItems: "center",
                                     fontSize: 14,
                                     border: 0,
-                                    borderRadius: "3px",
+                                    borderRadius: "5px",
                                     marginBottom: 0,
+                                    height: 35,
                                 }}
                             >
-                                View vote
+                                투표하기
                             </Box>
                         </Box>
                     </Box>

@@ -11,7 +11,7 @@ import {
     Typography,
 } from "@mui/material"
 import { makeStyles } from "@mui/styles"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useRef } from "react"
 import IdGenerator from "../../utils/IdGenerator"
 import DraggableList from "./DraggableList"
@@ -33,7 +33,6 @@ const RESPONSE_TYPE_MULTI = "MULTI"
 const steps = [
     "작성자 이름을 입력해주세요.",
     "투표 주제를 입력해주세요.",
-    "투표 이미지를 삽입해주세요. (선택사항 입니다.)",
     "투표 항목을 생성해주세요.",
     "투표 옵션을 선택해주세요.",
     "투표 마감일을 선택해주세요.",
@@ -44,19 +43,26 @@ export default function VerticalLinearStepper() {
     const router = useRouter()
     const [activeStep, setActiveStep] = useState(0)
     const [isSubmit, setIsSubmit] = useState(false)
-    const [cookies, setCookies] = useCookies()
+    const [userInfo, setUserInfo] = useState()
+    useEffect(async () => {
+        const token = getToken()
+
+        if (token !== null) {
+            const userInfo = await fetchUser(token)
+            setUserInfo(userInfo)
+        }
+    }, [])
     const nameRef = useRef({ value: "", isInvalid: false })
     const titleRef = useRef({ value: "", isInvalid: false })
-    const imageRef = useRef({})
     const itemsRef = useRef([
         {
             id: IdGenerator.generate(),
-            value: { description: "" },
+            value: { description: "", imgUrl: "" },
             isInvalid: false,
         },
         {
             id: IdGenerator.generate(),
-            value: { description: "" },
+            value: { description: "", imgUrl: "" },
             isInvalid: false,
         },
     ])
@@ -77,16 +83,13 @@ export default function VerticalLinearStepper() {
                 break
 
             case 2:
-                //if (imageRef.current.value !== "") return;
-                break
-
-            case 3:
                 if (itemsRef.current.some(el => el.isInvalid === true)) return
                 break
-            case 4:
+            case 3:
                 break
-            case 5:
+            case 4:
                 console.log("submit 가동")
+
                 handleSubmmit()
                 break
             default:
@@ -115,17 +118,27 @@ export default function VerticalLinearStepper() {
             responseType: optionsRef.current.responseType,
         }
 
-        if (cookies?.accessToken) {
-            const decoded = jwt_decode(cookies.accessToken)
+        if (userInfo?.accessToken !== undefined) {
+            const decoded = jwt_decode(userInfo.accessToken)
             payload.userId = decoded.id
         }
 
         const formData = new FormData()
         Object.keys(payload).forEach(key => formData.append(key, payload[key]))
-        if (imageRef.current.name !== undefined) formData.append("pollImage", imageRef.current)
 
         for (let i = 0; i < itemsRef.current.length; i++) {
             formData.append(`options[${i}].description`, itemsRef.current[i].value.description)
+            formData.append(`options[${i}].optionImage`, itemsRef.current[i].value.imgUrl)
+        }
+
+        console.log("submit 함수가동")
+        for (let key of formData.keys()) {
+            console.log("키", key)
+        }
+
+        /* value 확인하기 */
+        for (let asd of formData.values()) {
+            console.log("밸류", asd)
         }
 
         const response = await ApiGateway.createPoll(formData)
@@ -150,7 +163,7 @@ export default function VerticalLinearStepper() {
                     <Step key={label}>
                         <StepLabel>{label}</StepLabel>
                         <StepContent>
-                            {getStepContent(index, [nameRef, titleRef, imageRef, itemsRef, optionsRef, expireRef])}
+                            {getStepContent(index, [nameRef, titleRef, itemsRef, optionsRef, expireRef])}
                             <div className={classes.actionsContainer}>
                                 <div>
                                     <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
@@ -200,12 +213,10 @@ function getStepContent(step, refs) {
         case 1:
             return <PollTitle titleRef={refs[step]} />
         case 2:
-            return <PollImage imageRef={refs[step]} />
-        case 3:
             return <PollItemsWrapper itemsRef={refs[step]} />
-        case 4:
+        case 3:
             return <PollOptionsWrapper optionsRef={refs[step]} />
-        case 5:
+        case 4:
             return <PollExpireDate expireRef={refs[step]} />
         default:
             return "Unknown step"
@@ -314,28 +325,6 @@ function PollOption({ onChange, checked, label }) {
     )
 }
 
-function PollImage({ imageRef }) {
-    const classes = pollOptionStyles()
-    const [imgName, setImgName] = useState("")
-
-    const imgHandle = e => {
-        imageRef.current = e.target.files[0]
-        setImgName(e.target.files[0].name)
-    }
-
-    return (
-        <>
-            <div className={classes.wrapper}>
-                <Typography component={"span"}>{imgName}</Typography>
-            </div>
-            <Button variant="contained" component="label">
-                이미지 업로드
-                <input type="file" hidden accept="image/*" onChange={imgHandle} />
-            </Button>
-        </>
-    )
-}
-
 function PollExpireDate({ expireRef }) {
     const classes = pollOptionStyles()
     const now = new Date()
@@ -350,14 +339,13 @@ function PollExpireDate({ expireRef }) {
     const handleChange = date => {
         setExpireDate(date)
         expireRef.current = date
-        console.log("선택한 날짜>>>", date)
     }
 
     return (
         <>
             <DatePicker
                 //locale={ko}
-                selected={minDate}
+                selected={expireDate}
                 onChange={handleChange}
                 closeOnScroll={true}
                 minDate={minDate}
@@ -369,4 +357,26 @@ function PollExpireDate({ expireRef }) {
         //시간단위 포함할것.
         //최소 30분
     )
+}
+async function fetchUser(token) {
+    const { id } = jwt_decode(token)
+    const response = await ApiGateway.showUser(id, token)
+
+    if (response.error) return null
+
+    return response
+}
+
+function getToken() {
+    const token = localStorage.getItem("accessToken")
+
+    if (token === null) return null
+
+    const { exp } = jwt_decode(token)
+    const expiredDate = new Date(exp * 1000)
+    const now = new Date()
+
+    if (expiredDate < now) return null
+
+    return token
 }
