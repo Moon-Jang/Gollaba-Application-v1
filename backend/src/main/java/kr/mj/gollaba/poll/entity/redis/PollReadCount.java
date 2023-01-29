@@ -20,6 +20,7 @@ public class PollReadCount {
 
     public PollReadCount(Long pollId, Integer readCount) {
         this.pollId = pollId;
+        this.readCount = readCount;
     }
 
     public static PollReadCount of(Long pollId, Integer readCount) {
