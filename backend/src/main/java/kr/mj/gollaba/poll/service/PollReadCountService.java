@@ -1,6 +1,7 @@
 package kr.mj.gollaba.poll.service;
 
 import kr.mj.gollaba.common.Scheduler;
+import kr.mj.gollaba.common.util.IterableUtils;
 import kr.mj.gollaba.poll.entity.redis.PollReadCount;
 import kr.mj.gollaba.poll.repository.PollReadCountRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
@@ -22,7 +23,12 @@ public class PollReadCountService {
     @Transactional
     public void saveReadCount() {
         var pollReadCounts = pollReadCountRepository.findAll();
-        var pollReadCountByPollId = StreamSupport.stream(pollReadCounts.spliterator(), false)
+
+        if (IterableUtils.isEmpty(pollReadCounts)) {
+            return;
+        }
+
+        var pollReadCountByPollId = IterableUtils.stream(pollReadCounts)
             .collect(Collectors.toMap(prc -> prc.getPollId(), prc -> prc));
 
         var polls = pollRepository.findAllById(pollReadCountByPollId.keySet());
