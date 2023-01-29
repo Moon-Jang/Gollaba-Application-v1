@@ -64,6 +64,7 @@ public class PollService {
         return new CreatePollResponse(savedPoll.getId());
     }
 
+    @Transactional(readOnly = true)
     public FindAllPollResponse findAll(FindAllPollRequest request, User user) {
         request.validate();
         PollQueryFilter filter = request.toFilter();
@@ -79,7 +80,7 @@ public class PollService {
 
         return new FindAllPollResponse(totalCount, polls, favoritesList);
     }
-
+    @Transactional(readOnly = true)
     public FindAllPollResponse findAll(FindAllPollRequest request) {
         request.validate();
         PollQueryFilter filter = request.toFilter();
@@ -90,7 +91,7 @@ public class PollService {
         return new FindAllPollResponse(totalCount, polls);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public FindPollResponse find(Long pollId) {
         var poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
@@ -98,6 +99,7 @@ public class PollService {
         return new FindPollResponse(poll);
     }
 
+    @Transactional
     public void update(Long pollId, UpdatePollRequest request, User user) {
         Poll poll = pollQueryRepository.findById(pollId)
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_POLL));
@@ -124,6 +126,7 @@ public class PollService {
         pollRepository.save(poll);
     }
 
+    @Transactional
     public void vote(Long pollId, VoteRequest request) {
         request.validate();
         User user = null;
@@ -153,6 +156,7 @@ public class PollService {
         pollRepository.save(poll);
     }
 
+    @Transactional
     public void increaseReadCount(IncreaseReadCountRequest request) {
         // validate
         var record = pollReadRecordRepository.findById(request.getPollId())
@@ -179,6 +183,7 @@ public class PollService {
         pollReadCountRepository.save(pollReadCount);
     }
 
+    @Transactional(readOnly = true)
     public FindAllPollResponse findAllByUserId(Long userId) {
         var polls = pollQueryRepository.findByUserId(userId);
         return new FindAllPollResponse(polls.size(), polls);
