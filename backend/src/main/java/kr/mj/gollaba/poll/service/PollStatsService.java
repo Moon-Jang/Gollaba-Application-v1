@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static kr.mj.gollaba.poll.dto.PollQueryFilter.emptyFilter;
@@ -74,10 +76,9 @@ public class PollStatsService {
             .stream()
             .map(pollStats -> pollStats.getPoll().getId())
             .collect(Collectors.toList());
+        var result = getPollsOrderByPollIds(pollIds);
 
-        var polls = pollQueryRepository.findAll(pollIds);
-
-        return new FindAllPollResponse(10, polls);
+        return new FindAllPollResponse(10, result);
     }
 
     @Transactional(readOnly = true)
@@ -90,9 +91,9 @@ public class PollStatsService {
             .map(pollDailyStats -> pollDailyStats.getPoll().getId())
             .collect(Collectors.toList());
 
-        var polls = pollQueryRepository.findAll(pollIds);
+        var result = getPollsOrderByPollIds(pollIds);
 
-        return new FindAllPollResponse(10, polls);
+        return new FindAllPollResponse(10, result);
     }
 
     private PollStats findOrCreatePollStats(Poll poll) {
@@ -100,5 +101,21 @@ public class PollStatsService {
             .orElseGet(() ->
                 pollStatsRepository.save(PollStats.create(poll))
             );
+    }
+
+    private List<Poll> getPollsOrderByPollIds(List<Long> pollIds) {
+        var pollById = pollQueryRepository.findAll(pollIds)
+            .stream()
+            .collect(Collectors.toMap(
+                Poll::getId,
+                poll -> poll
+            ));
+        var resultPolls = new ArrayList<Poll>();
+
+        for (var pollId : pollIds) {
+            resultPolls.add(pollById.get(pollId));
+        }
+
+        return resultPolls;
     }
 }
