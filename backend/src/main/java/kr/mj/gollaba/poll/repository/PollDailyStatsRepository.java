@@ -20,7 +20,7 @@ public interface PollDailyStatsRepository extends JpaRepository<PollDailyStats, 
             "pds.dailyVoteCount DESC," +
             "pds.dailyReadCount DESC," +
             "pds.dailyFavoritesCount DESC," +
-            "pds.id DESC"
+            "pds.poll.id DESC"
     )
     List<PollDailyStats> findTrendingPolls(LocalDate date, Pageable pageable);
 

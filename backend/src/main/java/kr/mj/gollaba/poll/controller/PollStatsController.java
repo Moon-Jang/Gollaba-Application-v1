@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 
 @RestController
 @RequestMapping(Const.ROOT_URL)
@@ -50,7 +52,7 @@ public class PollStatsController {
     public ResponseEntity<FindAllPollResponse> findAllForTrending() {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(pollStatsService.findAllForTrending());
+            .body(pollStatsService.findAllForTrending(LocalDate.now()));
     }
 
 }
