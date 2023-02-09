@@ -65,7 +65,7 @@ export default function FooterNav() {
                     label="My 투표"
                     onClick={() => {
                         {
-                            userInfo ? router.push("/voting") : router.push("/account")
+                            userInfo ? router.push("/voting") : router.push("/login")
                         }
                     }}
                     icon={<PollOutlinedIcon />}
