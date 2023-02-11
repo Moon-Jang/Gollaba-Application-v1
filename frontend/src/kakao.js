@@ -1,3 +1,4 @@
+import Kakao from "kakaojs"
 // kakao.js
 // Kakao API 키를 추가합니다.
 Kakao.init("f7429e5a7e3c46efd999ac63b58ec9f1")
@@ -26,3 +27,5 @@ function shareOnKakao(url, title, image) {
         ],
     })
 }
+
+export default shareOnKakao

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useRouter } from "next/router"
 import Box from "@mui/material/Box"
 import ShareIcon from "@mui/icons-material/Share"
@@ -14,14 +14,28 @@ import {
     LineIcon,
 } from "react-share"
 
+import kakao_share from "../../public/kakaotalk_sharing_btn.png"
+
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function ShareBar(props) {
+    useEffect(() => {
+        if (typeof window !== undefined) {
+            window.Kakao.init("f7429e5a7e3c46efd999ac63b58ec9f1")
+        }
+    }, [])
+
     const router = useRouter()
     const currentUrl = "http://localhost:3000" + router.asPath
-    console.log("curr", currentUrl)
     const clipboardCopy = () => {
         navigator.clipboard.writeText(currentUrl)
         alert("클립보드에 복사되었습니다.")
+    }
+
+    const handleKakao = () => {
+        const { Kakao, location } = window
+        Kakao.Link.sendScrap({
+            requestUrl: location.href,
+        })
     }
 
     return (
@@ -68,6 +82,10 @@ export default function ShareBar(props) {
             <LineShareButton>
                 <LineIcon size={30} round={true} borderRadius={24} url={currentUrl}></LineIcon>
             </LineShareButton>
+
+            <button onClick={handleKakao}>
+                <img src={kakao_share.src} />
+            </button>
         </Box>
     )
 }
