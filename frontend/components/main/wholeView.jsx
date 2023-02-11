@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import CssBaseline from "@mui/material/CssBaseline"
 import Container from "@mui/material/Container"
 import Typography from "@mui/material/Typography"
@@ -42,15 +42,19 @@ export default function WholeView() {
 
     useEffect(() => {
         if (inView && !isLoading) {
-            setOffset(prevState => prevState + 1)
+            setOffset((prevState) => prevState + 1)
         }
     }, [inView, isLoading])
 
     if (polls !== undefined)
         return (
             <Box sx={{ mt: 3, mb: 3 }}>
-                <Box className="Title" sx={{ pl: 0.3, mt: 0.3 }}>
-                    📝 전체 투표
+                <Box
+                    className="Title"
+                    sx={{ pl: 0.3, mt: 0.3, display: "flex", flexDirection: "row", backgroundColor: "red" }}
+                >
+                    <Box sx={{ display: "flex" }}>📝 전체 투표</Box>
+                    <Box sx={{ display: "flex", justifyContent: "right" }}>asdsad</Box>
                 </Box>
 
                 <Box display={"flex"} flexDirection={"column"} flex={"1"}>
