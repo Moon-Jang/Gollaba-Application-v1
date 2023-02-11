@@ -12,7 +12,9 @@ const clientSideEmotionCache = createEmotionCache()
 
 export default function MyApp(props) {
     const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
-
+    
+    initializeKakaoSDK();
+    
     return (
         <CacheProvider value={emotionCache}>
             <Head>
@@ -32,4 +34,14 @@ MyApp.propTypes = {
     Component: PropTypes.elementType.isRequired,
     emotionCache: PropTypes.object,
     pageProps: PropTypes.object.isRequired,
+}
+
+function initializeKakaoSDK() {
+    if (typeof window !== 'undefined') {
+        if (window.Kakao.isInitialized()) {
+            return;
+        }
+
+        window.Kakao.init("f7429e5a7e3c46efd999ac63b58ec9f1")
+    }
 }

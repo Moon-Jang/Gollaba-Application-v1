@@ -18,12 +18,6 @@ import kakao_share from "../../public/kakaotalk_sharing_btn.png"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function ShareBar(props) {
-    useEffect(() => {
-        if (typeof window !== undefined) {
-            window.Kakao.init("f7429e5a7e3c46efd999ac63b58ec9f1")
-        }
-    }, [])
-
     const router = useRouter()
     const currentUrl = "http://localhost:3000" + router.asPath
     const clipboardCopy = () => {
