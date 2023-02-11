@@ -25,12 +25,12 @@ public class JwtTokenProvider {
         this.refreshExpirationTime = refreshExpirationTime;
     }
 
-    public String createAccessToken(String uniqueId, String nickName) {
+    public String createAccessToken(String email, String nickName) {
         Date now = new Date();
         Date expirationTime = new Date(now.getTime() + accessExpirationTime);
 
         return Jwts.builder()
-                .claim("uid", uniqueId)
+                .claim("uid", email)
                 .claim("un", nickName)
                 .setIssuedAt(now)
                 .setExpiration(expirationTime)
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .claim("id", user.getId())
-                .claim("uid", user.getUniqueId())
+                .claim("uid", user.getEmail())
                 .claim("un", user.getNickName())
                 .setIssuedAt(now)
                 .setExpiration(expirationTime)

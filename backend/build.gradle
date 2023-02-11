@@ -27,7 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-    // database
+    // rdb
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'mysql:mysql-connector-java'
     runtimeOnly 'com.h2database:h2'
@@ -51,8 +51,24 @@ dependencies {
     // swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
+    // AWS-S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.281'
+
+    // hashIds
+    implementation 'org.hashids:hashids:1.0.3'
+
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    //oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {

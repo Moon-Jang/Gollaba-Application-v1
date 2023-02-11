@@ -13,13 +13,17 @@ public class PollQueryFilter {
     private final Integer offset;
 
     private final Integer limit;
-
     @Builder
     private PollQueryFilter(Long userId, String title, Integer offset, Integer limit) {
         this.userId = userId;
         this.title = title;
         this.offset = offset;
         this.limit = limit;
+    }
+
+    public static PollQueryFilter emptyFilter() {
+        return PollQueryFilter.builder()
+            .build();
     }
 
 }

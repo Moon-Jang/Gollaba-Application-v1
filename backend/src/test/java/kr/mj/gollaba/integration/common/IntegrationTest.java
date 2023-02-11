@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-@Tag("IntegrationTest")
+@Tag(IntegrationConst.INTEGRATION_TEST_TAG_NAME)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
