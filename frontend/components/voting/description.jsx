@@ -1,34 +1,32 @@
-import * as React from "react"
 import Box from "@mui/material/Box"
 import { Checkbox, TextField, Typography } from "@mui/material"
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"
 import SettingsIcon from "@mui/icons-material/Settings"
 import ModeEditIcon from "@mui/icons-material/ModeEdit"
-import { useCookies } from "react-cookie"
+import React, { useRef, useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import jwt_decode from "jwt-decode"
+import ApiGateway from "../../apis/ApiGateway"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function Description(props) {
     const data = props.data
     const name = data.creatorName
-    let token
+    console.log("epdlxj", data)
 
     const date = new Date(props.data.endedAt)
-    console.log("응애", props.data.endedAt)
-    /*
-    const strDate = date
-        .toISOString()
-        .substring(0, 10)
-        .split("-")
-*/
+
     const today = new Date()
+    const [userInfo, setUserInfo] = useState()
 
-    const router = useRouter()
-    const [cookies, setCookies] = useCookies()
+    useEffect(async () => {
+        const token = getToken()
 
-    if (data.user) console.log("test", data.user.userId)
-    if (cookies.accessToken) token = jwt_decode(cookies.accessToken)
+        if (token !== null) {
+            const userInfo = await fetchUser(token)
+            setUserInfo(userInfo)
+        }
+    }, [])
 
     const editClick = () => {
         router.push("/edit/" + data.pollId)
@@ -125,7 +123,7 @@ export default function Description(props) {
                 }}
             >
                 <Box sx={{ display: "flex", flex: 1, justifyContent: "left" }}>
-                    {cookies.accessToken && data.user && token.id === data.user.userId ? (
+                    {userInfo !== undefined && data.user && userInfo.id === data.user.userId ? (
                         <Box
                             className="edit"
                             onClick={editClick}
@@ -138,15 +136,39 @@ export default function Description(props) {
                                 pr: 1,
                                 alignItems: "center",
                             }}
-                        ></Box>
+                        >
+                            <Box sx={{ display: "flex", flex: 1, justifyContent: "right" }}>
+                                <SettingsIcon sx={{ fontSize: 25, ml: 0.8, mb: 0.3, color: "gray" }} />
+                            </Box>
+                        </Box>
                     ) : (
                         ""
                     )}
                 </Box>
-                <Box sx={{ display: "flex", flex: 1, justifyContent: "right" }}>
-                    <SettingsIcon sx={{ fontSize: 25, ml: 0.8, mb: 0.3, color: "gray" }} />
-                </Box>
             </Box>
         </Box>
     )
+}
+
+async function fetchUser(token) {
+    const { id } = jwt_decode(token)
+    const response = await ApiGateway.showUser(id, token)
+
+    if (response.error) return null
+
+    return response
+}
+
+function getToken() {
+    const token = localStorage.getItem("accessToken")
+
+    if (token === null) return null
+
+    const { exp } = jwt_decode(token)
+    const expiredDate = new Date(exp * 1000)
+    const now = new Date()
+
+    if (expiredDate < now) return null
+
+    return token
 }
