@@ -32,10 +32,10 @@ export default function Main() {
     const limit = 10
 
     const getData = async () => {
-        topTenResponse = await ApiGateway.topPolls(offset, limit)
+        topTenResponse = await ApiGateway.topPolls()
         setTopTenPolls([...topTenPolls, ...topTenResponse.polls])
 
-        trendingResponse = await ApiGateway.topPolls(offset, limit)
+        trendingResponse = await ApiGateway.trendingPolls()
         setTrendingPolls([...trendingPolls, ...trendingResponse.polls])
 
         response = await ApiGateway.getPolls(offset, limit)

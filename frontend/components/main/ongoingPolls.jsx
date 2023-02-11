@@ -33,14 +33,29 @@ export default function OngoingPolls(props) {
     const scrollRef = useRef(null)
     const [isDrag, setIsDrag] = useState(false)
     const [startX, setStartX] = useState()
+    const startPositionRef = useRef(0)
+    const [unclickable, setUnclickable] = useState(true)
 
     const onDragStart = e => {
+        console.log("onDragStart")
         e.preventDefault()
         setIsDrag(true)
         setStartX(e.pageX + scrollRef.current.scrollLeft)
+        startPositionRef.current = e.pageX
     }
-    const onDragEnd = () => {
+    const onDragEnd = e => {
+        const moveRange = Math.abs(startPositionRef.current - e.pageX)
+
+        if (moveRange < 20) {
+            console.log("movePage")
+            setUnclickable(false)
+            setIsDrag(false)
+
+            return
+        }
+
         setIsDrag(false)
+        setUnclickable(true)
     }
 
     const onDragMove = e => {
@@ -48,9 +63,10 @@ export default function OngoingPolls(props) {
             scrollRef.current.scrollLeft = startX - e.pageX
         }
     }
+
     const PollsMap = () => {
         const data = props.data
-        return data.map(el => <OngoingPollsPoll data={el} />)
+        return data.map(el => <OngoingPollsPoll data={el} unclickable={unclickable} />)
     }
     return (
         <Box>

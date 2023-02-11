@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import Box from "@mui/material/Box"
 import { Checkbox, TextField } from "@mui/material"
 import { ConstructionOutlined } from "@mui/icons-material"
+import defaultImage from "../../public/defaultImage.png"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function Option(props) {
@@ -32,16 +33,18 @@ export default function Option(props) {
                 alignItems: "center",
                 fontSize: 22,
                 flex: 0.2,
-                background: `linear-gradient(to right,  #9c9e9f 0%,#9c9e9f ${ratio}% ,#f6f6f6  ${ratio}%,#f6f6f6 100%)`,
-                //backgroundImage: url("../../public/untilDie.jpg"),
+                background: `linear-gradient(to right,  #9c9e9f 30%,#9c9e9f ${ratio}% ,#f6f6f6  ${ratio}%,#f6f6f6 100%)`,
             }}
         >
             <Box
                 sx={{
-                    backgroundImage: `url(${props.data.imageUrl})`,
+                    backgroundImage:
+                        props.data.imageUrl !== null ? `url(${props.data.imageUrl})` : `url(${defaultImage.src})`,
+                    backgroundPosition: "50% 50%",
+                    backgroundSize: "cover",
                     width: 90,
                     height: "100%",
-                    mr: 1.5,
+                    mr: 1,
                     backgroundSize: "cover",
                 }}
             ></Box>
