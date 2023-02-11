@@ -23,11 +23,14 @@ public class Option extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poll_id" , nullable = true)
+    @JoinColumn(name = "poll_id" , nullable = false)
     private Poll poll;
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    @Column(name = "image_url", nullable = true)
+    private String imageUrl;
 
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL)
     private Set<Voter> voters = new HashSet<>();
@@ -37,11 +40,16 @@ public class Option extends BaseTimeEntity {
         this.id = id;
         this.description = description;
     }
+
     public void updateDescription(String description) {
         this.description = description;
     }
 
     public void setPoll(Poll poll) { this.poll = poll; }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public Voter findVoterByVoterId(Long voterId) {
         return voters.stream()

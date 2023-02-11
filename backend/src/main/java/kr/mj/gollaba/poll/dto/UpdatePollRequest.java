@@ -9,12 +9,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static kr.mj.gollaba.exception.GollabaErrorCode.INVALID_PARAMS;
@@ -27,7 +25,7 @@ public class UpdatePollRequest implements BaseApiRequest {
     @Size(min = 4, max = 50)
     private String title;
 
-    @ApiModelProperty(example = "imageFile")
+    @ApiModelProperty(example = "imageFile", hidden = true)
     private MultipartFile pollImage;
 
     @ApiModelProperty(required = false)

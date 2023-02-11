@@ -68,6 +68,22 @@ public class PollController {
                 .body(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @ApiOperation(value = "(My 투표) 투표 조회 by userId")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = FindAllPollResponse.class))),
+        @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = ErrorAPIResponse.class)))})
+    @GetMapping(path = "/polls/me")
+    public ResponseEntity<FindAllPollResponse> findAllByUserId(@ApiIgnore @AuthenticationPrincipal PrincipalDetails principalDetails){
+        var response = pollService.findAllByUserId(principalDetails.getUser().getId());
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(response);
+    }
+
     @ParseHashId
     @ApiOperation(value = "투표 상세 조회")
     @ApiResponses(value = {
@@ -120,6 +136,29 @@ public class PollController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(true);
+    }
+
+    @ParseHashId
+    @ApiOperation(value = "투표 조회수 증가")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = Boolean.class))),
+        @ApiResponse(responseCode = "400", description = "에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = @Schema(implementation = ErrorAPIResponse.class)))})
+    @PostMapping(path = "/polls/{pollId}/read-count")
+    public ResponseEntity<Boolean> increaseReadCount(@ApiParam(type = "string")
+                                                     @PathVariable Object pollId) {
+        var request = new IncreaseReadCountRequest();
+        request.setPollId((Long) pollId);
+        request.setIpAddress(HttpRequestUtils.getClientIpAddress());
+
+        request.validate();
+
+        pollService.increaseReadCount(request);
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(true);
     }
 
 }

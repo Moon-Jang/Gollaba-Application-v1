@@ -5,11 +5,10 @@ import kr.mj.gollaba.common.util.CryptUtils;
 import kr.mj.gollaba.exception.GollabaErrorCode;
 import kr.mj.gollaba.exception.GollabaException;
 import kr.mj.gollaba.poll.dto.*;
-import kr.mj.gollaba.poll.entity.Option;
-import kr.mj.gollaba.poll.entity.Poll;
-import kr.mj.gollaba.poll.entity.Voter;
-import kr.mj.gollaba.poll.repository.PollQueryRepository;
-import kr.mj.gollaba.poll.repository.PollRepository;
+import kr.mj.gollaba.poll.entity.*;
+import kr.mj.gollaba.poll.entity.redis.PollReadCount;
+import kr.mj.gollaba.poll.entity.redis.PollReadRecord;
+import kr.mj.gollaba.poll.repository.*;
 import kr.mj.gollaba.poll.service.PollService;
 import kr.mj.gollaba.poll.type.PollingResponseType;
 import kr.mj.gollaba.unit.common.ServiceTest;
@@ -36,12 +35,11 @@ import java.util.stream.Collectors;
 
 import static kr.mj.gollaba.poll.type.PollingResponseType.SINGLE;
 import static kr.mj.gollaba.unit.poll.factory.PollFactory.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static kr.mj.gollaba.unit.poll.factory.VoterFactory.TEST_IP_ADDRESS;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class PollServiceTest extends ServiceTest {
 
@@ -56,6 +54,12 @@ public class PollServiceTest extends ServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PollReadCountRepository pollReadCountRepository;
+
+    @Mock
+    private PollReadRecordRepository pollReadRecordRepository;
 
     @Mock
     private S3UploadService s3UploadService;
@@ -115,11 +119,11 @@ public class PollServiceTest extends ServiceTest {
             }
         }
 
-        @DisplayName("투표 이미지가 있을 경우 경우")
+        @DisplayName("투표 항목 이미지가 있을 경우 경우")
         @Nested
         class has_poll_image {
 
-            @DisplayName("투표 저장 후 투표 이미지를 업로드한다.")
+            @DisplayName("투표 저장 후 투표 항목 이미지를 업로드한다.")
             @Test
             void upload_image_after_save_poll() throws IOException {
                 //given
@@ -127,13 +131,29 @@ public class PollServiceTest extends ServiceTest {
 
                 File file = ResourceUtils.getFile("classpath:test_image.jpeg");
                 InputStream inputStream = new FileInputStream(file);
-
-                request.setPollImage(new MockMultipartFile(
-                        "image",
-                        "test.png",
-                        "image/png",
-                        inputStream));
-                Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
+                var mockFile = new MockMultipartFile(
+                    "image",
+                    "test.png",
+                    "image/png",
+                    inputStream);
+                var optionDto1 = new CreatePollRequest.OptionDto();
+                optionDto1.setDescription("test1");
+                optionDto1.setOptionImage(mockFile);
+                var optionDto2 = new CreatePollRequest.OptionDto();
+                optionDto2.setDescription("test2");
+                optionDto2.setOptionImage(mockFile);
+                var option1 = Option.builder()
+                    .id(1L)
+                    .description("test1")
+                    .build();
+                option1.updateImageUrl("testImageUrl1");
+                var option2 = Option.builder()
+                    .id(2L)
+                    .description("test2")
+                    .build();
+                option1.updateImageUrl("testImageUrl2");
+                request.setOptions(List.of(optionDto1, optionDto2));
+                Poll poll = PollFactory.createWithId(null, List.of(option1, option2));
 
                 given(pollRepository.save(any(Poll.class)))
                         .willReturn(poll);
@@ -148,8 +168,8 @@ public class PollServiceTest extends ServiceTest {
                 //then
                 assertThat(result.getPollId()).isPositive();
                 verify(pollRepository, times(2)).save(any(Poll.class));
-                verify(s3UploadService, times(1)).generateFileName(anyLong(), anyString());
-                verify(s3UploadService, times(1)).upload(anyString(), anyString(), any());
+                verify(s3UploadService, times(2)).generateFileName(anyLong(), anyString());
+                verify(s3UploadService, times(2)).upload(anyString(), anyString(), any());
             }
         }
 
@@ -212,13 +232,13 @@ public class PollServiceTest extends ServiceTest {
     @Nested
     class find {
 
-        @DisplayName("투표 id를 통해 검색 후 결과를 리턴한다.")
+        @DisplayName("투표 id를 통해 검색 후 결과를 리턴한다.(조회 데이터도 추가)")
         @Test
         void return_search_result() {
             //given
             Poll poll = PollFactory.createWithId(null, OptionFactory.createList());
             given(pollQueryRepository.findById(any(Long.class)))
-                    .willReturn(Optional.of(poll));
+                .willReturn(Optional.of(poll));
 
             //when
             FindPollResponse result = pollService.find(poll.getId());
@@ -248,7 +268,7 @@ public class PollServiceTest extends ServiceTest {
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
                 given(pollQueryRepository.findById(anyLong()))
                         .willReturn(Optional.of(poll));
 
@@ -277,7 +297,7 @@ public class PollServiceTest extends ServiceTest {
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
                 given(pollQueryRepository.findById(anyLong()))
                         .willReturn(Optional.of(poll));
 
@@ -306,11 +326,11 @@ public class PollServiceTest extends ServiceTest {
                 request.setOptionIds(poll.getOptions().stream().map(Option::getId).collect(Collectors.toList()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
                 request.setUserId(null);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
                 given(pollQueryRepository.findById(anyLong()))
                         .willReturn(Optional.of(poll));
                 given(cryptUtils.decrypt(anyString()))
-                        .willReturn(VoterFactory.TEST_IP_ADDRESS);
+                        .willReturn(TEST_IP_ADDRESS);
 
                 //when then
                 assertThatThrownBy(() -> pollService.vote(PollFactory.TEST_ID, request))
@@ -346,13 +366,13 @@ public class PollServiceTest extends ServiceTest {
                 request.setUserId(UserFactory.TEST_ID);
                 request.setOptionIds(List.of(options.get(0).getId()));
                 request.setVoterName(VoterFactory.TEST_VOTER_NAME);
-                request.setIpAddress(VoterFactory.TEST_IP_ADDRESS);
+                request.setIpAddress(TEST_IP_ADDRESS);
 
                 //when
                 pollService.vote(PollFactory.TEST_ID, request);
 
                 //then
-                verify(cryptUtils, times(1)).encrypt(eq(VoterFactory.TEST_IP_ADDRESS));
+                verify(cryptUtils, times(1)).encrypt(eq(TEST_IP_ADDRESS));
                 verify(userRepository, times(1)).findById(eq(UserFactory.TEST_ID));
                 verify(pollQueryRepository, times(1)).findById(eq(PollFactory.TEST_ID));
                 verify(pollRepository, times(1)).save(eq(poll));
@@ -389,6 +409,58 @@ public class PollServiceTest extends ServiceTest {
 
                 verify(pollQueryRepository, times(1)).findById(eq(poll.getId()));
             }
+        }
+    }
+
+    @DisplayName("increaseReadCount 메서드는")
+    @Nested
+    class increaseReadCount {
+
+        @DisplayName("성공 케이스")
+        @Test
+        void success() {
+            //given
+            var request = new IncreaseReadCountRequest();
+            request.setPollId(TEST_ID);
+            request.setIpAddress(TEST_IP_ADDRESS);
+            var record = PollReadRecord.of(TEST_ID);
+            var pollReadCount = PollReadCount.of(TEST_ID, 0);
+            given(pollReadRecordRepository.findById(eq(TEST_ID)))
+                .willReturn(Optional.of(record));
+            given(pollReadCountRepository.findById(eq(TEST_ID)))
+                .willReturn(Optional.of(pollReadCount));
+
+            //when
+            var throwable = catchThrowable(() -> {
+                pollService.increaseReadCount(request);
+            });
+
+            //then
+            assertThat(throwable).isNull();
+        }
+
+        @DisplayName("이미 읽은 아이피면 패스")
+        @Test
+        void when_already_read_ip_then_pass() {
+            //given
+            var request = new IncreaseReadCountRequest();
+            request.setPollId(TEST_ID);
+            request.setIpAddress(TEST_IP_ADDRESS);
+            var mockRecord = mock(PollReadRecord.class);
+            given(pollReadRecordRepository.findById(eq(TEST_ID)))
+                .willReturn(Optional.of(mockRecord));
+            given(mockRecord.isAlreadyRead(eq(TEST_IP_ADDRESS)))
+                .willReturn(true);
+
+            //when
+            var throwable = catchThrowable(() -> {
+                pollService.increaseReadCount(request);
+            });
+
+            //then
+            assertThat(throwable).isNull();
+
+            verify(pollReadRecordRepository, times(0)).save(any());
         }
     }
 }

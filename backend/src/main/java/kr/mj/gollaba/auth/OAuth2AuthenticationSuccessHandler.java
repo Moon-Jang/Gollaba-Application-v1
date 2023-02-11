@@ -8,6 +8,7 @@ import kr.mj.gollaba.auth.repository.UserTokenRepository;
 import kr.mj.gollaba.auth.types.ProviderType;
 import kr.mj.gollaba.common.util.CookieUtils;
 import kr.mj.gollaba.user.entity.User;
+import kr.mj.gollaba.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -33,6 +34,7 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
     private final UserProviderRepository userProviderRepository;
     @Value("${security.jwt.refresh-expiration-time}")
@@ -45,15 +47,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .map(Cookie::getValue)
                 .orElse(getDefaultTargetUrl());
         var oAuth2UserInfo = getOAuth2UserInfo(authentication);
-        var user = userProviderRepository.findByProviderId(oAuth2UserInfo.getProviderId())
-            .map(UserProvider::getUser)
-            .orElse(null);
 
-        if (user == null) {
+        if (userRepository.existsByEmail(oAuth2UserInfo.getEmail()) == false) {
             var signUpUrl = generateSignupUrl(redirectUrl, oAuth2UserInfo);
             getRedirectStrategy().sendRedirect(request, response, signUpUrl);
             return;
-         }
+        }
+
+        var user = userRepository.findByEmail(oAuth2UserInfo.getEmail()).get();
+        var userProvider = userProviderRepository.findByProviderId(oAuth2UserInfo.getProviderId());
+
+        if (userProvider.isEmpty()) {
+            userProviderRepository.save(UserProvider.of(oAuth2UserInfo, user));
+        }
 
         var accessToken = jwtTokenProvider.createAccessToken(user);
         var refreshToken = saveUserToken(user, accessToken);

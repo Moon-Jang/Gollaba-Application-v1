@@ -47,10 +47,11 @@ public class CreatePollRequest implements BaseApiRequest {
     @ApiModelProperty(example = "true", required = true)
     private Boolean isBallot;
 
-    @ApiModelProperty(example = "imageFile", required = false)
+    @ApiModelProperty(example = "imageFile", required = false, hidden = true)
     private MultipartFile pollImage;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @ApiModelProperty(required = true)
     private LocalDateTime endedAt = LocalDateTime.now().plusDays(7L);
 
     private List<OptionDto> options = new ArrayList<>();
@@ -85,6 +86,7 @@ public class CreatePollRequest implements BaseApiRequest {
                 .responseType(responseType)
                 .isBallot(isBallot)
                 .endedAt(endedAt)
+                .readCount(0)
                 .build();
 
         options.stream()
@@ -105,6 +107,8 @@ public class CreatePollRequest implements BaseApiRequest {
         @Size(min = 2, max = 50)
         private String description;
 
+        @ApiModelProperty(example = "투표 항목 이미지", required = false)
+        private MultipartFile optionImage;
     }
 
 }

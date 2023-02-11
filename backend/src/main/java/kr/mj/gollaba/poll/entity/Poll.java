@@ -48,18 +48,24 @@ public class Poll extends BaseTimeEntity {
     @Column(name = "poll_image_url", nullable = true)
     private String pollImageUrl;
 
+    @Column(name = "read_count", nullable = false)
+    private Integer readCount;
+
     @OneToMany(mappedBy = "poll", cascade = CascadeType.ALL)
     @OrderColumn(name = "position")
     private List<Option> options = new ArrayList<>();
 
     @Builder
-    public Poll(Long id, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt) {
+    private Poll(Long id, User user, String title, String creatorName, PollingResponseType responseType, Boolean isBallot, LocalDateTime endedAt, String pollImageUrl, Integer readCount) {
         this.id = id;
+        this.user = user;
         this.title = title;
         this.creatorName = creatorName;
         this.responseType = responseType;
         this.isBallot = isBallot;
         this.endedAt = endedAt;
+        this.pollImageUrl = pollImageUrl;
+        this.readCount = readCount;
     }
 
     public void addOption(Option option) {
@@ -77,6 +83,12 @@ public class Poll extends BaseTimeEntity {
                 .filter(el -> el.getId().equals(optionId))
                 .findFirst()
                 .orElseThrow(() -> new GollabaException(GollabaErrorCode.NOT_EXIST_OPTION));
+    }
+
+    public int getVoteCnt() {
+        return options.stream()
+            .mapToInt(option -> option.getVoters().size())
+            .sum();
     }
 
     public void registerCreator(User user) {
@@ -101,5 +113,14 @@ public class Poll extends BaseTimeEntity {
 
     public void updatePollImageUrl(String pollImageUrl) {
         this.pollImageUrl = pollImageUrl;
+    }
+
+    public void updateReadCount(Integer readCount) {
+        this.readCount = readCount;
+    }
+
+    public void updateOptionImageUrl(long optionId, String optionImageUrl) {
+        var option = findOptionByOptionId(optionId);
+        option.updateImageUrl(optionImageUrl);
     }
 }

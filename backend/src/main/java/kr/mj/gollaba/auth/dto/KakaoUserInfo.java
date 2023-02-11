@@ -3,7 +3,9 @@ package kr.mj.gollaba.auth.dto;
 import kr.mj.gollaba.auth.types.ProviderType;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class FaceBookUserInfo implements OAuth2UserInfo {
+import java.util.Map;
+
+public class KakaoUserInfo implements OAuth2UserInfo {
 
     private final ProviderType providerType;
 
@@ -13,12 +15,17 @@ public class FaceBookUserInfo implements OAuth2UserInfo {
 
     private final String name;
 
-    public FaceBookUserInfo(ProviderType providerType, OAuth2User oAuth2User) {
+    private final String profileImageUrl;
+
+    public KakaoUserInfo(ProviderType providerType, OAuth2User oAuth2User) {
         var attributes = oAuth2User.getAttributes();
+        var accountInfo = (Map<String, Object>) attributes.get("kakao_account");
+        var profile = (Map<String, Object>) accountInfo.get("profile");
         this.providerType = providerType;
-        this.providerId = attributes.get("id").toString();
-        this.email = attributes.get("email").toString();
-        this.name = attributes.get("name").toString();
+        this.providerId = valueToString(attributes.get("id"));
+        this.email = valueToString(accountInfo.get("email"));
+        this.name = valueToString(profile.get("nickname"));
+        this.profileImageUrl = valueToString(profile.get("profile_image_url"));
     }
 
     @Override
@@ -33,7 +40,7 @@ public class FaceBookUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getProfileImageUrl() {
-        return null;
+        return this.profileImageUrl;
     }
 
     @Override
@@ -45,5 +52,10 @@ public class FaceBookUserInfo implements OAuth2UserInfo {
     public ProviderType getProviderType() {
         return this.providerType;
     }
+    
+    private String valueToString(Object value) {
+        if (value == null) return null;
 
+        return value.toString();
+    }
 }
