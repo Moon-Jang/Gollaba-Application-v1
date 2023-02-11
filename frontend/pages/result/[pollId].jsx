@@ -31,7 +31,6 @@ export default function Voting() {
     const router = useRouter()
     let response
     const { pollId } = router.query
-    console.log(pollId)
     const [selected, setSelected] = useState([])
     const [polls, setPolls] = useState([])
     const [isFetch, setIsFetch] = useState(false)
@@ -52,8 +51,6 @@ export default function Voting() {
             setIsFetch(true)
         }
     }, [pollId])
-    console.log("isFetch>>", isFetch)
-    console.log("response", response)
     const [voted, setVoted] = useState([])
 
     return (

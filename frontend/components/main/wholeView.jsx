@@ -6,7 +6,7 @@ import Box from "@mui/material/Box"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import BottomNavigation from "@mui/material/BottomNavigation"
 import BottomNavigationAction from "@mui/material/BottomNavigationAction"
-import { Icon } from "@mui/material"
+import { Icon, TextField } from "@mui/material"
 import { useInView } from "react-intersection-observer"
 
 import PollsMap from "../main/mapPoll"
@@ -23,7 +23,7 @@ export default function WholeView() {
     const [offset, setOffset] = useState(0)
     const [totalCount, setTotalCount] = useState(0)
     const [cookies, setCookies, removeCookies] = useCookies([])
-
+    const inputRef = useRef(null)
     let response
     const limit = 15
 
@@ -46,15 +46,20 @@ export default function WholeView() {
         }
     }, [inView, isLoading])
 
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        console.log(inputRef.current.value)
+    }
+
     if (polls !== undefined)
         return (
             <Box sx={{ mt: 3, mb: 3 }}>
-                <Box
-                    className="Title"
-                    sx={{ pl: 0.3, mt: 0.3, display: "flex", flexDirection: "row", backgroundColor: "red" }}
-                >
+                <Box className="Title" sx={{ pl: 0.3, mt: 0.3, display: "flex", flexDirection: "row" }}>
                     <Box sx={{ display: "flex" }}>📝 전체 투표</Box>
-                    <Box sx={{ display: "flex", justifyContent: "right" }}>asdsad</Box>
+                    <form onSubmit={handleSubmit}>
+                        <TextField variant="outlined" sx={{ width: "150px", height: "4px" }} />
+                        <button type="submit">Search</button>
+                    </form>
                 </Box>
 
                 <Box display={"flex"} flexDirection={"column"} flex={"1"}>
