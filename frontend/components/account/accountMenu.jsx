@@ -2,6 +2,7 @@ import Favorite from "./favorite"
 import Logout from "./logout"
 import MyPoll from "./myPoll"
 import PasswordChange from "./passwordChange"
+import Box from "@mui/material/Box"
 
 import List from "@mui/material/List"
 import ListItem from "@mui/material/ListItem"
@@ -13,27 +14,31 @@ export default function AccountMenu() {
         width: "100%",
         maxWidth: 400,
         bgcolor: "background.paper",
+        paddingTop: 5,
     }
 
     return (
         <>
             <List sx={listStyle} component="nav" aria-label="mailbox folders">
                 <Divider />
-                <ListItem button>
-                    <MyPoll />
-                </ListItem>
+                <Box sx={{ maxHeight: 80 }}>
+                    <ListItem button>
+                        <MyPoll />
+                    </ListItem>
+                </Box>
                 <Divider />
-                <ListItem button>
-                    <Favorite />
-                </ListItem>
+                <Box sx={{ maxHeight: 70 }}>
+                    <ListItem button>
+                        <Favorite />
+                    </ListItem>
+                </Box>
+
                 <Divider />
-                <ListItem button>
-                    <PasswordChange />
-                </ListItem>
-                <Divider />
-                <ListItem button>
-                    <Logout />
-                </ListItem>
+                <Box sx={{ maxHeight: 80 }}>
+                    <ListItem button>
+                        <Logout />
+                    </ListItem>
+                </Box>
                 <Divider />
             </List>
         </>

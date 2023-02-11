@@ -1,6 +1,5 @@
 import { Avatar, Box, IconButton, TextField, Button, CssBaseline, ThemeProvider } from "@mui/material"
 import { useRef, useState, useEffect } from "react"
-import { useCookies } from "react-cookie"
 import jwt from "jsonwebtoken"
 import ApiGateway from "../apis/ApiGateway"
 import CommonValidator from "./../utils/CommonValidator"

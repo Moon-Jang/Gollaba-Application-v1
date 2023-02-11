@@ -1,14 +1,21 @@
 import * as React from "react"
 import axios from "axios"
 import Box from "@mui/material/Box"
-import { Cookies, useCookies } from "react-cookie"
+import { useRouter } from "next/router"
 import { Checkbox, TextField } from "@mui/material"
 import jwt from "jsonwebtoken"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 
 export default function CreateBtn(props) {
-    const [cookies, setCookies, removeCookies] = useCookies([])
+    const router = useRouter()
+    const [userInfo, setUserInfo] = useState()
+    useEffect(async () => {
+        const token = getToken()
+        const userInfo = await fetchUser(token)
+
+        setUserInfo(userInfo)
+    }, [])
 
     const btnClicked = async () => {
         const decoded = jwt.decode(cookies.accessToken)
@@ -67,4 +74,13 @@ export default function CreateBtn(props) {
             생성
         </Box>
     )
+}
+
+async function fetchUser(token) {
+    const { id } = jwt_decode(token)
+    const response = await ApiGateway.showUser(id, token)
+
+    if (response.error) return null
+
+    return response
 }

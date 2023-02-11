@@ -4,7 +4,7 @@ import { Checkbox, TextField } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { makeStyles } from "@mui/styles"
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"
-import OngoingPollsPoll from "./ongoingPollsPoll"
+import TopTenPoll from "./TopTenPoll"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 /*
@@ -27,7 +27,7 @@ const newPageStyles = makeStyles((theme) => ({
 }));
 */
 
-export default function OngoingPolls(props) {
+export default function TopTen(props) {
     // const classes = newPageStyles();
 
     const scrollRef = useRef(null)
@@ -37,7 +37,6 @@ export default function OngoingPolls(props) {
     const [unclickable, setUnclickable] = useState(true)
 
     const onDragStart = e => {
-        console.log("onDragStart")
         e.preventDefault()
         setIsDrag(true)
         setStartX(e.pageX + scrollRef.current.scrollLeft)
@@ -50,7 +49,6 @@ export default function OngoingPolls(props) {
             console.log("movePage")
             setUnclickable(false)
             setIsDrag(false)
-
             return
         }
 
@@ -66,12 +64,13 @@ export default function OngoingPolls(props) {
 
     const PollsMap = () => {
         const data = props.data
-        return data.map(el => <OngoingPollsPoll data={el} unclickable={unclickable} />)
+        return data.map(el => <TopTenPoll data={el} unclickable={unclickable} />)
     }
+
     return (
-        <Box>
-            <Box className="Title" sx={{ pl: 0.3 }}>
-                🔥 Trending
+        <Box sx={{ mt: 0.2, mb: 3 }}>
+            <Box className="Title" sx={{ pl: 0.3, mt: 0.3 }}>
+                🏆 Top 10
             </Box>
             <Box
                 className="outerContainer"
@@ -89,9 +88,11 @@ export default function OngoingPolls(props) {
                     borderColor: "grey.500",
                     flexDirection: "row",
                     overflow: "auto",
+
                     "&::-webkit-scrollbar": {
                         display: "none",
                     },
+
                     "-ms-overflow-style": "none",
                     //overflow: "hidden",
                 }}

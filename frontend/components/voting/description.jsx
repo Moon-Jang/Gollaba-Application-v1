@@ -1,27 +1,32 @@
-import * as React from "react"
 import Box from "@mui/material/Box"
-import { Checkbox, TextField } from "@mui/material"
+import { Checkbox, TextField, Typography } from "@mui/material"
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"
 import SettingsIcon from "@mui/icons-material/Settings"
 import ModeEditIcon from "@mui/icons-material/ModeEdit"
-import { useCookies } from "react-cookie"
+import React, { useRef, useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import jwt_decode from "jwt-decode"
+import ApiGateway from "../../apis/ApiGateway"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function Description(props) {
     const data = props.data
     const name = data.creatorName
+    console.log("epdlxj", data)
 
-    console.log("이름", name)
+    const date = new Date(props.data.endedAt)
 
-    let token
+    const today = new Date()
+    const [userInfo, setUserInfo] = useState()
 
-    const router = useRouter()
-    const [cookies, setCookies] = useCookies()
+    useEffect(async () => {
+        const token = getToken()
 
-    if (data.user) console.log("test", data.user.userId)
-    if (cookies.accessToken) token = jwt_decode(cookies.accessToken)
+        if (token !== null) {
+            const userInfo = await fetchUser(token)
+            setUserInfo(userInfo)
+        }
+    }, [])
 
     const editClick = () => {
         router.push("/edit/" + data.pollId)
@@ -32,18 +37,20 @@ export default function Description(props) {
             className="outerContainer"
             sx={{
                 maxWidth: "100%",
-                height: "180px",
-                // minHeight: 180,
-                mt: 1.5,
+                height: "160px",
+                mt: 1,
                 mb: 2,
                 borderRadius: "5px",
                 padding: 0.5,
                 boxShadow: 2,
                 letterSpacing: 1.2,
                 display: "flex",
-                //flex: 1,
                 borderColor: "grey.500",
                 flexDirection: "column",
+                boxShadow: "0 0 5px 1px rgba(0,0,0,0.095)",
+                borderColor: "lightgray",
+                borderRadius: 2,
+                flexShrink: 0,
             }}
         >
             <Box
@@ -84,8 +91,8 @@ export default function Description(props) {
                         alignItems: "center",
                     }}
                 >
-                    <AccountCircleIcon fontSize="12" sx={{ mr: 0.2 }} />
-                    {name !== undefined && (name.length <= 5 ? name : name.substring(0, 5) + "...")}
+                    <AccountCircleIcon sx={{ fontSize: 10, mr: 0.2 }} />
+                    {name !== undefined && (name.length <= 4 ? name : name.substring(0, 4) + "...")}
                 </Box>
             </Box>
             <Box
@@ -101,7 +108,7 @@ export default function Description(props) {
                     fontSize: 30,
                 }}
             >
-                {data.title}
+                <Typography sx={{ fontSize: 23, letterSpacing: 0, pt: 2.8 }}>{data.title}</Typography>
             </Box>
 
             <Box
@@ -116,7 +123,7 @@ export default function Description(props) {
                 }}
             >
                 <Box sx={{ display: "flex", flex: 1, justifyContent: "left" }}>
-                    {cookies.accessToken && data.user && token.id === data.user.userId ? (
+                    {userInfo !== undefined && data.user && userInfo.id === data.user.userId ? (
                         <Box
                             className="edit"
                             onClick={editClick}
@@ -129,15 +136,39 @@ export default function Description(props) {
                                 pr: 1,
                                 alignItems: "center",
                             }}
-                        ></Box>
+                        >
+                            <Box sx={{ display: "flex", flex: 1, justifyContent: "right" }}>
+                                <SettingsIcon sx={{ fontSize: 25, ml: 0.8, mb: 0.3, color: "gray" }} />
+                            </Box>
+                        </Box>
                     ) : (
                         ""
                     )}
                 </Box>
-                <Box sx={{ display: "flex", flex: 1, justifyContent: "right" }}>
-                    <SettingsIcon fontSize="large" sx={{ ml: 0.8, mb: 0.3 }} />
-                </Box>
             </Box>
         </Box>
     )
+}
+
+async function fetchUser(token) {
+    const { id } = jwt_decode(token)
+    const response = await ApiGateway.showUser(id, token)
+
+    if (response.error) return null
+
+    return response
+}
+
+function getToken() {
+    const token = localStorage.getItem("accessToken")
+
+    if (token === null) return null
+
+    const { exp } = jwt_decode(token)
+    const expiredDate = new Date(exp * 1000)
+    const now = new Date()
+
+    if (expiredDate < now) return null
+
+    return token
 }

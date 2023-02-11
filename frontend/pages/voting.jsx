@@ -15,20 +15,7 @@ import FooterNav from "../components/footerNav"
 import PollsMap from "../components/polls/mapPoll"
 import theme from "../src/theme"
 import ApiGateway from "../apis/ApiGateway"
-import { useCookies } from "react-cookie"
-/*
-const theme = createTheme({
-  typography: {
-    fontFamily: "'Jua', sans-serif",
-    //fontFamily: "GmarketSansMedium",
-  },
-  palette: {
-    primary: {
-      main: "#808080",
-    },
-  },
-});
-*/
+import jwt_decode from "jwt-decode"
 
 const PollTheme = createTheme(theme)
 
@@ -38,23 +25,28 @@ export default function Voting() {
     const [isLoading, setIsLoading] = useState(false)
     const [offset, setOffset] = useState(0)
     const [totalCount, setTotalCount] = useState(0)
-    const [cookies, setCookies, removeCookies] = useCookies([])
+    const [userInfo, setUserInfo] = useState()
 
     let response
     const limit = 15
 
-    const getData = async () => {
-        if (totalCount !== 0 && offset * 15 >= totalCount) return
+    const getData = async token => {
         setIsLoading(true)
-        response = await ApiGateway.getPolls(offset, limit, cookies.accessToken)
+        response = await ApiGateway.myPolls(token)
         setPolls([...polls, ...response.polls])
         setTotalCount(response.totalCount)
         setIsLoading(false)
     }
 
-    useEffect(() => {
-        getData()
-    }, [offset])
+    useEffect(async () => {
+        const token = getToken()
+
+        if (token !== null) {
+            const userInfo = await fetchUser(token)
+            setUserInfo(userInfo)
+            getData(token)
+        }
+    }, [])
 
     useEffect(() => {
         if (inView && !isLoading) {
@@ -91,6 +83,9 @@ export default function Voting() {
                                 flexDirection: "column",
                             }}
                         >
+                            <Box className="Title" sx={{ pl: 0.3, mt: 0.3 }}>
+                                ✍ 내 투표
+                            </Box>
                             <Box display={"flex"} flexDirection={"column"} flex={"1"}>
                                 <Box
                                     sx={{
@@ -98,8 +93,8 @@ export default function Voting() {
                                         flexDirection: "column",
                                         flex: 1,
                                         overflow: "auto",
-                                        maxHeight: "90vh",
-                                        mt: 5,
+                                        maxHeight: "80vh",
+                                        mt: 0,
                                         pl: 1.2,
                                         pr: 1.2,
                                     }}
@@ -117,4 +112,26 @@ export default function Voting() {
                 </Container>
             </ThemeProvider>
         )
+}
+
+async function fetchUser(token) {
+    const { id } = jwt_decode(token)
+    const response = await ApiGateway.showUser(id, token)
+    if (response.error) return null
+
+    return response
+}
+
+function getToken() {
+    const token = localStorage.getItem("accessToken")
+
+    if (token === null) return null
+
+    const { exp } = jwt_decode(token)
+    const expiredDate = new Date(exp * 1000)
+    const now = new Date()
+
+    if (expiredDate < now) return null
+
+    return token
 }

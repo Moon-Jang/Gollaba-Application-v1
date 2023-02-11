@@ -7,11 +7,19 @@ import TextField from "@mui/material/TextField"
 import Container from "@mui/material/Container"
 import Box from "@mui/material/Box"
 import Link from "../src/Link"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { createTheme, rgbToHex, ThemeProvider } from "@mui/material/styles"
 import axios from "axios"
 import { useCookies } from "react-cookie"
 import CommonValidator from "../utils/CommonValidator"
 import LogoImage from "../public/Gollaba_logo_nuki_v1.png"
+import NaverLogoImage from "../public/naver_logo.png"
+import KakaoLogoImage from "../public/kakao_logo.png"
+
+import FacebookIcon from "@mui/icons-material/Facebook"
+import socialBtn from "../components/login/btn"
+import { Typography } from "@mui/material"
+import { BrowserRouter, Switch, Route, useLocation } from "react-router-dom"
+import { useEffect } from "react"
 
 const theme = createTheme({
     palette: {
@@ -22,59 +30,11 @@ const theme = createTheme({
 })
 
 export default function Login() {
-    const [cookies, setCookies, removeCookies] = useCookies(null)
-    const [isErrorId, setIsErrorId] = useState(false)
-    const [helperTextId, setHelperTextId] = useState("")
-    const [isErrorPassword, setIsErrorPassword] = useState(false)
-    const [helperTextPassword, setHelperTextPassword] = useState("")
+    const [host, setHost] = useState("")
 
-    const handleChangeId = event => {
-        if (event.target.name === "id" && !CommonValidator.validate("id", event.target.value)) {
-            setIsErrorId(true)
-            setHelperTextId("ID는 8~32자의 숫자, 문자로 구성되어야 합니다.")
-            return
-        }
-        setIsErrorId(false)
-        setHelperTextId("")
-    }
-
-    const handleChangePassword = event => {
-        if (event.target.name === "password" && !CommonValidator.validate("password", event.target.value)) {
-            setIsErrorPassword(true)
-            setHelperTextPassword("비밀번호는 8~24자의 숫자, 문자, 특수문자가 모두 포함되어야 합니다.")
-            return
-        }
-        setIsErrorPassword(false)
-        setHelperTextPassword("")
-    }
-
-    const handleSubmit = async event => {
-        event.preventDefault()
-        if (isErrorId || isErrorPassword) {
-            alert("Id와 비밀번호가 조건에 맞는지 확인하세요.")
-            return
-        }
-        const input = new FormData(event.currentTarget)
-        const payload = {
-            id: input.get("id"),
-            password: input.get("password"),
-        }
-        let response
-        try {
-            response = await axios.post("https://dev.api.gollaba.net/v1/login", payload)
-        } catch (e) {
-            response = e.response
-            alert(response.data.error.message)
-            return
-        } finally {
-            if (response.status === 400) return
-            setCookies("accessToken", response.data.accessToken)
-            setCookies("refreshToken", response.data.refreshToken)
-            Router.push("/account")
-        }
-    }
-    console.log(LogoImage)
-    console.log(LogoImage.src)
+    useEffect(() => {
+        setHost(window.location.protocol + "//" + window.location.host)
+    }, [])
 
     return (
         <ThemeProvider theme={theme}>
@@ -82,11 +42,12 @@ export default function Login() {
                 <CssBaseline />
                 <Box
                     sx={{
-                        marginTop: 5,
+                        marginTop: 0,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
+                        height: "100vh",
                     }}
                 >
                     <div className="Header">
@@ -98,74 +59,113 @@ export default function Login() {
                         </Link>
                     </div>
 
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 2 }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="id"
-                            label="아이디"
-                            name="id"
-                            variant="standard"
-                            helperText={helperTextId}
-                            error={isErrorId ? true : false}
-                            onChange={handleChangeId}
-                            autoFocus
-                        />
-                        <TextField
-                            required
-                            fullWidth
-                            name="password"
-                            variant="standard"
-                            label="비밀번호"
-                            type="password"
-                            id="password"
-                            helperText={helperTextPassword}
-                            error={isErrorPassword ? true : false}
-                            onChange={handleChangePassword}
-                        />
-                        <Button
-                            color="primary"
-                            type="submit"
-                            variant="outlined"
-                            fullWidth
-                            style={{ verticalAlign: "middle", color: "#000000" }}
-                            sx={{ mt: 8, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
+                    <Box noValidate>
+                        <Link
+                            href={`https://dev.api.gollaba.net/oauth2/authorize/facebook?redirect_uri=${host}/temp/oauth-callback`}
+                            underline="none"
                         >
-                            Login
-                        </Button>
-                        <Link href="/signup">
                             <Button
-                                type="submit"
+                                color="primary"
                                 variant="outlined"
                                 fullWidth
-                                style={{ verticalAlign: "middle", color: "#000000" }}
-                                sx={{ mt: 1.5, mb: 2, borderRadius: 12.5, boxShadow: 4 }}
+                                style={{ verticalAlign: "middle", color: "#1878F2", textTransform: "none" }}
+                                sx={{
+                                    mt: 8,
+                                    mb: 1,
+                                    boxShadow: 0,
+                                    border: 0.1,
+                                    borderColor: "lightgray",
+                                    borderRadius: 0.5,
+                                    //backgroundColor: "#3B5998",
+                                    height: 55,
+                                    ":hover": { bgcolor: "#E5E8EB", borderColor: "#E5E8EB" },
+                                }}
                             >
-                                Sign up
+                                <Box sx={{ display: "flex", flex: 1 }}>
+                                    <FacebookIcon />
+                                </Box>
+                                <Box sx={{ display: "flex", flex: 15, justifyContent: "center" }}>
+                                    <Typography color="#737881" sx={{ fontWeight: "Bold" }}>
+                                        Facebook 로그인
+                                    </Typography>
+                                </Box>
                             </Button>
                         </Link>
-                        <Divider color="primary" sx={{ fontStyle: "italic", mt: 1, mb: 2 }}>
-                            Or
-                        </Divider>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
+                        <Link
+                            href={`https://dev.api.gollaba.net/oauth2/authorize/naver?redirect_uri=${host}/temp/oauth-callback`}
+                            underline="none"
                         >
-                            <Link
-                                href="#"
-                                underline="always"
-                                level="body1"
-                                variant="plain"
-                                sx={{ fontStyle: "italic", mt: 0 }}
+                            <Button
+                                color="primary"
+                                variant="outlined"
+                                fullWidth
+                                style={{ verticalAlign: "middle", color: "#1878F2", textTransform: "none" }}
+                                sx={{
+                                    mt: 1,
+                                    mb: 1,
+                                    boxShadow: 0,
+                                    border: 0.1,
+                                    borderColor: "lightgray",
+                                    borderRadius: 0.5,
+                                    //backgroundColor: "#3B5998",
+                                    height: 55,
+                                    ":hover": { bgcolor: "#E5E8EB", borderColor: "#E5E8EB" },
+                                }}
                             >
-                                Forgot your password?
-                            </Link>
-                        </Box>
+                                <Box sx={{ display: "flex", flex: 1 }}>
+                                    <img
+                                        src={NaverLogoImage.src}
+                                        style={{ width: 21, height: "auto", marginLeft: 2 }}
+                                    />
+                                </Box>
+                                <Box sx={{ display: "flex", flex: 15, justifyContent: "center" }}>
+                                    <Typography color="#737881" sx={{ fontWeight: "Bold" }}>
+                                        Naver 로그인
+                                    </Typography>
+                                </Box>
+                            </Button>
+                        </Link>
+                        <Link
+                            href={`https://dev.api.gollaba.net/oauth2/authorize/kakao?redirect_uri=${host}/temp/oauth-callback`}
+                            underline="none"
+                        >
+                            <Button
+                                color="primary"
+                                variant="outlined"
+                                fullWidth
+                                style={{ verticalAlign: "middle", color: "#1878F2", textTransform: "none" }}
+                                sx={{
+                                    mt: 1,
+                                    mb: 1,
+                                    boxShadow: 0,
+                                    border: 0.1,
+                                    borderColor: "lightgray",
+                                    borderRadius: 0.5,
+                                    //backgroundColor: "#3B5998",
+                                    height: 55,
+                                    ":hover": { bgcolor: "#E5E8EB", borderColor: "#E5E8EB" },
+                                }}
+                            >
+                                <Box sx={{ display: "flex", flex: 1 }}>
+                                    <img
+                                        src={KakaoLogoImage.src}
+                                        style={{ width: 22, height: "auto", marginLeft: 2 }}
+                                    />
+                                </Box>
+                                <Box sx={{ display: "flex", flex: 15, justifyContent: "center" }}>
+                                    <Typography color="#737881" sx={{ fontWeight: "bold" }}>
+                                        Kakao 로그인
+                                    </Typography>
+                                </Box>
+                            </Button>
+                        </Link>
+                    </Box>
+                    <Box
+                        sx={{ display: "flex", position: "fixed", bottom: 8, width: "100%", justifyContent: "center" }}
+                    >
+                        <Typography color="#737881" sx={{ fontWeight: "normal", fontSize: 12 }}>
+                            Copyright 2023. Gollaba All rights reserverd
+                        </Typography>
                     </Box>
                 </Box>
             </Container>

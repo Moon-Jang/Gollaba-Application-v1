@@ -17,19 +17,28 @@ import theme from "../src/theme"
 import ApiGateway from "../apis/ApiGateway"
 
 import OngoingPolls from "../components/main/ongoingPolls"
-import NewResults from "../components/main/newResults"
+import TopTen from "../components/main/TopTen"
+import WholeView from "../components/main/wholeView"
 
 const PollTheme = createTheme(theme)
 
 export default function Main() {
     const [polls, setPolls] = useState([])
-    let response
+    const [topTenPolls, setTopTenPolls] = useState([])
+    const [trendingPolls, setTrendingPolls] = useState([])
+
+    let response, topTenResponse, trendingResponse
     const offset = 0
     const limit = 10
 
     const getData = async () => {
-        response = await ApiGateway.getPolls(offset, limit)
+        topTenResponse = await ApiGateway.topPolls()
+        setTopTenPolls([...topTenPolls, ...topTenResponse.polls])
 
+        trendingResponse = await ApiGateway.trendingPolls()
+        setTrendingPolls([...trendingPolls, ...trendingResponse.polls])
+
+        response = await ApiGateway.getPolls(offset, limit)
         setPolls([...polls, ...response.polls])
     }
 
@@ -55,7 +64,7 @@ export default function Main() {
                     }}
                 >
                     <div className="header">
-                        <ButtonAppBar titletext={"Voting"} />
+                        <ButtonAppBar titletext={""} />
                     </div>
                     <Box
                         className="body"
@@ -67,8 +76,9 @@ export default function Main() {
                             maxHeight: "90vh",
                         }}
                     >
-                        <OngoingPolls data={polls} menuTitle={"New Results!"} />
-                        <NewResults data={polls} menuTitle={"Ongoing Polls"} />
+                        <TopTen data={topTenPolls} menuTitle={"Ongoing Polls"} />
+                        <OngoingPolls data={trendingPolls} menuTitle={"New Results!"} />
+                        <WholeView data={polls} />
                     </Box>
 
                     <div className="footer">
