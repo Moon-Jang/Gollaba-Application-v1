@@ -13,7 +13,7 @@ public class PollReadCountScheduler {
 
     private final PollReadCountService readCountService;
 
-    @Scheduled(fixedDelay = 1000 * 60 * 5)
+    @Scheduled(cron = "0 0/5 * * * *")
     public void saveReadCount() {
         log.info("saveReadCount start");
         readCountService.saveReadCount();

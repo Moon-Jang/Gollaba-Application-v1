@@ -20,13 +20,14 @@ public class PollReadCountService {
     private final PollRepository pollRepository;
     private final PollReadCountRepository pollReadCountRepository;
 
-    @Transactional
     public void saveReadCount() {
         var pollReadCounts = pollReadCountRepository.findAll();
 
         if (IterableUtils.isEmpty(pollReadCounts)) {
             return;
         }
+
+        pollReadCountRepository.deleteAll();
 
         var pollReadCountByPollId = IterableUtils.stream(pollReadCounts)
             .collect(Collectors.toMap(prc -> prc.getPollId(), prc -> prc));
@@ -39,5 +40,6 @@ public class PollReadCountService {
             pollRepository.save(poll);
             log.info("pollId: {}, readCount: {}", poll.getId(), poll.getReadCount());
         }
+
     }
 }
