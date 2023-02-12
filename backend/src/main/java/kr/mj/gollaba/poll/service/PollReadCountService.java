@@ -4,6 +4,7 @@ import kr.mj.gollaba.common.Scheduler;
 import kr.mj.gollaba.common.util.IterableUtils;
 import kr.mj.gollaba.poll.entity.redis.PollReadCount;
 import kr.mj.gollaba.poll.repository.PollReadCountRepository;
+import kr.mj.gollaba.poll.repository.PollReadRecordRepository;
 import kr.mj.gollaba.poll.repository.PollRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ import java.util.stream.StreamSupport;
 public class PollReadCountService {
     private final PollRepository pollRepository;
     private final PollReadCountRepository pollReadCountRepository;
-
+    private final PollReadRecordRepository pollReadRecordRepository;
     public void saveReadCount() {
         var pollReadCounts = pollReadCountRepository.findAll();
 
@@ -28,6 +29,7 @@ public class PollReadCountService {
         }
 
         pollReadCountRepository.deleteAll();
+        pollReadRecordRepository.deleteAll();
 
         var pollReadCountByPollId = IterableUtils.stream(pollReadCounts)
             .collect(Collectors.toMap(prc -> prc.getPollId(), prc -> prc));

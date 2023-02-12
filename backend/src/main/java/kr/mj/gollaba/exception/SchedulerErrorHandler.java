@@ -21,7 +21,7 @@ public class SchedulerErrorHandler implements ErrorHandler {
 
     private String getScheduleName(Throwable e) {
         var stackTraceElement= Arrays.stream(e.getStackTrace())
-            .filter(el -> el.getClassName().contains("com.gguge.scheduler.schedule"))
+            .filter(el -> el.getClassName().contains("kr.mj.gollaba.poll.scheduler"))
             .findFirst()
             .orElseThrow();
         var className = stackTraceElement.getClassName().split("\\.");
