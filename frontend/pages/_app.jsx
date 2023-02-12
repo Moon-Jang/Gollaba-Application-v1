@@ -12,14 +12,15 @@ const clientSideEmotionCache = createEmotionCache()
 
 export default function MyApp(props) {
     const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
-    
-    initializeKakaoSDK();
-    
+
+    initializeKakaoSDK()
+
     return (
         <CacheProvider value={emotionCache}>
             <Head>
                 <meta name="viewport" content="initial-scale=1, width=device-width" />
                 <meta name="referrer" content="no-referrer" />
+                <link rel="shortcut icon" href="/favicon.ico" />
             </Head>
             <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
@@ -37,9 +38,9 @@ MyApp.propTypes = {
 }
 
 function initializeKakaoSDK() {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
         if (window.Kakao.isInitialized()) {
-            return;
+            return
         }
 
         window.Kakao.init("f7429e5a7e3c46efd999ac63b58ec9f1")

@@ -13,10 +13,12 @@ import PollsMap from "../main/mapPoll"
 import theme from "../../src/theme"
 import ApiGateway from "../../apis/ApiGateway"
 import { useCookies } from "react-cookie"
+import { useRouter } from "next/router"
 
 const PollTheme = createTheme(theme)
 
 export default function WholeView() {
+    const router = useRouter()
     const [polls, setPolls] = useState([])
     const [ref, inView] = useInView()
     const [isLoading, setIsLoading] = useState(false)
@@ -48,7 +50,8 @@ export default function WholeView() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
-        console.log(inputRef.current.value)
+        router.push(`/search/${inputRef.current.value}`)
+        return
     }
 
     if (polls !== undefined)
@@ -56,10 +59,29 @@ export default function WholeView() {
             <Box sx={{ mt: 3, mb: 3 }}>
                 <Box className="Title" sx={{ pl: 0.3, mt: 0.3, display: "flex", flexDirection: "row" }}>
                     <Box sx={{ display: "flex" }}>📝 전체 투표</Box>
-                    <form onSubmit={handleSubmit}>
-                        <TextField variant="outlined" sx={{ width: "150px", height: "4px" }} />
-                        <button type="submit">Search</button>
-                    </form>
+                    <Box sx={{ display: "flex", flex: 1 }} />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            border: 1,
+                            borderRadius: 2,
+                            borderColor: "grey.300",
+                            boxShadow: "0 0 5px 1px rgba(0,0,0,0.055)",
+                        }}
+                    >
+                        <form onSubmit={handleSubmit}>
+                            <button type="submit" style={{ backgroundColor: "transparent", border: "none" }}>
+                                🔍
+                            </button>
+                            <input
+                                type="text"
+                                placeholder="원하는 투표 찾아보기"
+                                style={{ width: "150px", height: "25px", border: "none", paddingRight: "10px" }}
+                                ref={inputRef}
+                            />
+                        </form>
+                    </Box>
                 </Box>
 
                 <Box display={"flex"} flexDirection={"column"} flex={"1"}>

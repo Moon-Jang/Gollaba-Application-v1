@@ -6,8 +6,7 @@ import LogoutIcon from "@mui/icons-material/Logout"
 export default function Logout() {
     const [cookies, setCookies, removeCookies] = useCookies(null)
     const logoutHandler = async () => {
-        removeCookies("accessToken")
-        removeCookies("refreshToken")
+        localStorage.clear()
     }
     // useRouter , NextLink
 

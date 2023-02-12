@@ -56,30 +56,22 @@ export default function ShareBar(props) {
                     height: 30,
                     justifyContent: "center",
                     alignItems: "center",
-                    mt: 0.2,
-                    mr: "10px",
+                    mt: 0.3,
+                    mr: "5px",
                     border: "none",
                 }}
             >
                 <ShareIcon fontSize="2" sx={{ color: "white" }} />
             </Box>
 
-            <FacebookShareButton style={{ marginRight: "10px" }} url={currentUrl}>
-                <FacebookIcon size={30} round={true} borderRadius={24}></FacebookIcon>
-            </FacebookShareButton>
-            <FacebookMessengerShareButton style={{ marginRight: "10px" }} url={currentUrl}>
-                <FacebookMessengerIcon size={30} round={true} borderRadius={24}></FacebookMessengerIcon>
-            </FacebookMessengerShareButton>
-            <TwitterShareButton style={{ marginRight: "10px" }}>
-                <TwitterIcon size={30} round={true} borderRadius={24} url={currentUrl}></TwitterIcon>
-            </TwitterShareButton>
-            <LineShareButton>
-                <LineIcon size={30} round={true} borderRadius={24} url={currentUrl}></LineIcon>
-            </LineShareButton>
-
-            <button onClick={handleKakao}>
-                <img src={kakao_share.src} />
-            </button>
+            <Box sx={{ display: "flex", pr: 1 }}>
+                <button
+                    onClick={handleKakao}
+                    style={{ width: "30px", height: "30px", border: "none", backgroundColor: "transparent" }}
+                >
+                    <img src={kakao_share.src} style={{ borderRadius: "50%", width: "33px", height: "33px" }} />
+                </button>
+            </Box>
         </Box>
     )
 }
