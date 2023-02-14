@@ -80,7 +80,7 @@ export default function ButtonAppBar(title) {
                                 <Box>
                                     <form onSubmit={handleSubmit}>
                                         <InputBase
-                                            placeholder="검색하기..."
+                                            placeholder="검색하기...."
                                             inputProps={{ "aria-label": "search" }}
                                             inputRef={inputRef}
                                             onSubmit={handleSubmit}
