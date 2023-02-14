@@ -20,6 +20,7 @@ import jwt_decode from "jwt-decode"
 export default function ButtonAppBar(title) {
     const router = useRouter()
     const [userInfo, setUserInfo] = useState()
+    const [isSearchClick, setIsSearchClick] = useState(false)
     const inputRef = useRef(null)
 
     useEffect(async () => {
@@ -56,29 +57,71 @@ export default function ButtonAppBar(title) {
                             {title.titletext}
                         </Typography>
                     </Box>
-                    <Box sx={{ display: "flex", flex: 2 }} />
-                    <Box sx={{ display: "flex", flexDirection: "row", flex: 1.5 }}>
-                        <SearchIcon sx={{ color: "gray", mt: 0.3 }} />
-                        <form onSubmit={handleSubmit}>
-                            <InputBase
-                                placeholder="검색하기..."
-                                inputProps={{ "aria-label": "search" }}
-                                inputRef={inputRef}
-                                onSubmit={handleSubmit}
+                    <Box sx={{ display: "flex", flex: 1 }} />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flex: 3,
+                            justifyContent: "flex-end",
+                            marginLeft: "auto",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                flex: 4,
+                                pr: 1,
+                                justifyContent: "flex-end",
+                                marginLeft: "auto",
+                            }}
+                        >
+                            {isSearchClick ? (
+                                <Box>
+                                    <form onSubmit={handleSubmit}>
+                                        <InputBase
+                                            placeholder="검색하기..."
+                                            inputProps={{ "aria-label": "search" }}
+                                            inputRef={inputRef}
+                                            onSubmit={handleSubmit}
+                                            sx={{
+                                                border: 1,
+                                                borderRadius: 2,
+                                                borderColor: "grey.300",
+                                                boxShadow: "0 0 5px 1px rgba(0,0,0,0.055)",
+                                                backgroundColor: "white",
+                                                paddingLeft: "10px",
+                                            }}
+                                        />
+                                    </form>
+                                </Box>
+                            ) : (
+                                ""
+                            )}
+                            <SearchIcon
+                                sx={{ color: "gray", mt: 0.3, ml: 0.5, fontSize: 30 }}
+                                onClick={() => setIsSearchClick(true)}
                             />
-                        </form>
-                    </Box>
-                    <Box sx={{ display: "flex", flex: 0.5, justifyContent: "flex-end" }}>
-                        {userInfo ? (
-                            <Box className="IconButton" onClick={IconButtonOnClick}>
-                                <Avatar
-                                    src={userInfo.profileImageUrl}
-                                    sx={{ width: 40, height: 40, border: "5px soild black" }}
-                                />
-                            </Box>
-                        ) : (
-                            <Typography onClick={LoginButtonOnClick}>로그인</Typography>
-                        )}
+                        </Box>
+                        <Box
+                            sx={{
+                                mr: -7,
+                                minWidth: "100px",
+                                justifyContent: "flex-end",
+                                pt: 0.8,
+                            }}
+                        >
+                            {userInfo ? (
+                                <Box className="IconButton" onClick={IconButtonOnClick}>
+                                    <Avatar
+                                        src={userInfo.profileImageUrl}
+                                        sx={{ width: 40, height: 40, border: "5px soild black" }}
+                                    />
+                                </Box>
+                            ) : (
+                                <Typography onClick={LoginButtonOnClick}>로그인</Typography>
+                            )}
+                        </Box>
                     </Box>
                 </Toolbar>
             </AppBar>

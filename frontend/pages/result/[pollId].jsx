@@ -93,7 +93,7 @@ export default function Voting() {
                                         }}
                                     >
                                         <MapOption data={polls} voted={voted} />
-                                        <ShareBar />
+                                        <ShareBar data={polls} />
                                     </Box>
                                 </Box>
                             </>

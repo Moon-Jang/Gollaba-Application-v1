@@ -19,16 +19,48 @@ import kakao_share from "../../public/kakaotalk_sharing_btn.png"
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function ShareBar(props) {
     const router = useRouter()
-    const currentUrl = "http://localhost:3000" + router.asPath
+    const currentUrl = "https://dev.gollaba.net" + router.asPath
     const clipboardCopy = () => {
         navigator.clipboard.writeText(currentUrl)
         alert("클립보드에 복사되었습니다.")
     }
+    const options =
+        props.data && props.data.option ? props.data.option.slice(0, Math.min(props.data.option.length, 5)) : []
 
+    console.log("옵션", options)
+
+    console.log("프롭스", props.data.title)
+    const newOptions = props.data.options.map((option) => ({
+        title: option.description,
+        description: "",
+        imageUrl: option.imageUrl,
+        link: {
+            mobileWebUrl: "https://dev.gollaba.net/",
+            webUrl: "https://dev.gollaba.net/",
+        },
+    }))
+
+    console.log(newOptions)
     const handleKakao = () => {
         const { Kakao, location } = window
-        Kakao.Link.sendScrap({
-            requestUrl: location.href,
+
+        Kakao.Share.sendDefault({
+            objectType: "list",
+            headerTitle: props.data.title,
+            headerLink: {
+                mobileWebUrl: "https://dev.gollaba.net/",
+                webUrl: "https://dev.gollaba.net/",
+            },
+            contents: newOptions,
+            buttons: [
+                {
+                    title: "투표 보러가기",
+                    link: {
+                        mobileWebUrl: currentUrl,
+                        webUrl: currentUrl,
+                    },
+                },
+            ],
         })
     }
 
