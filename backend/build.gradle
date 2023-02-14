@@ -29,6 +29,7 @@ dependencies {
 
     // database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'mysql:mysql-connector-java'
     runtimeOnly 'com.h2database:h2'
 
     // queryDsl
@@ -50,10 +51,45 @@ dependencies {
     // swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
+    // AWS-S3
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.281'
+
+    // hashIds
+    implementation 'org.hashids:hashids:1.0.3'
+
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    //oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+test {
+    useJUnitPlatform{
+        includeTags 'UnitTest'
+        excludeTags 'IntegrationTest'
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform{
+        includeTags 'IntegrationTest'
+        excludeTags 'UnitTest'
+    }
+}
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
+}
+
+clean {
+    delete file('src/main/generated') // 인텔리제이 Annotation processor 생성물 생성 위치
 }
