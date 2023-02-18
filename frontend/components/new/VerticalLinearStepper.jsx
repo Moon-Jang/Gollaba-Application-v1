@@ -129,7 +129,7 @@ export default function VerticalLinearStepper() {
 
             formData.append(`options[${i}].description`, item.description)
 
-            if (item.imgUrl !== "") {
+            if (item.imgUrl) {
                 formData.append(`options[${i}].optionImage`, item.imgUrl)
             }
         }
