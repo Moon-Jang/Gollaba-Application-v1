@@ -16,9 +16,8 @@ const theme = createTheme({
     },
 })
 
-const handleSubmit = async event => {
+const handleSubmit = async (event) => {
     event.preventDefault()
-    console.log("hello")
     await ApiGateway.updatePoll(pollId, payload, token)
     // 수정은 추후
 }
@@ -32,7 +31,7 @@ const initPollingItems = [
     },
 ]
 
-const newPageStyles = makeStyles(theme => ({
+const newPageStyles = makeStyles((theme) => ({
     container: {
         display: "flex",
         flexDirection: "column",

@@ -88,8 +88,6 @@ export default function VerticalLinearStepper() {
             case 3:
                 break
             case 4:
-                console.log("submit 가동")
-
                 handleSubmmit()
                 break
             default:
@@ -134,16 +132,6 @@ export default function VerticalLinearStepper() {
             if (item.imgUrl !== "") {
                 formData.append(`options[${i}].optionImage`, item.imgUrl)
             }
-        }
-
-        console.log("submit 함수가동")
-        for (let key of formData.keys()) {
-            console.log("키", key)
-        }
-
-        /* value 확인하기 */
-        for (let asd of formData.values()) {
-            console.log("밸류", asd)
         }
 
         const response = await ApiGateway.createPoll(formData)

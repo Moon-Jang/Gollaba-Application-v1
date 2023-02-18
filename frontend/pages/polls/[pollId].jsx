@@ -32,7 +32,6 @@ export default function Polls() {
     const router = useRouter()
     let response
     const { pollId } = router.query
-    console.log(pollId)
     const [selected, setSelected] = useState([])
     const [polls, setPolls] = useState([])
 
@@ -111,8 +110,7 @@ export default function Polls() {
     )
 }
 
-const optionAmount = polls => {
-    console.log("폴", polls.responseType)
+const optionAmount = (polls) => {
     if (polls.responseType === "SINGLE") return "한 개의 문항을 선택해주세요."
     return "한 개 이상의 문항을 선택해주세요."
 }

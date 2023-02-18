@@ -28,9 +28,7 @@ export default function Poll(props) {
         temp = temp + options[i].voteCount
     }
 
-    //const map1 = options.map((el) => console.log("map?", el.description));
     const map1 = options.map((el) => {
-        // console.log("props>>", el)
         return (
             <Box mt={0.5} mr={1} mb={0.5} ml={-0.5}>
                 {el.description}
@@ -72,8 +70,6 @@ export default function Poll(props) {
             alert(favoriteDelete.message)
             return
         }
-
-        console.log("favoriteDelete", favoriteDelete)
         setFavoriteId(null)
 
         const date = new Date(props.data.endedAt)
