@@ -126,10 +126,10 @@ export default function VerticalLinearStepper() {
 
         for (let i = 0; i < itemsRef.current.length; i++) {
             const item = itemsRef.current[i].value
-
+            console.log("아이템>>", item)
             formData.append(`options[${i}].description`, item.description)
 
-            if (item.imgUrl) {
+            if (item.imgUrl !== "" && item.imgUrl !== undefined) {
                 formData.append(`options[${i}].optionImage`, item.imgUrl)
             }
         }
