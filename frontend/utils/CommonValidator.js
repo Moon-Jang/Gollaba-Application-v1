@@ -13,7 +13,7 @@ const CommonValidator = {
     },
     pollcreatorName: {
         regExp: /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]{2,50}$/,
-        message: "작성자 이름는 최소 4글자에서 최대 50글자 입니다.",
+        message: "작성자 이름는 최소 2글자에서 최대 50글자 입니다.",
     },
     pollTitle: {
         regExp: /^.{4,50}$/,
