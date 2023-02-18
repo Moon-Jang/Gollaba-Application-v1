@@ -26,20 +26,13 @@ export default function Pwchange() {
             formData.append("currentPassword", currentPassword)
             formData.append("newPassword", newPassword)
             formData.append("updateType", "PASSWORD")
-            for (const keyValue of formData) console.log("keyValue : ", keyValue)
             const passwordChange = await ApiGateway.updateForm(formData, cookies.accessToken)
             setData(passwordChange)
-            console.log(currentPassword)
-            console.log(newPassword)
-            console.log("passwordChange : ", passwordChange)
-            console.log("password change success")
             router.push("/login")
-        } catch (e) {
-            console.log(e)
-        }
+        } catch (e) {}
     }
 
-    const handleSubmit = async event => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
         const input = new FormData(event.currentTarget)
 
@@ -58,13 +51,13 @@ export default function Pwchange() {
             return
         }
     }
-    const onChangeCurrentPasswordHandler = e => {
+    const onChangeCurrentPasswordHandler = (e) => {
         setCurrentPassword(e.target.value)
     }
-    const onChangeNewPasswordHandler = e => {
+    const onChangeNewPasswordHandler = (e) => {
         setNewPassword(e.target.value)
     }
-    const onChangeNewPasswordCheckHandler = e => {
+    const onChangeNewPasswordCheckHandler = (e) => {
         setNewPasswordCheck(e.target.value)
         if (e.target.value !== newPassword) {
             setIsErrorPasswordCheck(true)

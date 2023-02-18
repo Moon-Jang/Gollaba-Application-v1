@@ -15,9 +15,8 @@ const theme = createTheme({
     },
 })
 
-const handleSubmit = async event => {
+const handleSubmit = async (event) => {
     event.preventDefault()
-    console.log("hello")
 }
 
 const initPollingItems = [
@@ -29,7 +28,7 @@ const initPollingItems = [
     },
 ]
 
-const newPageStyles = makeStyles(theme => ({
+const newPageStyles = makeStyles((theme) => ({
     container: {
         display: "flex",
         flexDirection: "column",

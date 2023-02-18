@@ -22,7 +22,7 @@ export default function CreateBtn(props) {
         const time = new Date()
         const endTime = new Date(time.setDate(time.getDate() + 7))
         endTime = endTime.toISOString()
-        const options = props.pollingItems.map(a => ({
+        const options = props.pollingItems.map((a) => ({
             description: a.description,
         }))
         const payload = {
@@ -34,12 +34,9 @@ export default function CreateBtn(props) {
             options: options,
             endedAt: endTime,
         }
-
-        console.log("payload>>", payload)
-
         let response
         try {
-            response = await axios.post("https://dev.api.gollaba.net/v1/polls", payload)
+            response = await axios.post("https://api.gollaba.net/v1/polls", payload)
             router.push("/polls")
         } catch (e) {
             response = e.response

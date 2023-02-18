@@ -19,10 +19,7 @@ export default function Poll(props) {
     const [cookies, setCookies, removeCookies] = useCookies([])
 
     const date = new Date(props.data.endedAt)
-    const strDate = date
-        .toISOString()
-        .substring(0, 10)
-        .split("-")
+    const strDate = date.toISOString().substring(0, 10).split("-")
 
     const today = new Date()
 
@@ -31,9 +28,7 @@ export default function Poll(props) {
         temp = temp + options[i].voteCount
     }
 
-    //const map1 = options.map((el) => console.log("map?", el.description));
-    const map1 = options.map(el => {
-        // console.log("props>>", el)
+    const map1 = options.map((el) => {
         return (
             <Box mt={0.5} mr={1} mb={0.5} ml={-0.5}>
                 {el.description}
@@ -53,14 +48,10 @@ export default function Poll(props) {
 
     const extendClick = () => {
         isExtend === true ? setIsExtend(false) : setIsExtend(true)
-        console.log(isExtend)
     }
-    const favoriteClick = async e => {
+    const favoriteClick = async (e) => {
         const hashId = data?.pollId
         const payload = { pollId: hashId }
-        console.log("hashId", hashId)
-        console.log("payload", payload)
-        console.log("favoriteId", favoriteId)
         if (!favoriteId) {
             const favoriteSend = await ApiGateway.makeFavorite(payload, cookies.accessToken)
 
@@ -69,14 +60,11 @@ export default function Poll(props) {
                 return
             }
 
-            console.log("favoriteSend", favoriteSend)
             setFavoriteId(favoriteSend?.favoritesId)
-            console.log("favoriteId", favoriteId)
-            console.log("data", data)
+
             return
         }
-        console.log("favorite deselect")
-        console.log("favoriteId", favoriteId)
+
         const favoriteDelete = await ApiGateway.deleteFavorite(favoriteId, cookies.accessToken)
 
         if (favoriteDelete?.error === true) {
@@ -85,14 +73,10 @@ export default function Poll(props) {
             return
         }
 
-        console.log("favoriteDelete", favoriteDelete)
         setFavoriteId(null)
 
         const date = new Date(props.data.endedAt)
-        const strDate = date
-            .toISOString()
-            .substring(0, 10)
-            .split("-")
+        const strDate = date.toISOString().substring(0, 10).split("-")
 
         const today = new Date()
     }

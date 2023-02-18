@@ -44,7 +44,6 @@ export default function VerticalLinearStepper() {
     const [polls, setPolls] = useState([])
     const [cookies, setCookies] = useCookies()
     const { pollId } = router.query
-    console.log("zt", pollId)
 
     const getData = async () => {
         response = await ApiGateway.getPoll(pollId)
@@ -56,8 +55,6 @@ export default function VerticalLinearStepper() {
             getData()
         }
     }, [pollId])
-
-    console.log("response>>2", polls)
 
     const [activeStep, setActiveStep] = useState(0)
     const [isSubmit, setIsSubmit] = useState(false)
@@ -90,24 +87,23 @@ export default function VerticalLinearStepper() {
                 break
 
             case 2:
-                if (itemsRef.current.some(el => el.isInvalid === true)) return
+                if (itemsRef.current.some((el) => el.isInvalid === true)) return
                 break
 
             case 3:
-                console.log("submit 가동")
                 handleSubmmit()
                 break
             default:
                 console.error("존재하지 않는 스텝입니다.")
         }
 
-        setActiveStep(prevActiveStep => prevActiveStep + 1)
+        setActiveStep((prevActiveStep) => prevActiveStep + 1)
     }
 
     const handleSubmmit = async () => {
         //setIsSubmit(true)
 
-        if (itemsRef.current.some(el => el.value.description === "")) {
+        if (itemsRef.current.some((el) => el.value.description === "")) {
             alert("빈 항목이 존재합니다. 항목을 수정해주세요.")
             setIsSubmit(false)
             return
@@ -137,7 +133,7 @@ export default function VerticalLinearStepper() {
     }
 
     const handleBack = () => {
-        setActiveStep(prevActiveStep => prevActiveStep - 1)
+        setActiveStep((prevActiveStep) => prevActiveStep - 1)
     }
 
     return (
@@ -172,7 +168,7 @@ export default function VerticalLinearStepper() {
     )
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         flex: 1,
         marginTop: theme.spacing(2),
@@ -191,8 +187,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function getStepContent(step, refs, polls) {
-    console.log("Step", polls.title)
-    console.log("만기1", polls.endedAt)
     switch (step) {
         case 0:
             return <PollTitle originTitle={polls.title} titleRef={refs[step]} />
@@ -211,7 +205,6 @@ export const PollItemsContext = React.createContext(null)
 
 function PollItemsWrapper({ itemsRef, options }) {
     const itemListState = useState(itemsRef.current)
-    console.log("options>>", options)
 
     const beforeOptions = options.map((el, index) => (
         <text>
@@ -256,7 +249,7 @@ function PollItems({ itemsRef, itemListState, options }) {
     )
 }
 
-const pollOptionStyles = makeStyles(theme => ({
+const pollOptionStyles = makeStyles((theme) => ({
     container: {
         width: "100%",
         height: "100px",
@@ -285,19 +278,19 @@ function PollOptionsWrapper({ optionsRef }) {
 
     const handleChangeIsBallot = () => {
         optionsRef.current.isBallot = !optionsRef.current.isBallot
-        setCheckedIsBallot(prev => !prev)
+        setCheckedIsBallot((prev) => !prev)
     }
 
     const handleChangeResponseType = () => {
         if (optionsRef.current.responseType === RESPONSE_TYPE_SIGNLE) {
             optionsRef.current.responseType = RESPONSE_TYPE_MULTI
-            setCheckedResponseType(prev => !prev)
+            setCheckedResponseType((prev) => !prev)
             return
         }
 
         if (optionsRef.current.responseType === RESPONSE_TYPE_MULTI) {
             optionsRef.current.responseType = RESPONSE_TYPE_SIGNLE
-            setCheckedResponseType(prev => !prev)
+            setCheckedResponseType((prev) => !prev)
             return
         }
     }
@@ -325,7 +318,7 @@ function PollImage({ imageRef, originImage }) {
     const classes = pollOptionStyles()
     const [imgName, setImgName] = useState("")
 
-    const imgHandle = e => {
+    const imgHandle = (e) => {
         imageRef.current = e.target.files[0]
         setImgName(e.target.files[0].name)
     }
@@ -353,7 +346,7 @@ function PollExpireDate({ expireRef, endedAt }) {
     maxDate.setDate(maxDate.getDate() + 30)
     const [expireDate, setExpireDate] = useState(new Date(endedAt))
 
-    const handleChange = date => {
+    const handleChange = (date) => {
         setExpireDate(date)
         expireRef.current = date
     }

@@ -36,17 +36,16 @@ export default function TopTen(props) {
     const startPositionRef = useRef(0)
     const [unclickable, setUnclickable] = useState(true)
 
-    const onDragStart = e => {
+    const onDragStart = (e) => {
         e.preventDefault()
         setIsDrag(true)
         setStartX(e.pageX + scrollRef.current.scrollLeft)
         startPositionRef.current = e.pageX
     }
-    const onDragEnd = e => {
+    const onDragEnd = (e) => {
         const moveRange = Math.abs(startPositionRef.current - e.pageX)
 
         if (moveRange < 20) {
-            console.log("movePage")
             setUnclickable(false)
             setIsDrag(false)
             return
@@ -56,7 +55,7 @@ export default function TopTen(props) {
         setUnclickable(true)
     }
 
-    const onDragMove = e => {
+    const onDragMove = (e) => {
         if (isDrag) {
             scrollRef.current.scrollLeft = startX - e.pageX
         }
@@ -64,7 +63,7 @@ export default function TopTen(props) {
 
     const PollsMap = () => {
         const data = props.data
-        return data.map(el => <TopTenPoll data={el} unclickable={unclickable} />)
+        return data.map((el) => <TopTenPoll data={el} unclickable={unclickable} />)
     }
 
     return (

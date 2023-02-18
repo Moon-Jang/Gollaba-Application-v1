@@ -10,7 +10,6 @@ export default function OAuth2CallbackPage() {
 
     useEffect(() => {
         if (!router.query || !Object.keys(router.query).length) return
-        console.log(router.query)
         // 회원가입된 회원일 경우
         if (router.query.accessToken) {
             localStorage.setItem("accessToken", router.query.accessToken)

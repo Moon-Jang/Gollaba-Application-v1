@@ -20,34 +20,15 @@ export default function Profile() {
     const BACKGROUND_BASIC = "https://cdn.pixabay.com/photo/2015/12/01/15/43/black-1072366_960_720.jpg"
     const PROFILE_BASIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
 
-    // UserInfo API통해 페이지에 가져옴
-    /*
-    const showUser = async () => {
-        console.log("token : ", token)
-        if (!token.current) return
-
-        const userInfo = await ApiGateway.showUser(token.id, cookies.accessToken)
-        setData(userInfo)
-        console.log("showUser :", userInfo)
-    }
-    useEffect(() => {
-        setToken(jwt.decode(cookies.accessToken))
-    }, [cookies])
-    useEffect(() => {
-        showUser()
-    }, [token])
-    */
-
     const showUser = async () => {
         if (!token.current || !userId.current) return
 
         const userInfo = await ApiGateway.showUser(userId.current, token.current)
         setData(userInfo)
-        console.log("showUser :", userInfo)
     }
     useEffect(() => {
         token.current = localStorage.getItem("accessToken")
-        console.log("asdasd", token.current)
+
         userId.current = jwt_decode(token.current).id
     }, [])
     useEffect(() => {
@@ -73,41 +54,37 @@ export default function Profile() {
     }
 
     // formData로 이미지 파일 업데이트 하기
-    const changeProfile = async e => {
+    const changeProfile = async (e) => {
         if (!token.current) return
 
         const photoToAdd = e.target.files[0]
-        console.log("photoToAdd : ", photoToAdd)
+
         const formData = new FormData()
         formData.append("profileImage", photoToAdd)
         formData.append("updateType", "PROFILE_IMAGE")
-        for (const keyValue of formData) console.log("keyValue : ", keyValue)
+
         const profileChange = await ApiGateway.updateForm(formData, token.current)
         setData(profileChange)
-        console.log("profileChange : ", profileChange)
     }
-    const changeBackground = async e => {
+    const changeBackground = async (e) => {
         if (!token.current) return
         const photoToAdd = e.target.files[0]
-        console.log("photoToAdd : ", photoToAdd)
+
         const formData = new FormData()
         formData.append("backgroundImage", photoToAdd)
         formData.append("updateType", "BACKGROUND_IMAGE")
-        for (const keyValue of formData) console.log("keyValue : ", keyValue)
+
         const backgroundChange = await ApiGateway.updateForm(formData, token.current)
         setData(backgroundChange)
-        console.log("backgroundChange : ", backgroundChange)
+
         location.reload()
     }
 
     // 닉네임 변경
-    const onChangeNicknameHandler = e => {
+    const onChangeNicknameHandler = (e) => {
         setNickName(e.target.value)
     }
     const changeNickname = async () => {
-        console.log("a")
-        console.log("토큰", token.current)
-
         if (!token.current) return
 
         const formData = new FormData()
@@ -115,10 +92,6 @@ export default function Profile() {
         formData.append("updateType", "NICKNAME")
         const nickChange = await ApiGateway.updateForm(formData, token.current)
         setData(nickChange)
-        console.log("nickChange :", nickChange)
-        for (const keyValue of formData) {
-            console.log("formData keyValue :", keyValue)
-        }
         location.reload()
     }
 
@@ -182,7 +155,7 @@ export default function Profile() {
                             id="backgroundImageInput"
                             style={{ display: "none" }}
                             accept="image/jpg image/jpeg image/png"
-                            onChange={e => {
+                            onChange={(e) => {
                                 changeBackground(e)
                             }}
                             ref={backgroundInput}
@@ -206,7 +179,7 @@ export default function Profile() {
                             id="profileImageInput"
                             style={{ display: "none" }}
                             accept="image/jpg image/jpeg image/png"
-                            onChange={e => changeProfile(e)}
+                            onChange={(e) => changeProfile(e)}
                             ref={photoInput}
                         />
                         <ImageIcon
