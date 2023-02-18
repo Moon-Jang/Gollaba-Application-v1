@@ -14,7 +14,7 @@ export default function DraggableListItem({ item, index }) {
 
     return (
         <PollItemsContext.Consumer>
-            {value => (
+            {(value) => (
                 <Draggable draggableId={item.id} index={index}>
                     {(provided, snapshot) => (
                         <PollItem
@@ -34,7 +34,7 @@ export default function DraggableListItem({ item, index }) {
     )
 }
 
-const pollItemStyles = makeStyles(themes => ({
+const pollItemStyles = makeStyles((themes) => ({
     container: {
         width: "100%",
         height: "64px",
@@ -100,15 +100,14 @@ function PollItem(props) {
     const [imgPreview, setImgPreview] = useState("")
     const [isInvalid, setIsInvalid] = useState(false)
 
-    const imgHandle = event => {
+    const imgHandle = (event) => {
         const value = event.target.files[0]
         itemRef.value.imgUrl = value
         setImgUrl(value)
         setImgPreview(URL.createObjectURL(event.target.files[0]))
-        console.log("이미지", value)
     }
 
-    const handleChange = event => {
+    const handleChange = (event) => {
         const { value } = event.target
 
         if (!CommonValidator.validate("pollItem", value)) {
@@ -138,7 +137,7 @@ function PollItem(props) {
         setItems(newItem)
     }
 
-    const stopPropagation = event => {
+    const stopPropagation = (event) => {
         event.preventDefault()
         event.stopPropagation()
     }
