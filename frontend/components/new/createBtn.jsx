@@ -28,11 +28,9 @@ export default function CreateBtn(props) {
             endedAt: endTime,
         }
 
-        console.log("payload>>", payload)
-
         let response
         try {
-            response = await axios.post("https://dev.api.gollaba.net/v1/polls", payload)
+            response = await axios.post("https://api.gollaba.net/v1/polls", payload)
             router.push("/polls")
         } catch (e) {
             response = e.response

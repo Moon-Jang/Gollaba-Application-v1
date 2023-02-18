@@ -5,7 +5,7 @@ import { useState } from "react"
 // axios.defaults.withCredentials = true;
 
 const instance = axios.create({
-    baseURL: "https://dev.api.gollaba.net",
+    baseURL: "https://api.gollaba.net",
     timeout: 100000,
     //withCredentials: true,
 })
@@ -15,7 +15,6 @@ const EXPIRED_ACCESS_TOKEN = "액세스 토큰이 만료되었습니다."
 const ApiTemplate = {
     sendApi: async (method, url, body, token) => {
         let result = null
-        console.log(method, url, body)
         const authorizationHeader = {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -74,11 +73,7 @@ const ApiTemplate = {
 function getCookie(name) {
     const value = `; ${document.cookie}`
     const parts = value.split(`; ${name}=`)
-    if (parts.length === 2)
-        return parts
-            .pop()
-            .split(";")
-            .shift()
+    if (parts.length === 2) return parts.pop().split(";").shift()
 }
 
 export default ApiTemplate

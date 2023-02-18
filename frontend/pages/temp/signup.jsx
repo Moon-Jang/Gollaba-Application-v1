@@ -25,7 +25,7 @@ export default function SignUp() {
         photoInput.current.click()
     }
 
-    const changeProfile = async e => {
+    const changeProfile = async (e) => {
         const profileImageSelected = e.target.files[0]
         if (e.target.files[0]) {
             // setProfileImage(e.target.files[0])
@@ -44,14 +44,13 @@ export default function SignUp() {
         reader.readAsDataURL(e.target.files[0])
     }
 
-    const signup = async e => {
+    const signup = async (e) => {
         const formData = new FormData()
         formData.append("email", emailRef.current)
         formData.append("nickName", name)
         formData.append("providerId", providerIdRef.current)
         formData.append("providerType", providerTypeRef.current)
         formData.append("providerImageUrl", imagePayload.current)
-        for (const keyValue of formData) console.log("keyValue : ", keyValue)
         const response = await ApiGateway.signupForm(formData)
 
         if (response.error === true) {
@@ -106,7 +105,7 @@ export default function SignUp() {
                         id="profileImageInput"
                         style={{ display: "none" }}
                         accept="image/jpg image/jpeg image/png"
-                        onChange={e => changeProfile(e)}
+                        onChange={(e) => changeProfile(e)}
                         ref={photoInput}
                     />
                 </div>
@@ -134,7 +133,7 @@ export default function SignUp() {
                     label="닉네임"
                     // helperText={helperTextId}
                     // error={isErrorId ? true : false}
-                    onChange={e => setName(e.target.value)}
+                    onChange={(e) => setName(e.target.value)}
                 />
             </Box>
             <Button

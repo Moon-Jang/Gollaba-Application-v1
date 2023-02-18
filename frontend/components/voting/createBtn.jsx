@@ -14,7 +14,7 @@ export default function CreateBtn(props) {
     const [nickname, setNickname] = useState("")
     const [cookies, setCookies, removeCookies] = useCookies({})
 
-    const nicknameChanged = event => {
+    const nicknameChanged = (event) => {
         setNickname(event.target.value)
     }
 
@@ -33,10 +33,7 @@ export default function CreateBtn(props) {
             voterName: nickname.length !== 0 ? nickname : null,
         }
 
-        console.log("페이", payload)
-
         const response = await ApiGateway.vote(props.pollId, payload)
-        console.log("대답", response)
         if (response?.error) {
             alert(response.message)
             if (response.code === 20004) {

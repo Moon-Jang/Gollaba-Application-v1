@@ -22,7 +22,7 @@ export default function SignupComponent() {
         photoInput.current.click()
     }
 
-    const changeProfile = async e => {
+    const changeProfile = async (e) => {
         const profileImageSelected = e.target.files[0]
         if (e.target.files[0]) {
             // setProfileImage(e.target.files[0])
@@ -56,7 +56,7 @@ export default function SignupComponent() {
     const [helperTextPasswordCheck, setHelperTextPasswordCheck] = useState("")
     const [isErrorPasswordCheck, setIsErrorPasswordCheck] = useState(false)
 
-    const onChangeIdHandler = e => {
+    const onChangeIdHandler = (e) => {
         if (e.target.name === "id" && !CommonValidator.validate("id", e.target.value)) {
             setIsErrorId(true)
             setHelperTextId("ID는 8~32자의 숫자, 문자로 구성되어야 합니다.")
@@ -67,7 +67,7 @@ export default function SignupComponent() {
         setId(e.target.value)
     }
 
-    const onChangeNickNameHandler = e => {
+    const onChangeNickNameHandler = (e) => {
         if (e.target.name === "nickName" && !CommonValidator.validate("nickName", e.target.value)) {
             setIsErrorNickName(true)
             setHelperTextNickName("닉네임은 2~20자의 숫자, 문자로 구성되어야 합니다.")
@@ -78,7 +78,7 @@ export default function SignupComponent() {
         setNickName(e.target.value)
     }
 
-    const onChangePasswordHandler = e => {
+    const onChangePasswordHandler = (e) => {
         if (e.target.name === "password" && !CommonValidator.validate("password", e.target.value)) {
             setIsErrorPassword(true)
             setHelperTextPassword("비밀번호는 8~24자의 숫자, 문자, 특수문자가 모두 포함되어야 합니다.")
@@ -89,7 +89,7 @@ export default function SignupComponent() {
         setPassword(e.target.value)
     }
 
-    const onChangePasswordCheckHandler = e => {
+    const onChangePasswordCheckHandler = (e) => {
         if (e.target.value !== password) {
             setIsErrorPasswordCheck(true)
             setHelperTextPasswordCheck("비밀번호가 일치하지 않습니다.")
@@ -99,24 +99,18 @@ export default function SignupComponent() {
         setHelperTextPasswordCheck("")
     }
 
-    const signupHandler = async e => {
+    const signupHandler = async (e) => {
         e.preventDefault()
-        console.log("profileImage : ", profileImage)
-        // console.log("profileImageSelected : ", changeProfile[profileImageSelected])
-        // console.log()
+
         try {
             const formData = new FormData()
             formData.append("id", id)
             formData.append("nickName", nickName)
             formData.append("password", password)
             formData.append("profileImage", imagePayload.current)
-            for (const keyValue of formData) console.log("keyValue : ", keyValue)
+
             const signup = await ApiGateway.signupForm(formData)
-            console.log("signup", signup)
-            console.log("signup success!")
-        } catch (e) {
-            console.log(e)
-        }
+        } catch (e) {}
         router.push("/login")
     }
 
@@ -160,7 +154,7 @@ export default function SignupComponent() {
                                 id="profileImageInput"
                                 style={{ display: "none" }}
                                 accept="image/jpg image/jpeg image/png"
-                                onChange={e => changeProfile(e)}
+                                onChange={(e) => changeProfile(e)}
                                 ref={photoInput}
                             />
                         </div>

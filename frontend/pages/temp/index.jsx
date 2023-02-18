@@ -22,10 +22,10 @@ export default function TempHome() {
                 <p></p>
                 <a
                     href={
-                        "https://dev.api.gollaba.net/oauth2/authorize/facebook?redirect_uri=http://localhost:3000/temp/oauth-callback"
+                        "https://api.gollaba.net/oauth2/authorize/facebook?redirect_uri=http://localhost:3000/temp/oauth-callback"
                     }
                 >
-                    facebook login - dev.api.gollaba.net
+                    facebook login - api.gollaba.net
                 </a>
             </Box>
         </Container>
