@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useRouter } from "next/router"
 import Box from "@mui/material/Box"
 import ShareIcon from "@mui/icons-material/Share"
@@ -14,14 +14,54 @@ import {
     LineIcon,
 } from "react-share"
 
+import kakao_share from "../../public/kakaotalk_sharing_btn.png"
+
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function ShareBar(props) {
     const router = useRouter()
-    const currentUrl = "http://localhost:3000" + router.asPath
-    console.log("curr", currentUrl)
+    const currentUrl = "https://dev.gollaba.net" + router.asPath
     const clipboardCopy = () => {
         navigator.clipboard.writeText(currentUrl)
         alert("클립보드에 복사되었습니다.")
+    }
+    const options =
+        props.data && props.data.option ? props.data.option.slice(0, Math.min(props.data.option.length, 5)) : []
+
+    console.log("옵션", options)
+
+    console.log("프롭스", props.data.title)
+    const newOptions = props.data.options.map((option) => ({
+        title: option.description,
+        description: "",
+        imageUrl: option.imageUrl,
+        link: {
+            mobileWebUrl: "https://dev.gollaba.net/",
+            webUrl: "https://dev.gollaba.net/",
+        },
+    }))
+
+    console.log(newOptions)
+    const handleKakao = () => {
+        const { Kakao, location } = window
+
+        Kakao.Share.sendDefault({
+            objectType: "list",
+            headerTitle: props.data.title,
+            headerLink: {
+                mobileWebUrl: "https://dev.gollaba.net/",
+                webUrl: "https://dev.gollaba.net/",
+            },
+            contents: newOptions,
+            buttons: [
+                {
+                    title: "투표 보러가기",
+                    link: {
+                        mobileWebUrl: currentUrl,
+                        webUrl: currentUrl,
+                    },
+                },
+            ],
+        })
     }
 
     return (
@@ -48,26 +88,22 @@ export default function ShareBar(props) {
                     height: 30,
                     justifyContent: "center",
                     alignItems: "center",
-                    mt: 0.2,
-                    mr: "10px",
+                    mt: 0.3,
+                    mr: "5px",
                     border: "none",
                 }}
             >
                 <ShareIcon fontSize="2" sx={{ color: "white" }} />
             </Box>
 
-            <FacebookShareButton style={{ marginRight: "10px" }} url={currentUrl}>
-                <FacebookIcon size={30} round={true} borderRadius={24}></FacebookIcon>
-            </FacebookShareButton>
-            <FacebookMessengerShareButton style={{ marginRight: "10px" }} url={currentUrl}>
-                <FacebookMessengerIcon size={30} round={true} borderRadius={24}></FacebookMessengerIcon>
-            </FacebookMessengerShareButton>
-            <TwitterShareButton style={{ marginRight: "10px" }}>
-                <TwitterIcon size={30} round={true} borderRadius={24} url={currentUrl}></TwitterIcon>
-            </TwitterShareButton>
-            <LineShareButton>
-                <LineIcon size={30} round={true} borderRadius={24} url={currentUrl}></LineIcon>
-            </LineShareButton>
+            <Box sx={{ display: "flex", pr: 1 }}>
+                <button
+                    onClick={handleKakao}
+                    style={{ width: "30px", height: "30px", border: "none", backgroundColor: "transparent" }}
+                >
+                    <img src={kakao_share.src} style={{ borderRadius: "50%", width: "33px", height: "33px" }} />
+                </button>
+            </Box>
         </Box>
     )
 }

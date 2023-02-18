@@ -83,26 +83,24 @@ export default function VerticalLinearStepper() {
                 break
 
             case 2:
-                if (itemsRef.current.some(el => el.isInvalid === true)) return
+                if (itemsRef.current.some((el) => el.isInvalid === true)) return
                 break
             case 3:
                 break
             case 4:
-                console.log("submit 가동")
-
                 handleSubmmit()
                 break
             default:
                 console.error("존재하지 않는 스텝입니다.")
         }
 
-        setActiveStep(prevActiveStep => prevActiveStep + 1)
+        setActiveStep((prevActiveStep) => prevActiveStep + 1)
     }
 
     const handleSubmmit = async () => {
         //setIsSubmit(true)
 
-        if (itemsRef.current.some(el => el.value.description === "")) {
+        if (itemsRef.current.some((el) => el.value.description === "")) {
             alert("빈 항목이 존재합니다. 항목을 수정해주세요.")
             setIsSubmit(false)
             return
@@ -124,21 +122,16 @@ export default function VerticalLinearStepper() {
         }
 
         const formData = new FormData()
-        Object.keys(payload).forEach(key => formData.append(key, payload[key]))
+        Object.keys(payload).forEach((key) => formData.append(key, payload[key]))
 
         for (let i = 0; i < itemsRef.current.length; i++) {
-            formData.append(`options[${i}].description`, itemsRef.current[i].value.description)
-            formData.append(`options[${i}].optionImage`, itemsRef.current[i].value.imgUrl)
-        }
+            const item = itemsRef.current[i].value
 
-        console.log("submit 함수가동")
-        for (let key of formData.keys()) {
-            console.log("키", key)
-        }
+            formData.append(`options[${i}].description`, item.description)
 
-        /* value 확인하기 */
-        for (let asd of formData.values()) {
-            console.log("밸류", asd)
+            if (item.imgUrl !== "") {
+                formData.append(`options[${i}].optionImage`, item.imgUrl)
+            }
         }
 
         const response = await ApiGateway.createPoll(formData)
@@ -153,7 +146,7 @@ export default function VerticalLinearStepper() {
     }
 
     const handleBack = () => {
-        setActiveStep(prevActiveStep => prevActiveStep - 1)
+        setActiveStep((prevActiveStep) => prevActiveStep - 1)
     }
 
     return (
@@ -188,7 +181,7 @@ export default function VerticalLinearStepper() {
     )
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         flex: 1,
         marginTop: theme.spacing(2),
@@ -260,7 +253,7 @@ function PollItems({ itemsRef, itemListState }) {
     return <DraggableList items={itemsRef.current} onDragEnd={onDragEnd} />
 }
 
-const pollOptionStyles = makeStyles(theme => ({
+const pollOptionStyles = makeStyles((theme) => ({
     container: {
         width: "100%",
         height: "100px",
@@ -289,19 +282,19 @@ function PollOptionsWrapper({ optionsRef }) {
 
     const handleChangeIsBallot = () => {
         optionsRef.current.isBallot = !optionsRef.current.isBallot
-        setCheckedIsBallot(prev => !prev)
+        setCheckedIsBallot((prev) => !prev)
     }
 
     const handleChangeResponseType = () => {
         if (optionsRef.current.responseType === RESPONSE_TYPE_SIGNLE) {
             optionsRef.current.responseType = RESPONSE_TYPE_MULTI
-            setCheckedResponseType(prev => !prev)
+            setCheckedResponseType((prev) => !prev)
             return
         }
 
         if (optionsRef.current.responseType === RESPONSE_TYPE_MULTI) {
             optionsRef.current.responseType = RESPONSE_TYPE_SIGNLE
-            setCheckedResponseType(prev => !prev)
+            setCheckedResponseType((prev) => !prev)
             return
         }
     }
@@ -336,7 +329,7 @@ function PollExpireDate({ expireRef }) {
 
     const [expireDate, setExpireDate] = useState(new Date())
 
-    const handleChange = date => {
+    const handleChange = (date) => {
         setExpireDate(date)
         expireRef.current = date
     }
