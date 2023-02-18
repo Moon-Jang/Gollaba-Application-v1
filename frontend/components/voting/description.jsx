@@ -12,7 +12,6 @@ const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function Description(props) {
     const data = props.data
     const name = data.creatorName
-    console.log("epdlxj", data)
 
     const date = new Date(props.data.endedAt)
 

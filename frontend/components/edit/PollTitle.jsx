@@ -8,9 +8,8 @@ export default function PollTitle({ titleRef, originTitle }) {
     const [isInvalid, setIsInvalid] = useState(false)
     //const [title, setTitle] = useState(titleRef.current.value);
     const [title, setTitle] = useState(originTitle)
-    console.log("ORIGIN??", originTitle)
 
-    const handleChange = event => {
+    const handleChange = (event) => {
         const { value } = event.target
 
         if (value !== "" && !CommonValidator.validate("pollTitle", value)) {
@@ -40,7 +39,7 @@ export default function PollTitle({ titleRef, originTitle }) {
     )
 }
 
-const pollTitleStyles = makeStyles(themes => ({
+const pollTitleStyles = makeStyles((themes) => ({
     inputTitle: {
         width: "100%",
     },

@@ -61,7 +61,7 @@ export default function Login() {
 
                     <Box noValidate>
                         <Link
-                            href={`https://dev.api.gollaba.net/oauth2/authorize/facebook?redirect_uri=${host}/temp/oauth-callback`}
+                            href={`https://api.gollaba.net/oauth2/authorize/facebook?redirect_uri=${host}/temp/oauth-callback`}
                             underline="none"
                         >
                             <Button
@@ -92,7 +92,7 @@ export default function Login() {
                             </Button>
                         </Link>
                         <Link
-                            href={`https://dev.api.gollaba.net/oauth2/authorize/naver?redirect_uri=${host}/temp/oauth-callback`}
+                            href={`https://api.gollaba.net/oauth2/authorize/naver?redirect_uri=${host}/temp/oauth-callback`}
                             underline="none"
                         >
                             <Button
@@ -126,7 +126,7 @@ export default function Login() {
                             </Button>
                         </Link>
                         <Link
-                            href={`https://dev.api.gollaba.net/oauth2/authorize/kakao?redirect_uri=${host}/temp/oauth-callback`}
+                            href={`https://api.gollaba.net/oauth2/authorize/kakao?redirect_uri=${host}/temp/oauth-callback`}
                             underline="none"
                         >
                             <Button

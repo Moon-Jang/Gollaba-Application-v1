@@ -34,13 +34,11 @@ export default function Search() {
     const [pollTitleFromQuery, setPollTitleFromQuery] = useState("")
 
     useEffect(() => {
-        console.log("37", router.query.title)
         if (router.query.title) setPollTitleFromQuery(router.query.title)
     }, [router.query.title])
 
     useEffect(async () => {
         if (pollTitleFromQuery && pollTitleFromQuery !== null) {
-            console.log("43", pollTitleFromQuery)
             await getData()
         }
     }, [pollTitleFromQuery])
