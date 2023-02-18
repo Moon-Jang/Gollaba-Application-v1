@@ -127,11 +127,13 @@ export default function VerticalLinearStepper() {
         Object.keys(payload).forEach((key) => formData.append(key, payload[key]))
 
         for (let i = 0; i < itemsRef.current.length; i++) {
-            formData.append(`options[${i}].description`, itemsRef.current[i].value.description)
-            formData.append(
-                `options[${i}].optionImage`,
-                itemsRef.current[i].value.imgUrl !== "" ? itemsRef.current[i].value.imgUrl : null
-            )
+            const item = itemsRef.current[i].value
+
+            formData.append(`options[${i}].description`, item.description)
+
+            if (item.imgUrl !== "") {
+                formData.append(`options[${i}].optionImage`, item.imgUrl)
+            }
         }
 
         console.log("submit 함수가동")
