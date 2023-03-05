@@ -56,7 +56,7 @@ export default function Poll(props) {
             const favoriteSend = await ApiGateway.makeFavorite(payload, cookies.accessToken)
 
             if (favoriteSend?.error === true) {
-                alert(favoriteSend.message)
+                alert("로그인 이후에 사용할 수 있는 기능입니다.")
                 return
             }
             setFavoriteId(favoriteSend?.favoritesId)
