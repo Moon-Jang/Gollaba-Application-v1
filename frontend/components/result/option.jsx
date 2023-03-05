@@ -33,7 +33,7 @@ export default function Option(props) {
                 alignItems: "center",
                 fontSize: 22,
                 flex: 0.2,
-                background: `linear-gradient(to right,  #9c9e9f 30%,#9c9e9f ${ratio}% ,#f6f6f6  ${ratio}%,#f6f6f6 100%)`,
+                background: `linear-gradient(to right,  #9c9e9f 0%,#9c9e9f ${ratio}% ,#f6f6f6  ${ratio}%,#f6f6f6 100%)`,
             }}
         >
             <Box

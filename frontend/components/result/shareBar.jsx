@@ -15,37 +15,37 @@ import {
 } from "react-share"
 
 import kakao_share from "../../public/kakaotalk_sharing_btn.png"
+import defaultImage from "../../public/defaultImage.png"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
 export default function ShareBar(props) {
     const router = useRouter()
-    const currentUrl = "https://gollaba.net" + router.asPath
+    const currentUrl = "https://www.gollaba.net" + router.asPath
     const clipboardCopy = () => {
         navigator.clipboard.writeText(currentUrl)
         alert("클립보드에 복사되었습니다.")
     }
-    const options =
-        props.data && props.data.option ? props.data.option.slice(0, Math.min(props.data.option.length, 5)) : []
 
-    const newOptions = props.data.options.map((option) => ({
+    const newOptions = props.data.options.slice(0, 3).map((option) => ({
         title: option.description,
         description: "",
-        imageUrl: option.imageUrl,
+        imageUrl: typeof option.imageUrl === "string" ? option.imageUrl : { src: defaultImage },
         link: {
-            mobileWebUrl: "https://gollaba.net/",
-            webUrl: "https://gollaba.net/",
+            mobileWebUrl: "https://www.gollaba.net/",
+            webUrl: "https://www.gollaba.net/",
         },
     }))
-
     const handleKakao = () => {
         const { Kakao, location } = window
+
+        console.log("sdsad", newOptions)
 
         Kakao.Share.sendDefault({
             objectType: "list",
             headerTitle: props.data.title,
             headerLink: {
-                mobileWebUrl: "https://gollaba.net/",
-                webUrl: "https://gollaba.net/",
+                mobileWebUrl: "https://www.gollaba.net/",
+                webUrl: "https://www.gollaba.net/",
             },
             contents: newOptions,
             buttons: [
