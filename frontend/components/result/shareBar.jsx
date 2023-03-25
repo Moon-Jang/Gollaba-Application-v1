@@ -18,6 +18,8 @@ import kakao_share from "../../public/kakaotalk_sharing_btn.png"
 import defaultImage from "../../public/defaultImage.png"
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } }
+const defaultImageUrl = "https://dev-gollaba-bucket.s3.ap-northeast-2.amazonaws.com/default_image/defaultImage.png"
+
 export default function ShareBar(props) {
     const router = useRouter()
     const currentUrl = "https://www.gollaba.net" + router.asPath
@@ -29,7 +31,7 @@ export default function ShareBar(props) {
     const newOptions = props.data.options.slice(0, 3).map((option) => ({
         title: option.description,
         description: "",
-        imageUrl: typeof option.imageUrl === "string" ? option.imageUrl : { src: defaultImage },
+        imageUrl: typeof option.imageUrl === "string" ? option.imageUrl : defaultImageUrl,
         link: {
             mobileWebUrl: "https://www.gollaba.net/",
             webUrl: "https://www.gollaba.net/",

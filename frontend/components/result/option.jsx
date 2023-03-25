@@ -23,7 +23,7 @@ export default function Option(props) {
                 mt: 1,
                 mb: 1,
                 borderRadius: "5px",
-                padding: 0.5,
+
                 boxShadow: 2,
                 letterSpacing: 1.2,
                 display: "flex",
@@ -33,32 +33,56 @@ export default function Option(props) {
                 alignItems: "center",
                 fontSize: 22,
                 flex: 0.2,
-                background: `linear-gradient(to right,  #9c9e9f 0%,#9c9e9f ${ratio}% ,#f6f6f6  ${ratio}%,#f6f6f6 100%)`,
+                backgroundColor: totalVoteCount === 0 ? "#9c9e9f" : "rgb(156, 158, 159)",
             }}
         >
             <Box
                 sx={{
                     backgroundImage:
                         props.data.imageUrl !== null ? `url(${props.data.imageUrl})` : `url(${defaultImage.src})`,
+
                     backgroundPosition: "50% 50%",
-                    backgroundSize: "cover",
                     width: 90,
                     height: "100%",
                     mr: 1,
                     backgroundSize: "cover",
+                    marginTop: 0,
+                    marginBottom: 0,
+                    padding: 0,
+                    zIndex: 1,
+                    backgroundColor: "white",
+                    filter: props.data.imageUrl === null ? "brightness(1.15)" : "none",
                 }}
             ></Box>
-            <Box>{data.description}</Box>
-
             <Box
                 sx={{
                     display: "flex",
-                    fontSize: 13,
-                    flex: 0.2,
-                    pt: 2,
+                    borderColor: "grey.500",
+                    flexDirection: "row",
+                    backgroundColor: "skyblue",
+                    flexDirection: "row",
+                    //justifyContent: "left",
+                    alignItems: "center",
+                    height: "100%",
+                    flex: 1,
+                    ml: -1,
+                    fontSize: 22,
+                    pl: 1,
+                    background: `linear-gradient(to right,  #9c9e9f 0%,#9c9e9f ${ratio}% ,#f6f6f6  ${ratio}%,#f6f6f6 100%)`,
                 }}
             >
-                ({props.data.voters.length}명)
+                <Box>{data.description}</Box>
+
+                <Box
+                    sx={{
+                        display: "flex",
+                        fontSize: 13,
+                        flex: 0.2,
+                        pt: 2,
+                    }}
+                >
+                    ({props.data.voters.length}명)
+                </Box>
             </Box>
         </Box>
     )
