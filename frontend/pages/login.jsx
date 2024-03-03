@@ -54,45 +54,14 @@ export default function Login() {
                         <Link href="/">
                             <img
                                 src={LogoImage.src}
-                                style={{ width: 200, height: "auto", marginLeft: 8, marginTop: 30 }}
+                                style={{ width: 200, height: "auto", marginLeft: 8, marginTop: 30, marginBottom: 30 }}
                             />
                         </Link>
                     </div>
 
                     <Box noValidate>
                         <Link
-                            href={`https://api.gollaba.net/oauth2/authorize/facebook?redirect_uri=${host}/temp/oauth-callback`}
-                            underline="none"
-                        >
-                            <Button
-                                color="primary"
-                                variant="outlined"
-                                fullWidth
-                                style={{ verticalAlign: "middle", color: "#1878F2", textTransform: "none" }}
-                                sx={{
-                                    mt: 8,
-                                    mb: 1,
-                                    boxShadow: 0,
-                                    border: 0.1,
-                                    borderColor: "lightgray",
-                                    borderRadius: 0.5,
-                                    //backgroundColor: "#3B5998",
-                                    height: 55,
-                                    ":hover": { bgcolor: "#E5E8EB", borderColor: "#E5E8EB" },
-                                }}
-                            >
-                                <Box sx={{ display: "flex", flex: 1 }}>
-                                    <FacebookIcon />
-                                </Box>
-                                <Box sx={{ display: "flex", flex: 15, justifyContent: "center" }}>
-                                    <Typography color="#737881" sx={{ fontWeight: "Bold" }}>
-                                        Facebook 로그인
-                                    </Typography>
-                                </Box>
-                            </Button>
-                        </Link>
-                        <Link
-                            href={`https://api.gollaba.net/oauth2/authorize/naver?redirect_uri=${host}/temp/oauth-callback`}
+                            href={`https://dev-api.gollaba.app/oauth2/authorize/naver?redirect_uri=${host}/temp/oauth-callback`}
                             underline="none"
                         >
                             <Button
@@ -126,7 +95,7 @@ export default function Login() {
                             </Button>
                         </Link>
                         <Link
-                            href={`https://api.gollaba.net/oauth2/authorize/kakao?redirect_uri=${host}/temp/oauth-callback`}
+                            href={`https://dev-api.gollaba.app/oauth2/authorize/kakao?redirect_uri=${host}/temp/oauth-callback`}
                             underline="none"
                         >
                             <Button
@@ -172,5 +141,3 @@ export default function Login() {
         </ThemeProvider>
     )
 }
-// 어디서 넘어왔는지를 쿼리스트링으로 담고 있으면 좋겠다. 지금은 푸터내브에서만 들어가지만, 추후에 투표 수정을 통해서도 들어갈 수 있다.
-// 로그인 페이지에서 로그인 완료했을 때 이전 행선지로 바로 넘어갈 수 있도록.
