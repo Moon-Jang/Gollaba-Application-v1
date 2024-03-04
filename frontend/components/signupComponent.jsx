@@ -103,6 +103,7 @@ export default function SignupComponent() {
         e.preventDefault()
 
         try {
+            /*
             const formData = new FormData()
             formData.append("id", id)
             formData.append("nickName", nickName)
@@ -110,6 +111,18 @@ export default function SignupComponent() {
             formData.append("profileImage", imagePayload.current)
 
             const signup = await ApiGateway.signupForm(formData)
+
+            */
+
+            const payload = {
+                email: id,
+                name: nickName,
+                password: password,
+                profileImageUrl: imagePayload.current,
+                providerType: "KAKAO", //추후 수정할 것
+                providerId: "providerId",
+            }
+            const signup = await ApiGateway.signupForm(payload)
         } catch (e) {}
         router.push("/login")
     }
