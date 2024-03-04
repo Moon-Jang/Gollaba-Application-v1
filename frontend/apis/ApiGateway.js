@@ -26,7 +26,7 @@ const ApiGateway = {
     topPolls: async (token) => ApiTemplate.sendApi(MethodType.GET, `/v1/polls/top`, null, token),
     trendingPolls: async (token) => ApiTemplate.sendApi(MethodType.GET, `/v1/polls/trending`, null, token),
     // User Controller
-    signupForm: async (formData) => ApiTemplate.sendApiMultiPart(MethodType.POST, `v1/signup`, formData),
+    signupForm: async (payload) => ApiTemplate.sendApi(MethodType.POST, `v2/users`, payload),
     showUser: async (userId, token) => ApiTemplate.sendApi(MethodType.GET, `/v1/users/${userId}`, null, token),
     updateForm: async (formData, token) =>
         ApiTemplate.sendApiMultiPart(MethodType.POST, `v1/users/update`, formData, token),
