@@ -45,6 +45,7 @@ export default function SignUp() {
     }
 
     const signup = async (e) => {
+        /*
         const formData = new FormData()
         formData.append("email", emailRef.current)
         formData.append("nickName", name)
@@ -52,6 +53,18 @@ export default function SignUp() {
         formData.append("providerType", providerTypeRef.current)
         formData.append("providerImageUrl", imagePayload.current)
         const response = await ApiGateway.signupForm(formData)
+        */
+
+        const payload = {
+            email: emailRef.current,
+            name: name,
+            profileImageUrl: profileImage,
+            providerType: providerTypeRef.current,
+            providerId: providerIdRef.current,
+        }
+
+        console.log("페이로드>", payload)
+        const response = await ApiGateway.signupForm(payload)
 
         if (response.error === true) {
             alert(response.message)
@@ -65,7 +78,7 @@ export default function SignUp() {
         if (!router.query || !Object.keys(router.query).length) return
 
         const { name, email, providerId, providerType, profileImageUrl } = router.query
-
+        console.log("check>>", name, email, providerId, providerType, profileImageUrl)
         setLoadedPage(true)
         setName(name)
         emailRef.current = email
