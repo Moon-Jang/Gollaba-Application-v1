@@ -66,7 +66,7 @@ export default function SignUp() {
         console.log("페이로드>", payload)
         const response = await ApiGateway.signupForm(payload)
 
-        if (response.error === true) {
+        if (response?.error === true) {
             alert(response.message)
             return
         }
